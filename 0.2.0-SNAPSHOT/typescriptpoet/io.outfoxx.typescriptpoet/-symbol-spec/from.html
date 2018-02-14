@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SymbolSpec.from - typescriptpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="index.html">SymbolSpec</a>&nbsp;/&nbsp;<a href=".">from</a><br/>
+<br/>
+<h1>from</h1>
+<a name="io.outfoxx.typescriptpoet.SymbolSpec.Companion$from(kotlin.String)"></a>
+<code><span class="keyword">fun </span><span class="identifier">from</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$from(kotlin.String)/spec">spec</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span><span class="symbol">: </span><a href="index.html"><span class="identifier">SymbolSpec</span></a></code>
+<p>Parses a symbol reference pattern to create a symbol. The pattern
+allows the simple definition of all symbol types including any possible
+import variation. If the spec to parse does not follow the proper format
+an implicit symbol is created from the unparsed spec.</p>
+<p>Pattern: <code>&lt;symbol_name&gt;? &lt;import_type&gt; &lt;module_path&gt; (#&lt;augmented_symbol_name&gt;)?</code></p>
+<ul><li>
+<p>symbol_name = <code>[a-zA-Z0-9._]+</code></p>
+<p>  Any legal compound JS/TS symbol (e.g. symbol._member.member). If no symbol name is
+    specified then the last component of the module path is used as the symbol name;
+    allows easy use with libraries that follow normal conventions.</p>
+</li>
+<li>
+<p>import_type = <code>@ | * | +</code></p>
+<p>  <code>@</code> = Import named symbol from module (e.g. <code>import { &lt;symbol_name&gt; } from '&lt;module_name&gt;'</code>)</p>
+<p>  <code>*</code> = Import all symbols from module (e.g. <code>import * from '&lt;module_name&gt;'</code>)</p>
+<p>  <code>+</code> = Symbol is declared implicitly via import of the module (e.g. <code>import '&lt;module_name&gt;'</code>)</p>
+</li>
+<li>
+<p>module_path = <code>!&lt;filename&gt; | &lt;filename&gt;(/&lt;filename)*</code></p>
+<p>  Path name specifying the module. If the module path begins with a <code>!</code> then it is considered
+    to be a file being generated. This ensures the paths are output as relative imports.</p>
+</li>
+<li>
+<p>augmented_symbol_name = <code>[a-zA-Z0-9_]+</code></p>
+<p>  Any valid symbol name that represents the symbol that is being augmented. For example,
+    the import <code>rxjs/add/observable/from</code> attaches the <code>from</code> method to the <code>Observable</code> class.
+    To import it correctly the spec should be <code>+rxjs/add/observable/from#Observable</code>. Adding this
+    parameter to augmented imports ensures they are output only when the symbol being augmented
+    is actually used.</p>
+</li>
+</ul>
+<h3>Parameters</h3>
+
+<p><a name="spec"></a>
+<code>spec</code> - Symbol spec to parse.
+<p><strong>Return</strong><br/>
+Parsed symbol specification</p>
+</BODY>
+</HTML>
