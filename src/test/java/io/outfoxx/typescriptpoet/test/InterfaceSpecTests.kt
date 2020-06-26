@@ -36,7 +36,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -61,7 +61,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -92,7 +92,7 @@ class InterfaceSpecTests {
              .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -115,7 +115,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -142,7 +142,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -165,7 +165,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -201,7 +201,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -241,7 +241,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -274,7 +274,7 @@ class InterfaceSpecTests {
        .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out))
+    testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),

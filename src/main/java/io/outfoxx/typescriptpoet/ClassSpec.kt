@@ -16,6 +16,8 @@
 
 package io.outfoxx.typescriptpoet
 
+import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
+
 
 /** A generated `class` declaration. */
 class ClassSpec
@@ -33,28 +35,31 @@ private constructor(
   val propertySpecs = builder.propertySpecs.toImmutableList()
   val constructor = builder.constructor
   val functionSpecs = builder.functionSpecs.toImmutableList()
+  val useConstructorPropertiesAutomatically = builder.useConstructorPropertiesAutomatically
 
-  internal fun emit(codeWriter: CodeWriter) {
+  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
-    val constructorProperties: Map<String, PropertySpec> = constructorProperties()
+    val constructorProperties: Map<String, PropertySpec> =
+       if (useConstructorPropertiesAutomatically)
+         constructorProperties()
+       else
+         emptyMap()
 
-    codeWriter.emitJavaDoc(javaDoc)
-    codeWriter.emitDecorators(decorators, false)
+    codeWriter.emitJavaDoc(javaDoc, scope)
+    codeWriter.emitDecorators(decorators, false, scope)
     codeWriter.emitModifiers(modifiers, setOf(Modifier.PUBLIC))
     codeWriter.emit("class")
-    codeWriter.emitCode(" %L", name)
-    codeWriter.emitTypeVariables(typeVariables)
+    codeWriter.emitCode(CodeBlock.of(" %L", name), scope)
+    codeWriter.emitTypeVariables(typeVariables, scope)
 
     val superClass = if (superClass != null) CodeBlock.of("extends %T", superClass) else CodeBlock.empty()
     val mixins = mixins.map { CodeBlock.of("%T", it) }.let {
       if (it.isNotEmpty()) it.joinToCode(prefix = "implements ") else CodeBlock.empty()
     }
 
-    if (superClass.isNotEmpty() && mixins.isNotEmpty()) {
-      codeWriter.emitCode(" %L %L", superClass, mixins)
-    }
-    else if (superClass.isNotEmpty() || mixins.isNotEmpty()) {
-      codeWriter.emitCode(" %L%L", superClass, mixins)
+    val parents = (listOf(superClass) + mixins).filter { it.isNotEmpty() }
+    if (parents.any { it.isNotEmpty() }) {
+      codeWriter.emitCode(parents.joinToCode(separator = " ", prefix = " "), scope)
     }
 
     codeWriter.emit(" {\n")
@@ -66,7 +71,9 @@ private constructor(
         continue
       }
       codeWriter.emit("\n")
-      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true)
+      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true,
+                        compactOptionalAllowed = !useConstructorPropertiesAutomatically,
+                        scope = scope)
     }
 
     // Write the constructor manually, allowing the replacement
@@ -76,7 +83,7 @@ private constructor(
 
       if (it.decorators.isNotEmpty()) {
         codeWriter.emit(" ")
-        codeWriter.emitDecorators(it.decorators, true)
+        codeWriter.emitDecorators(it.decorators, true, scope)
         codeWriter.emit("\n")
       }
 
@@ -89,7 +96,7 @@ private constructor(
       var body = constructor.body
 
       // Emit constructor parameters & property specs that can be replaced with parameters
-      it.parameters.emit(codeWriter, rest = it.restParameter) { param, isRest ->
+      it.parameters.emit(codeWriter, rest = it.restParameter, scope = scope) { param, isRest, optionalAllowed, scope ->
         var property = constructorProperties[param.name]
         if (property != null && !isRest) {
 
@@ -101,8 +108,8 @@ private constructor(
             // Add default public modifier
             property = property.toBuilder().addModifiers(Modifier.PUBLIC).build()
           }
-          property.emit(codeWriter, setOf(), withInitializer = false)
-          param.emitDefaultValue(codeWriter)
+          property.emit(codeWriter, setOf(), compactOptionalAllowed = false, withInitializer = false, scope = scope)
+          param.emitDefaultValue(codeWriter, scope)
 
           // Remove initializing statements
 
@@ -111,13 +118,13 @@ private constructor(
           body = bodyBuilder.build()
         }
         else {
-          param.emit(codeWriter, isRest = isRest)
+          param.emit(codeWriter, isRest = isRest, optionalAllowed = optionalAllowed && !useConstructorPropertiesAutomatically, scope = scope)
         }
       }
 
       codeWriter.emit(" {\n")
       codeWriter.indent()
-      codeWriter.emitCode(body)
+      codeWriter.emitCode(body, scope)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
@@ -126,14 +133,14 @@ private constructor(
     for (funSpec in functionSpecs) {
       if (!funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC))
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC), scope)
     }
 
     // Functions (static and non-static).
     for (funSpec in functionSpecs) {
       if (funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC))
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC), scope)
     }
 
     codeWriter.unindent()
@@ -201,6 +208,7 @@ private constructor(
     internal val propertySpecs = mutableListOf<PropertySpec>()
     internal var constructor: FunctionSpec? = null
     internal val functionSpecs = mutableListOf<FunctionSpec>()
+    internal var useConstructorPropertiesAutomatically = true
 
     fun addJavadoc(format: String, vararg args: Any) = apply {
       javaDoc.add(format, *args)
@@ -273,6 +281,10 @@ private constructor(
       this.functionSpecs += functionSpec
     }
 
+    fun allowUsingConstructorPropertiesAutomatically(value: Boolean = true) = apply {
+      this.useConstructorPropertiesAutomatically = value
+    }
+
     fun build(): ClassSpec {
       val isAbstract = modifiers.contains(Modifier.ABSTRACT)
       for (functionSpec in functionSpecs) {
@@ -291,8 +303,7 @@ private constructor(
     fun builder(name: String) = Builder(name)
 
     @JvmStatic
-    fun builder(name: TypeName) = Builder(
-       name.reference(null))
+    fun builder(name: TypeName) = Builder(name.reference(null, null))
 
   }
 

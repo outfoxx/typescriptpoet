@@ -28,12 +28,12 @@ private constructor(
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
 
-  internal fun emit(codeWriter: CodeWriter) {
-    codeWriter.emitJavaDoc(javaDoc)
+  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
+    codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers)
-    codeWriter.emitCode("type %L", name)
-    codeWriter.emitTypeVariables(typeVariables)
-    codeWriter.emitCode(" = %T", type)
+    codeWriter.emitCode(CodeBlock.of("type %L", name), scope)
+    codeWriter.emitTypeVariables(typeVariables, scope)
+    codeWriter.emitCode(CodeBlock.of(" = %T", type), scope)
     codeWriter.emit(";\n")
   }
 
@@ -46,7 +46,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this)) }
+  override fun toString() = buildString { emit(CodeWriter(this), scope = emptyList()) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)

@@ -125,8 +125,7 @@ private constructor(
       end--
     }
     return when {
-      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args,
-                                                                                 referencedSymbols)
+      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args, referencedSymbols)
       else -> this
     }
   }
@@ -140,7 +139,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock) }
+  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock, emptyList()) }
 
   fun toBuilder(): Builder {
     val builder = Builder()
@@ -328,7 +327,7 @@ private constructor(
     private fun argToName(o: Any?) = when (o) {
       is CharSequence -> o.toString()
       is SymbolSpec -> o.reference(this)
-      is TypeName -> o.reference(this)
+      is TypeName -> o.reference(this, emptyList())
       is ParameterSpec -> o.name
       is PropertySpec -> o.name
       is FunctionSpec -> o.name
@@ -349,7 +348,7 @@ private constructor(
 
     private fun argToType(o: Any?) = when (o) {
       is TypeName -> {
-        o.reference(this)
+        o.reference(this, emptyList())
         o
       }
       else -> throw IllegalArgumentException("expected type but was $o")
@@ -420,7 +419,7 @@ private constructor(
     }
 
     fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList(),
-                                                      referencedSymbols.toImmutableSet())
+                            referencedSymbols.toImmutableSet())
   }
 
   companion object {
@@ -440,13 +439,30 @@ private constructor(
     fun empty() = builder().build()
 
     internal fun isNoArgPlaceholder(c: Char) = c.isOneOf('%', '>', '<', '[', ']', 'W')
-  }
-}
 
-@JvmOverloads
-fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
-                                                               suffix: CharSequence = ""): CodeBlock {
-  val blocks = toTypedArray()
-  val placeholders = Array(blocks.size) { "%L" }
-  return CodeBlock.of(placeholders.joinToString(separator, prefix, suffix), *blocks)
+    @JvmOverloads
+    fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
+                                         suffix: CharSequence = ""): CodeBlock {
+      val formatParts = mutableListOf<String>()
+
+      if (prefix.isNotEmpty()) {
+        formatParts.add(prefix.toString())
+      }
+
+      for ((idx, block) in this.withIndex()) {
+        formatParts.addAll(block.formatParts)
+        if (idx != size - 1) {
+          formatParts.add(separator.toString())
+        }
+      }
+
+      if (suffix.isNotEmpty()) {
+        formatParts += suffix.toString()
+      }
+
+      return CodeBlock(formatParts, flatMap { it.args }, fold(setOf()) { prev, cur -> cur.referencedSymbols union prev })
+    }
+
+  }
+
 }

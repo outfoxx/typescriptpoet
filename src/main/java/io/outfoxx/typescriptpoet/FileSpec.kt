@@ -100,8 +100,10 @@ private constructor(
   fun writeTo(directory: File) = writeTo(directory.toPath())
 
   private fun emit(codeWriter: CodeWriter) {
+    val scope = emptyList<String>()
+
     if (comment.isNotEmpty()) {
-      codeWriter.emitComment(comment)
+      codeWriter.emitComment(comment, scope)
     }
 
     val imports = codeWriter.requiredImports()
@@ -124,10 +126,10 @@ private constructor(
 
            imports.filterIsInstance<SymbolSpec.ImportsAll>().forEach { import ->
              // Output star imports individually
-             codeWriter.emitCode("%[import * as %L from '%L';\n%]", import.value, sourceImportPath)
+             codeWriter.emitCode(CodeBlock.of("%[import * as %L from '%L';\n%]", import.value, sourceImportPath), scope)
              // Output related augments
              augmentImports[import.value]?.forEach { augment ->
-               codeWriter.emitCode("%[import '%L';\n%]", augment.source)
+               codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
              }
            }
 
@@ -142,11 +144,11 @@ private constructor(
                    .indent()
                    .emitCode(names.joinToString(", "))
                    .unindent()
-                   .emitCode("} from '%L';\n", sourceImportPath)
+                   .emitCode(CodeBlock.of("} from '%L';\n", sourceImportPath), scope)
                 // Output related augments
                 names.forEach { name ->
                   augmentImports[name]?.forEach { augment ->
-                    codeWriter.emitCode("%[import '%L';\n%]", augment.source)
+                    codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
                   }
                 }
               }
@@ -154,7 +156,7 @@ private constructor(
          }
 
       sideEffectImports.forEach {
-        codeWriter.emitCode("%[import %S;\n%]", it.key)
+        codeWriter.emitCode(CodeBlock.of("%[import %S;\n%]", it.key), scope)
       }
 
       codeWriter.emit("\n")
@@ -163,28 +165,26 @@ private constructor(
     members.filterNot { it is ModuleSpec || it is CodeBlock }.forEach { member ->
       codeWriter.emit("\n")
       when (member) {
-        is ModuleSpec -> member.emit(codeWriter)
-        is InterfaceSpec -> member.emit(codeWriter)
-        is ClassSpec -> member.emit(codeWriter)
-        is EnumSpec -> member.emit(codeWriter)
-        is FunctionSpec -> member.emit(codeWriter, null, setOf(
-           Modifier.PUBLIC))
-        is PropertySpec -> member.emit(codeWriter, setOf(
-           Modifier.PUBLIC), asStatement = true)
-        is TypeAliasSpec -> member.emit(codeWriter)
-        is CodeBlock -> codeWriter.emitCode(member)
+        is ModuleSpec -> member.emit(codeWriter, scope)
+        is InterfaceSpec -> member.emit(codeWriter, scope)
+        is ClassSpec -> member.emit(codeWriter, scope)
+        is EnumSpec -> member.emit(codeWriter, scope)
+        is FunctionSpec -> member.emit(codeWriter, null, setOf(Modifier.PUBLIC), scope)
+        is PropertySpec -> member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, scope = scope)
+        is TypeAliasSpec -> member.emit(codeWriter, scope)
+        is CodeBlock -> codeWriter.emitCode(member, scope)
         else -> throw AssertionError()
       }
     }
 
     members.filterIsInstance<ModuleSpec>().forEach { member ->
       codeWriter.emit("\n")
-      member.emit(codeWriter)
+      member.emit(codeWriter, scope)
     }
 
     members.filterIsInstance<CodeBlock>().forEach { member ->
       codeWriter.emit("\n")
-      codeWriter.emitCode(member)
+      codeWriter.emitCode(member, scope)
     }
 
   }

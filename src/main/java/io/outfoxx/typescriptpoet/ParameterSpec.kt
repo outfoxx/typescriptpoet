@@ -16,6 +16,8 @@
 
 package io.outfoxx.typescriptpoet
 
+import kotlin.math.min
+
 
 class ParameterSpec private constructor(builder: Builder) {
   val name = builder.name
@@ -28,26 +30,31 @@ class ParameterSpec private constructor(builder: Builder) {
   internal fun emit(
      codeWriter: CodeWriter,
      includeType: Boolean = true,
-     isRest: Boolean = false
+     isRest: Boolean = false,
+     optionalAllowed: Boolean = false,
+     scope: List<String>
   ) {
-    codeWriter.emitDecorators(decorators, true)
+    codeWriter.emitDecorators(decorators, true, scope)
     codeWriter.emitModifiers(modifiers)
     if (isRest) {
       codeWriter.emitCode("... ")
     }
-    codeWriter.emitCode("%L", name)
-    if (optional) {
-      codeWriter.emitCode("?")
-    }
+    codeWriter.emitCode(CodeBlock.of("%L", name), scope)
     if (includeType) {
-      codeWriter.emitCode(": %T", type)
+      if (optional && optionalAllowed) {
+        codeWriter.emitCode("?")
+      }
+      codeWriter.emitCode(CodeBlock.of(": %T", type), scope)
+      if (optional && !optionalAllowed) {
+        codeWriter.emitCode(" | undefined")
+      }
     }
-    emitDefaultValue(codeWriter)
+    emitDefaultValue(codeWriter, scope)
   }
 
-  internal fun emitDefaultValue(codeWriter: CodeWriter) {
+  internal fun emitDefaultValue(codeWriter: CodeWriter, scope: List<String>) {
     if (defaultValue != null) {
-      codeWriter.emitCode(" = %[%L%]", defaultValue)
+      codeWriter.emitCode(CodeBlock.of(" = %[%L%]", defaultValue), scope)
     }
   }
 
@@ -60,7 +67,7 @@ class ParameterSpec private constructor(builder: Builder) {
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this)) }
+  override fun toString() = buildString { emit(CodeWriter(this), scope = emptyList()) }
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type, optional)
@@ -126,27 +133,31 @@ internal fun List<ParameterSpec>.emit(
    codeWriter: CodeWriter,
    enclosed: Boolean = true,
    rest: ParameterSpec? = null,
-   emitBlock: (ParameterSpec, Boolean) -> Unit = { param, isRest -> param.emit(codeWriter, isRest = isRest) }
+   scope: List<String>,
+   emitBlock: (ParameterSpec, Boolean, Boolean, List<String>) -> Unit =
+      { param, isRest, optionalAllowed, pscope ->
+        param.emit(codeWriter, optionalAllowed = optionalAllowed, isRest = isRest, scope = pscope)
+      }
 ) = with(codeWriter) {
   val params = this@emit + if (rest != null) listOf(rest) else emptyList()
   if (enclosed) emit("(")
-  when (size) {
-    in 0..5 -> {
-      params.forEachIndexed { index, parameter ->
-        if (index > 0) emit(", ")
-        emitBlock(parameter, rest === parameter)
-      }
+  if (size < 5 && all { it.decorators.isEmpty() }) {
+    params.forEachIndexed { index, parameter ->
+      val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
+      if (index > 0) emit(", ")
+      emitBlock(parameter, rest === parameter, optionalAllowed, scope)
     }
-    else -> {
-      emit("\n")
-      indent(2)
-      params.forEachIndexed { index, parameter ->
-        if (index > 0) emit(",\n")
-        emitBlock(parameter, rest === parameter)
-      }
-      unindent(2)
-      emit("\n")
+  }
+  else {
+    emit("\n")
+    indent(2)
+    params.forEachIndexed { index, parameter ->
+      val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
+      if (index > 0) emit(",\n")
+      emitBlock(parameter, rest === parameter, optionalAllowed, scope)
     }
+    unindent(2)
+    emit("\n")
   }
   if (enclosed) emit(")")
 }

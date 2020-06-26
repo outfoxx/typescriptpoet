@@ -34,7 +34,7 @@ sealed class TypeName {
    * @param trackedBy An optional symbol tracker that is notified of each symbol used
    * @return String type representation in TypeScript syntax
    */
-  abstract fun reference(trackedBy: SymbolReferenceTracker?): String
+  abstract fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String
 
 
 
@@ -44,9 +44,9 @@ sealed class TypeName {
      val imported: SymbolSpec?
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       imported?.reference(trackedBy)
-      return usage
+      return usage.removePrefix(relativeTo?.joinToString(".")?.plus(".") ?: "")
     }
 
   }
@@ -58,9 +58,9 @@ sealed class TypeName {
      val typeArgs: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      val name = name.reference(trackedBy)
-      val typeArgs = typeArgs.map { it.reference(trackedBy) }
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
+      val name = name.reference(trackedBy, relativeTo)
+      val typeArgs = typeArgs.map { it.reference(trackedBy, relativeTo) }
       return "$name<${typeArgs.joinToString(", ")}>"
     }
 
@@ -94,7 +94,7 @@ sealed class TypeName {
 
     }
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       return name
     }
 
@@ -112,11 +112,11 @@ sealed class TypeName {
        val optional: Boolean
     )
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       val entries = members.joinToString(", ") {
         val name = it.name
         val opt = if (it.optional) "?" else ""
-        val type = it.type.reference(trackedBy)
+        val type = it.type.reference(trackedBy, relativeTo)
         "$name$opt: $type"
       }
       return "{ $entries }"
@@ -130,8 +130,8 @@ sealed class TypeName {
      val memberTypes: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      val typeRequirements = memberTypes.map { it.reference(trackedBy) }
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
+      val typeRequirements = memberTypes.map { it.reference(trackedBy, relativeTo) }
       return "[${typeRequirements.joinToString(", ")}]"
     }
 
@@ -143,8 +143,8 @@ sealed class TypeName {
      val typeRequirements: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      val typeRequirements = typeRequirements.map { it.reference(trackedBy) }
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
+      val typeRequirements = typeRequirements.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" & ")
     }
 
@@ -156,8 +156,8 @@ sealed class TypeName {
      val typeChoices: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      val typeRequirements = typeChoices.map { it.reference(trackedBy) }
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
+      val typeRequirements = typeChoices.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" | ")
     }
 
@@ -170,9 +170,9 @@ sealed class TypeName {
      private val returnType: TypeName = VOID
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      val params = parameters.map { "${it.key}: ${it.value.reference(trackedBy)}" }.joinToString(", ")
-      return "($params) => ${returnType.reference(trackedBy)}"
+    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
+      val params = parameters.map { "${it.key}: ${it.value.reference(trackedBy, relativeTo)}" }.joinToString(", ")
+      return "($params) => ${returnType.reference(trackedBy, relativeTo)}"
     }
 
   }
@@ -218,8 +218,7 @@ sealed class TypeName {
         val usage = name.substring(0, idx)
         val imported = SymbolSpec.from(
            "${usage.split('.').first()}${name.substring(idx)}")
-        return anyType(if (usage.isEmpty()) imported.value else usage,
-                                                                    imported)
+        return anyType(if (usage.isEmpty()) imported.value else usage, imported)
       }
       return anyType(name, null)
     }

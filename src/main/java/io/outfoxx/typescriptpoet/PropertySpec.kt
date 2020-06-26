@@ -34,15 +34,17 @@ private constructor(
      codeWriter: CodeWriter,
      implicitModifiers: Set<Modifier>,
      asStatement: Boolean = false,
-     withInitializer: Boolean = true
+     withInitializer: Boolean = true,
+     compactOptionalAllowed: Boolean = false,
+     scope: List<String>
   ) {
-    codeWriter.emitJavaDoc(javaDoc)
-    codeWriter.emitDecorators(decorators, false)
+    codeWriter.emitJavaDoc(javaDoc, scope)
+    codeWriter.emitDecorators(decorators, false, scope)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
-    codeWriter.emitCode("%L${if (optional) "?" else ""}: %T", name, type)
+    codeWriter.emitCode(CodeBlock.of("%L${if (optional && compactOptionalAllowed) "?" else ""}: %T${if (optional && !compactOptionalAllowed) " | undefined" else ""}", name, type), scope)
     if (withInitializer && initializer != null) {
       codeWriter.emit(" = ")
-      codeWriter.emitCode("%[%L%]", initializer)
+      codeWriter.emitCode(CodeBlock.of("%[%L%]", initializer), scope)
     }
     if (asStatement) {
       codeWriter.emit(";\n")

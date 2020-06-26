@@ -50,7 +50,7 @@ class TypeNameTests {
     assertThat(typeName.members, hasItems(Member("a", STRING, false),
                                           Member("b", NUMBER, false),
                                           Member("C", BOOLEAN, false)))
-    assertThat(typeName.reference(null), equalTo("{ a: string, b: number, C: boolean }"))
+    assertThat(typeName.reference(null, emptyList()), equalTo("{ a: string, b: number, C: boolean }"))
 
     val typeName2 = TypeName.anonymousType(arrayListOf(
        Member("a", NUMBER, true),
@@ -61,7 +61,7 @@ class TypeNameTests {
     assertThat(typeName2.members, hasItems(Member("a", NUMBER, true),
                                            Member("B", STRING, false),
                                            Member("c", DATE, true)))
-    assertThat(typeName2.reference(null), equalTo("{ a?: number, B: string, c?: Date }"))
+    assertThat(typeName2.reference(null, emptyList()), equalTo("{ a?: number, B: string, c?: Date }"))
   }
 
 }

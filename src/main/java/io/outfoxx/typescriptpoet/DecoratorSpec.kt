@@ -26,9 +26,9 @@ internal constructor(
   val parameters = builder.parameters
   val factory = builder.factory
 
-  internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
+  internal fun emit(codeWriter: CodeWriter, inline: Boolean, scope: List<String>, asParameter: Boolean = false) {
 
-    codeWriter.emitCode("@%N", name)
+    codeWriter.emitCode(CodeBlock.of("@%N", name), scope)
 
     if (parameters.isNotEmpty()) {
 
@@ -46,7 +46,7 @@ internal constructor(
         if (!asParameter && first != null) {
           codeWriter.emit("/* $first */ ")
         }
-        codeWriter.emitCode(second)
+        codeWriter.emitCode(second, scope)
       }
 
       if (!inline) {

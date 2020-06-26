@@ -35,7 +35,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -64,7 +64,7 @@ class ClassSpecTests {
        )
        .build()
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -90,7 +90,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -120,7 +120,7 @@ class ClassSpecTests {
              .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -142,7 +142,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -165,7 +165,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -189,7 +189,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -216,7 +216,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -242,7 +242,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -273,7 +273,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -316,7 +316,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -324,9 +324,9 @@ class ClassSpecTests {
           """
             class Test {
 
-              value3?: boolean;
+              value3: boolean | undefined;
 
-              constructor(private value: number, public value2: string, value3?: boolean) {
+              constructor(private value: number, public value2: string, value3: boolean | undefined) {
                 val testing = 'need other code'
                 anotherTestStatement();
                 this.value3 = value3 || testing == '';
@@ -380,7 +380,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),
@@ -437,7 +437,7 @@ class ClassSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), emptyList())
 
     assertThat(
        out.toString(),

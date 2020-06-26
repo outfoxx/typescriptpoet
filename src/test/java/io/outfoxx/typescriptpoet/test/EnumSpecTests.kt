@@ -39,7 +39,7 @@ class EnumSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -64,7 +64,7 @@ class EnumSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -88,7 +88,7 @@ class EnumSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out))
+    testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),

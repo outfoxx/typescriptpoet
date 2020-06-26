@@ -39,7 +39,7 @@ class TypeAliasSpecTests {
        .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out))
+    testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -63,7 +63,7 @@ class TypeAliasSpecTests {
        .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out))
+    testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -84,7 +84,7 @@ class TypeAliasSpecTests {
        .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out))
+    testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -108,7 +108,7 @@ class TypeAliasSpecTests {
        .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out))
+    testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
        out.toString(),

@@ -57,11 +57,11 @@ internal class CodeWriter constructor(
     indentLevel -= levels
   }
 
-  fun emitComment(codeBlock: CodeBlock) {
+  fun emitComment(codeBlock: CodeBlock, scope: List<String>) {
     trailingNewline = true // Force the '//' prefix for the comment.
     comment = true
     try {
-      emitCode(codeBlock)
+      emitCode(codeBlock, scope)
       emit("\n")
     }
     finally {
@@ -69,13 +69,13 @@ internal class CodeWriter constructor(
     }
   }
 
-  fun emitJavaDoc(javaDocCodeBlock: CodeBlock) {
+  fun emitJavaDoc(javaDocCodeBlock: CodeBlock, scope: List<String>) {
     if (javaDocCodeBlock.isEmpty()) return
 
     emit("/**\n")
     javaDoc = true
     try {
-      emitCode(javaDocCodeBlock)
+      emitCode(javaDocCodeBlock, scope)
     }
     finally {
       javaDoc = false
@@ -83,9 +83,9 @@ internal class CodeWriter constructor(
     emit(" */\n")
   }
 
-  fun emitDecorators(decorators: List<DecoratorSpec>, inline: Boolean) {
+  fun emitDecorators(decorators: List<DecoratorSpec>, inline: Boolean, scope: List<String>) {
     for (decoratorSpec in decorators) {
-      decoratorSpec.emit(this, inline)
+      decoratorSpec.emit(this, inline, scope)
       emit(if (inline) " " else "\n")
     }
   }
@@ -110,7 +110,7 @@ internal class CodeWriter constructor(
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  fun emitTypeVariables(typeVariables: List<TypeName.TypeVariable>) {
+  fun emitTypeVariables(typeVariables: List<TypeName.TypeVariable>, scope: List<String>) {
     if (typeVariables.isEmpty()) return
 
     emit("<")
@@ -124,7 +124,7 @@ internal class CodeWriter constructor(
           typeVariable.bounds.forEachIndexed { index, bound ->
             if (index > 0) parts.add(bound.combiner.symbol)
             bound.modifier?.let { parts.add(it.keyword) }
-            parts.add(bound.type.reference(this@CodeWriter))
+            parts.add(bound.type.reference(this@CodeWriter, scope))
           }
           append(parts.joinToString(" "))
         }
@@ -133,12 +133,9 @@ internal class CodeWriter constructor(
     emit(">")
   }
 
-  fun emitCode(s: String) = emitCode(CodeBlock.of(s))
+  fun emitCode(s: String) = emitCode(CodeBlock.of(s), emptyList())
 
-  fun emitCode(format: String, vararg args: Any?) = emitCode(
-     CodeBlock.of(format, *args))
-
-  fun emitCode(codeBlock: CodeBlock) = apply {
+  fun emitCode(codeBlock: CodeBlock, scope: List<String>) = apply {
 
     // Transfer all symbols referenced in the code block
     this@CodeWriter.referencedSymbols.addAll(codeBlock.referencedSymbols)
@@ -148,13 +145,13 @@ internal class CodeWriter constructor(
     while (partIterator.hasNext()) {
       val part = partIterator.next()
       when (part) {
-        "%L" -> emitLiteral(codeBlock.args[a++])
+        "%L" -> emitLiteral(codeBlock.args[a++], scope)
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
         "%S" -> emitString(codeBlock.args[a++] as String?)
 
-        "%T" -> emitTypeName(codeBlock.args[a++] as TypeName)
+        "%T" -> emitTypeName(codeBlock.args[a++] as TypeName, scope)
 
         "%%" -> emit("%")
 
@@ -196,8 +193,8 @@ internal class CodeWriter constructor(
     out.wrappingSpace(indentLevel + 2)
   }
 
-  private fun emitTypeName(typeName: TypeName) {
-    emit(typeName.reference(this))
+  private fun emitTypeName(typeName: TypeName, scope: List<String>) {
+    emit(typeName.reference(this, scope))
   }
 
   private fun emitString(string: String?) {
@@ -208,13 +205,13 @@ internal class CodeWriter constructor(
            "null")
   }
 
-  private fun emitLiteral(o: Any?) {
+  private fun emitLiteral(o: Any?, scope: List<String>) {
     when (o) {
-      is ClassSpec -> o.emit(this)
-      is InterfaceSpec -> o.emit(this)
-      is EnumSpec -> o.emit(this)
-      is DecoratorSpec -> o.emit(this, inline = true, asParameter = true)
-      is CodeBlock -> emitCode(o)
+      is ClassSpec -> o.emit(this, scope)
+      is InterfaceSpec -> o.emit(this, scope)
+      is EnumSpec -> o.emit(this, scope)
+      is DecoratorSpec -> o.emit(this, true, scope, true)
+      is CodeBlock -> emitCode(o, scope)
       else -> emit(o.toString())
     }
   }
@@ -275,4 +272,5 @@ internal class CodeWriter constructor(
   fun requiredImports(): Set<SymbolSpec.Imported> {
     return referencedSymbols.filterIsInstance<SymbolSpec.Imported>().toImmutableSet()
   }
+
 }

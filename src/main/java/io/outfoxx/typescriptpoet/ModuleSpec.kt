@@ -20,22 +20,31 @@ package io.outfoxx.typescriptpoet
 /** A generated `module` declaration. */
 class ModuleSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) {
+
+  enum class Type(val keyword: String) {
+    MODULE("module"),
+    NAMESPACE("namespace")
+  }
+
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableList()
   val members = builder.members.toImmutableList()
+  val type = builder.type
 
-  internal fun emit(codeWriter: CodeWriter) {
+  internal fun emit(codeWriter: CodeWriter, parentScope: List<String>) {
+    val scope = parentScope.plus(name)
+
     if (javaDoc.isNotEmpty()) {
-      codeWriter.emitComment(javaDoc)
+      codeWriter.emitComment(javaDoc, scope)
     }
 
     if (modifiers.isNotEmpty()) {
-      codeWriter.emitCode("%L ", modifiers.joinToString(" ") { it.keyword })
+      codeWriter.emitCode(CodeBlock.of("%L ", modifiers.joinToString(" ") { it.keyword }), scope)
     }
-    codeWriter.emitCode("module %L {\n", name)
+    codeWriter.emitCode(CodeBlock.of("${type.keyword} %L {\n", name), scope)
     codeWriter.indent()
 
     if (members.isNotEmpty()) {
@@ -45,16 +54,16 @@ private constructor(
     members.forEachIndexed { index, member ->
       if (index > 0) codeWriter.emit("\n")
       when (member) {
-        is ModuleSpec -> member.emit(codeWriter)
-        is InterfaceSpec -> member.emit(codeWriter)
-        is ClassSpec -> member.emit(codeWriter)
-        is EnumSpec -> member.emit(codeWriter)
-        is FunctionSpec -> member.emit(codeWriter, null, setOf(
-           Modifier.PUBLIC))
-        is PropertySpec -> member.emit(codeWriter, setOf(
-           Modifier.PUBLIC), asStatement = true)
-        is TypeAliasSpec -> member.emit(codeWriter)
-        is CodeBlock -> codeWriter.emitCode(member)
+        is ModuleSpec -> member.emit(codeWriter, scope)
+        is InterfaceSpec -> member.emit(codeWriter, scope)
+        is ClassSpec -> member.emit(codeWriter, scope)
+        is EnumSpec -> member.emit(codeWriter, scope)
+        is FunctionSpec ->
+          member.emit(codeWriter, null, setOf(Modifier.PUBLIC), scope)
+        is PropertySpec ->
+          member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, scope = scope)
+        is TypeAliasSpec -> member.emit(codeWriter, scope)
+        is CodeBlock -> codeWriter.emitCode(member, scope)
         else -> throw AssertionError()
       }
     }
@@ -76,7 +85,7 @@ private constructor(
   }
 
   fun toBuilder(): Builder {
-    val builder = Builder(name)
+    val builder = Builder(name, type)
     builder.javaDoc.add(javaDoc)
     builder.modifiers += modifiers
     builder.members.addAll(this.members)
@@ -85,8 +94,10 @@ private constructor(
 
   open class Builder
   internal constructor(
-     internal val name: String
+    internal val name: String,
+    internal val type: Type = Type.NAMESPACE
   ) {
+
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()
     internal val members = mutableListOf<Any>()
@@ -114,7 +125,7 @@ private constructor(
 
     fun addModifier(modifier: Modifier) = apply {
       requireNoneOrOneOf(modifiers + modifier, Modifier.EXPORT,
-                                                   Modifier.DECLARE)
+                         Modifier.DECLARE)
       modifiers += modifier
     }
 
@@ -146,8 +157,8 @@ private constructor(
 
     fun addProperty(propertySpec: PropertySpec) = apply {
       requireExactlyOneOf(propertySpec.modifiers, Modifier.CONST,
-                                                    Modifier.LET,
-                                                    Modifier.VAR)
+                          Modifier.LET,
+                          Modifier.VAR)
       require(propertySpec.decorators.isEmpty()) { "decorators on file properties are not allowed" }
       checkMemberModifiers(propertySpec.modifiers)
       members += propertySpec

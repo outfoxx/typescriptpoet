@@ -36,7 +36,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testFunc.emit(CodeWriter(out), null, setOf())
+    testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -66,7 +66,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testFunc.emit(CodeWriter(out), null, setOf())
+    testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -93,7 +93,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -115,7 +115,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -144,7 +144,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -166,7 +166,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -188,7 +188,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -209,7 +209,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -231,7 +231,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -254,7 +254,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -276,7 +276,7 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -316,13 +316,15 @@ class FunctionSpecTests {
        .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf())
+    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
        out.toString(),
        equalTo(
           """
-            function test(@required @size(/* min */ 10, /* max */ 100) @logged() a: number) {
+            function test(
+                @required @size(/* min */ 10, /* max */ 100) @logged() a: number
+            ) {
             }
 
           """.trimIndent()

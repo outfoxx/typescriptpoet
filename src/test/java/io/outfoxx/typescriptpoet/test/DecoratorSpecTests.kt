@@ -40,7 +40,7 @@ class DecoratorSpecTests {
        .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = true)
+    testDec.emit(CodeWriter(out), inline = true, scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -61,7 +61,7 @@ class DecoratorSpecTests {
        .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
+    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -83,7 +83,7 @@ class DecoratorSpecTests {
        .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
+    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
        out.toString(),
@@ -103,7 +103,7 @@ class DecoratorSpecTests {
        .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
+    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
        out.toString(),

@@ -27,20 +27,20 @@ private constructor(
   val modifiers = builder.modifiers.toImmutableSet()
   val constants = builder.constants.toImmutableMap()
 
-  internal fun emit(codeWriter: CodeWriter) {
+  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers, setOf())
-    codeWriter.emitCode("enum %L {\n", name)
+    codeWriter.emitCode(CodeBlock.of("enum %L {\n", name), scope)
 
     codeWriter.indent()
     val i = constants.entries.iterator()
     while (i.hasNext()) {
       val constant = i.next()
-      codeWriter.emitCode("%L", constant.key)
+      codeWriter.emitCode(CodeBlock.of("%L", constant.key), scope)
       constant.value?.let {
         codeWriter.emitCode(" = ")
-        codeWriter.emitCode(it)
+        codeWriter.emitCode(it, scope)
       }
       if (i.hasNext()) {
         codeWriter.emit(",\n")
@@ -106,7 +106,7 @@ private constructor(
 
     @JvmStatic
     fun builder(name: TypeName) = Builder(
-       name.reference(null))
+       name.reference(null, emptyList()))
 
   }
 

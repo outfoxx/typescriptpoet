@@ -16,6 +16,8 @@
 
 package io.outfoxx.typescriptpoet
 
+import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
+
 
 /** A generated `interface` declaration. */
 class InterfaceSpec
@@ -33,20 +35,18 @@ private constructor(
   val indexableSpecs = builder.indexableSpecs.toImmutableList()
   val callable = builder.callable
 
-  internal fun emit(codeWriter: CodeWriter) {
+  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers, setOf())
     codeWriter.emit("interface")
-    codeWriter.emitCode(" %L", name)
-    codeWriter.emitTypeVariables(typeVariables)
+    codeWriter.emitCode(CodeBlock.of(" %L", name), scope)
+    codeWriter.emitTypeVariables(typeVariables, scope)
 
     val superClasses = superInterfaces.map { CodeBlock.of("%T", it) }.let {
       if (it.isNotEmpty()) it.joinToCode(prefix = " extends ") else CodeBlock.empty()
     }
-    if (superClasses.isNotEmpty()) {
-      codeWriter.emitCode("%L", superClasses)
-    }
+    codeWriter.emitCode(superClasses, scope)
 
     codeWriter.emit(" {\n")
     codeWriter.indent()
@@ -54,28 +54,26 @@ private constructor(
     // Callable
     callable?.let {
       codeWriter.emitCode("\n")
-      it.emit(codeWriter, null, setOf(Modifier.ABSTRACT))
+      it.emit(codeWriter, null, setOf(Modifier.ABSTRACT), scope)
     }
 
     // Properties.
     for (propertySpec in propertySpecs) {
       codeWriter.emit("\n")
-      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true)
+      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, compactOptionalAllowed = true, scope = scope)
     }
 
     // Indexables
     for (funSpec in indexableSpecs) {
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, null, setOf(Modifier.PUBLIC,
-                                           Modifier.ABSTRACT))
+      funSpec.emit(codeWriter, null, setOf(Modifier.PUBLIC, Modifier.ABSTRACT), scope)
     }
 
     // Functions.
     for (funSpec in functionSpecs) {
       if (funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC,
-                                           Modifier.ABSTRACT))
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC, Modifier.ABSTRACT), scope)
     }
 
     codeWriter.unindent()
