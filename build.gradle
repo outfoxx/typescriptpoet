@@ -94,6 +94,9 @@ dependencies {
   
 }
 
+test {
+  useJUnitPlatform()
+}
 
 apply from: "$gradleFilesDir/compile-java.gradle"
 apply from: "$gradleFilesDir/compile-kotlin.gradle"

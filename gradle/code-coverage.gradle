@@ -4,17 +4,6 @@
 apply plugin: 'jacoco'
 
 
-jacoco {
-  toolVersion = '0.8.0'
-}
-
-test {
-  jacoco {
-    append = false
-  }
-}
-
-
 jacocoTestReport {
   
   executionData "${buildDir}/jacoco/test.exec"

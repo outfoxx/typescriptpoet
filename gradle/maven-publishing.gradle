@@ -11,21 +11,20 @@ ext {
       'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
 }
 
-
-task sourceJar(type: Jar) {
-  from sourceSets.main.allSource
+java {
+  withSourcesJar()
+  withJavadocJar()
 }
 
-
-task javadocJar(type: Jar, dependsOn: dokka) {
+javadocJar {
+  dependsOn dokka
   from dokka.outputDirectory
 }
 
-
 pom {
-  
+
   name 'TypeScript Poet'
-  
+
   url 'https://github.com/outfoxx/typescriptpoet'
   organization {
     name 'Outfox, Inc.'
@@ -54,29 +53,18 @@ pom {
       email 'kevin@outfoxx.io'
     }
   }
-  
 }
 
-
 publishing {
-  
+
   publications {
-    
+
     mavenJava(MavenPublication) {
       from components.java
-  
-      artifact sourceJar {
-        classifier "sources"
-      }
-    
-      artifact javadocJar {
-        classifier 'javadoc'
-      }
-      
     }
-  
+
   }
-  
+
   repositories {
     maven {
       url repositoryUrl
@@ -86,7 +74,7 @@ publishing {
       }
     }
   }
-  
+
 }
 
 
