@@ -395,9 +395,6 @@ class ClassSpecTests {
                     /* value */ 'test-value'
                   )
                   private value: number,
-                  @MyDec(
-                    /* value */ 'test-value'
-                  )
                   public value2: string,
                   @MyDec('test-value') value3: boolean | undefined
               ) {
