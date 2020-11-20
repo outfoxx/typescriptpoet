@@ -101,9 +101,9 @@ private constructor(
         if (property != null && !isRest) {
 
           // Ensure the parameter always has a modifier (that makes it a property in TS)
-          if (property.modifiers.none {
-            it.isOneOf(Modifier.PUBLIC, Modifier.PRIVATE,
-                       Modifier.PROTECTED, Modifier.READONLY)
+          if (property.modifiers.none { mod ->
+            mod.isOneOf(Modifier.PUBLIC, Modifier.PRIVATE,
+                        Modifier.PROTECTED, Modifier.READONLY)
           }) {
             // Add default public modifier
             property = property.toBuilder().addModifiers(Modifier.PUBLIC).build()
@@ -161,7 +161,10 @@ private constructor(
       if (parameter.optional != property.optional) continue
       if (property.initializer != null) continue
       if (!body.contains(constructorPropertyInitSearch(property.name))) continue
-      result[property.name] = property
+      result[property.name] =
+        property.toBuilder()
+          .addDecorators(parameter.decorators)
+          .build()
     }
     return result
   }
@@ -176,7 +179,7 @@ private constructor(
         val constructorProperties = constructorProperties()
         propertySpecs
            .filterNot { constructorProperties.containsKey(it.name) }
-           .forEach { return false }
+           .forEach { _ -> return false }
       }
       return constructor == null && functionSpecs.isEmpty()
     }
