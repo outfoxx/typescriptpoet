@@ -1,0 +1,96 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SymbolSpec.Imported - typescriptpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">SymbolSpec</a>&nbsp;/&nbsp;<a href=".">Imported</a><br/>
+<br/>
+<h1>Imported</h1>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Imported</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../index.html"><span class="identifier">SymbolSpec</span></a></code>
+<p>Common base class for imported symbols</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="-init-.html">&lt;init&gt;</a></td>
+<td>
+<code><span class="identifier">Imported</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Imported$<init>(kotlin.String, kotlin.String)/value">value</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Imported$<init>(kotlin.String, kotlin.String)/source">source</span><span class="symbol">:</span>&nbsp;<span class="identifier">String</span><span class="symbol">)</span></code>
+<p>Common base class for imported symbols</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="source.html">source</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">source</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+<tr>
+<td>
+<a href="value.html">value</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">value</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../reference.html">reference</a></td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">reference</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec$reference(io.outfoxx.typescriptpoet.SymbolReferenceTracker)/trackedBy">trackedBy</span><span class="symbol">:</span>&nbsp;<a href="../../-symbol-reference-tracker/index.html"><span class="identifier">SymbolReferenceTracker</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">String</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<a href="../-augmented/index.html">Augmented</a></td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Augmented</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code>
+<p>A symbol that is brought in by a whole module import
+that "augments" an existing symbol.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../-imports-all/index.html">ImportsAll</a></td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsAll</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code>
+<p>Imports all of the modules exported symbols as a single
+named symbol</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../-imports-name/index.html">ImportsName</a></td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsName</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code>
+<p>Imports a single named symbol from the module's exported
+symbols.</p>
+</td>
+</tr>
+<tr>
+<td>
+<a href="../-side-effect/index.html">SideEffect</a></td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SideEffect</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code>
+<p>A symbol that is brought in as a side effect of an
+import.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
