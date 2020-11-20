@@ -200,7 +200,7 @@ internal class CodeWriter constructor(
   private fun emitString(string: String?) {
     // Emit null as a literal null: no quotes.
     emit(if (string != null)
-           stringLiteralWithQuotes(string)
+           stringLiteralWithQuotes(string, (0 until (indentLevel + 1)).joinToString("") { indent })
          else
            "null")
   }
