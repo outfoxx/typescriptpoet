@@ -96,7 +96,9 @@ private constructor(
       var body = constructor.body
 
       // Emit constructor parameters & property specs that can be replaced with parameters
-      it.parameters.emit(codeWriter, rest = it.restParameter, scope = scope) { param, isRest, optionalAllowed, scope ->
+      it.parameters.emit(codeWriter, rest = it.restParameter, scope = scope,
+                         constructorProperties = constructorProperties) { param, isRest, optionalAllowed, scope ->
+
         var property = constructorProperties[param.name]
         if (property != null && !isRest) {
 

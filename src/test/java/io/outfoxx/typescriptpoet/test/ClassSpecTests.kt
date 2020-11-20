@@ -340,8 +340,8 @@ class ClassSpecTests {
   }
 
   @Test
-  @DisplayName("Generates constructor with decorated shorthand properties")
-  fun testGenConstructorDecoratedShorthandProperties() {
+  @DisplayName("Generates constructor with decorated constructor parameters")
+  fun testGenConstructorDecoratedConstructorParameters() {
     val testClass = ClassSpec.builder("Test")
       .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
       .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
@@ -357,15 +357,7 @@ class ClassSpecTests {
               )
               .build()
           )
-          .addParameter(
-            ParameterSpec.builder("value2", TypeName.STRING)
-              .addDecorator(
-                DecoratorSpec.builder("MyDec")
-                  .addParameter("value", "%S", "test-value")
-                  .build()
-              )
-              .build()
-          )
+          .addParameter("value2", TypeName.STRING)
           .addParameter(
             ParameterSpec.builder("value3", TypeName.BOOLEAN, true)
               .addDecorator(
@@ -408,6 +400,70 @@ class ClassSpecTests {
                   )
                   public value2: string,
                   @MyDec('test-value') value3: boolean | undefined
+              ) {
+                val testing = 'need other code'
+                anotherTestStatement();
+                this.value3 = value3 || testing == '';
+              }
+
+            }
+
+          """.trimIndent()
+      )
+    )
+  }
+
+
+  @Test
+  @DisplayName("Generates constructor with decorated shorthand properties")
+  fun testGenConstructorDecoratedShorthandProperties() {
+    val testClass = ClassSpec.builder("Test")
+      .addProperty(
+        PropertySpec.builder("value", TypeName.NUMBER, false, Modifier.PRIVATE)
+          .addDecorator(
+            DecoratorSpec.builder("MyDec")
+              .addParameter("value", "%S", "test-value")
+              .build()
+          )
+          .build()
+      )
+      .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
+      .addProperty("value3", TypeName.BOOLEAN, true, Modifier.PUBLIC)
+      .constructor(
+        FunctionSpec.constructorBuilder()
+          .addParameter("value", TypeName.NUMBER)
+          .addParameter("value2", TypeName.STRING)
+          .addParameter("value3", TypeName.BOOLEAN, true)
+          .addCode(
+            CodeBlock.builder()
+              .add("val testing = 'need other code'; this.value = value\n")
+              .addStatement("anotherTestStatement()")
+              .addStatement("this.value2 = value2")
+              .addStatement("this.value3 = value3 || testing == ''")
+              .build()
+          )
+          .build()
+      )
+      .build()
+
+    val out = StringWriter()
+    testClass.emit(CodeWriter(out), emptyList())
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+            class Test {
+
+              value3: boolean | undefined;
+
+              constructor(
+                  @MyDec(
+                    /* value */ 'test-value'
+                  )
+                  private value: number,
+                  public value2: string,
+                  value3: boolean | undefined
               ) {
                 val testing = 'need other code'
                 anotherTestStatement();

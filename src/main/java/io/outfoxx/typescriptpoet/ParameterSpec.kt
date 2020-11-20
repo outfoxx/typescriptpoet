@@ -133,6 +133,7 @@ internal fun List<ParameterSpec>.emit(
    codeWriter: CodeWriter,
    enclosed: Boolean = true,
    rest: ParameterSpec? = null,
+   constructorProperties: Map<String, PropertySpec> = emptyMap(),
    scope: List<String>,
    emitBlock: (ParameterSpec, Boolean, Boolean, List<String>) -> Unit =
       { param, isRest, optionalAllowed, pscope ->
@@ -141,7 +142,7 @@ internal fun List<ParameterSpec>.emit(
 ) = with(codeWriter) {
   val params = this@emit + if (rest != null) listOf(rest) else emptyList()
   if (enclosed) emit("(")
-  if (size < 5 && all { it.decorators.isEmpty() }) {
+  if (size < 5 && all { constructorProperties[it.name]?.decorators?.isEmpty() ?: it.decorators.isEmpty() }) {
     params.forEachIndexed { index, parameter ->
       val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
       if (index > 0) emit(", ")
