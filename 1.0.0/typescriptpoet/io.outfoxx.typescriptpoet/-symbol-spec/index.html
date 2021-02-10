@@ -1,0 +1,159 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>SymbolSpec - typescriptpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="./index.html">SymbolSpec</a><br/>
+<br/>
+<h1>SymbolSpec</h1>
+<code><span class="keyword">sealed</span> <span class="keyword">class </span><span class="identifier">SymbolSpec</span></code>
+<p>Specifies a symbol and its related origin, either via import or implicit/local declaration</p>
+<h3>Parameters</h3>
+<p><a name="value"></a>
+<code>value</code> - Value of the symbol</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-augmented/index.html">Augmented</a></h4>
+</td>
+<td>
+<p>A symbol that is brought in by a whole module import
+that "augments" an existing symbol.</p>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Augmented</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-implicit/index.html">Implicit</a></h4>
+</td>
+<td>
+<p>Non-imported symbol</p>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Implicit</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-imported/index.html">Imported</a></h4>
+</td>
+<td>
+<p>Common base class for imported symbols</p>
+<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Imported</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-imports-all/index.html">ImportsAll</a></h4>
+</td>
+<td>
+<p>Imports all of the modules exported symbols as a single
+named symbol</p>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsAll</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-imports-name/index.html">ImportsName</a></h4>
+</td>
+<td>
+<p>Imports a single named symbol from the module's exported
+symbols.</p>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsName</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-side-effect/index.html">SideEffect</a></h4>
+</td>
+<td>
+<p>A symbol that is brought in as a side effect of an
+import.</p>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SideEffect</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="value.html">value</a></h4>
+</td>
+<td>
+<p>Value of the symbol</p>
+<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">value</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="reference.html">reference</a></h4>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">reference</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec$reference(io.outfoxx.typescriptpoet.SymbolReferenceTracker)/trackedBy">trackedBy</span><span class="symbol">:</span>&nbsp;<a href="../-symbol-reference-tracker/index.html"><span class="identifier">SymbolReferenceTracker</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="augmented.html">augmented</a></h4>
+</td>
+<td>
+<p>Creates a symbol that is brought in by a whole module import
+that "augments" an existing symbol.</p>
+<code><span class="keyword">fun </span><span class="identifier">augmented</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/symbolName">symbolName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="from.html">from</a></h4>
+</td>
+<td>
+<p>Parses a symbol reference pattern to create a symbol. The pattern
+allows the simple definition of all symbol types including any possible
+import variation. If the spec to parse does not follow the proper format
+an implicit symbol is created from the unparsed spec.</p>
+<code><span class="keyword">fun </span><span class="identifier">from</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$from(kotlin.String)/spec">spec</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="implicit.html">implicit</a></h4>
+</td>
+<td>
+<p>An implied symbol that does no tracking of imports</p>
+<code><span class="keyword">fun </span><span class="identifier">implicit</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$implicit(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="imports-all.html">importsAll</a></h4>
+</td>
+<td>
+<p>Creates an import of all the modules exported symbols as a single
+local named symbol</p>
+<code><span class="keyword">fun </span><span class="identifier">importsAll</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsAll(kotlin.String, kotlin.String)/localName">localName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsAll(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="imports-name.html">importsName</a></h4>
+</td>
+<td>
+<p>Creates an import of a single named symbol from the module's exported
+symbols.</p>
+<code><span class="keyword">fun </span><span class="identifier">importsName</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsName(kotlin.String, kotlin.String)/exportedName">exportedName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsName(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="side-effect.html">sideEffect</a></h4>
+</td>
+<td>
+<p>Creates a symbol that is brought in as a side effect of
+an import.</p>
+<code><span class="keyword">fun </span><span class="identifier">sideEffect</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$sideEffect(kotlin.String, kotlin.String)/symbolName">symbolName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$sideEffect(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

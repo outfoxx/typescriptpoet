@@ -1,0 +1,333 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>TypeName - typescriptpoet</title>
+<link rel="stylesheet" href="../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="./index.html">TypeName</a><br/>
+<br/>
+<h1>TypeName</h1>
+<code><span class="keyword">sealed</span> <span class="keyword">class </span><span class="identifier">TypeName</span></code>
+<p>Name of any possible type that can be referenced</p>
+<h3>Types</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-anonymous/index.html">Anonymous</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Anonymous</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-any/index.html">Any</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Any</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-intersection/index.html">Intersection</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Intersection</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-lambda/index.html">Lambda</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Lambda</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-parameterized/index.html">Parameterized</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Parameterized</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-tuple/index.html">Tuple</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Tuple</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-type-variable/index.html">TypeVariable</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">TypeVariable</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-union/index.html">Union</a></h4>
+</td>
+<td>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Union</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="reference.html">reference</a></h4>
+</td>
+<td>
+<p>Produces a string representation of the type name
+in TypeScript syntax.</p>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">reference</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName$reference(io.outfoxx.typescriptpoet.SymbolReferenceTracker, kotlin.collections.List((kotlin.String)))/trackedBy">trackedBy</span><span class="symbol">:</span>&nbsp;<a href="../-symbol-reference-tracker/index.html"><span class="identifier">SymbolReferenceTracker</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName$reference(io.outfoxx.typescriptpoet.SymbolReferenceTracker, kotlin.collections.List((kotlin.String)))/relativeTo">relativeTo</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">&gt;</span><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="-a-n-y.html">ANY</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ANY</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-a-r-r-a-y.html">ARRAY</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ARRAY</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-a-r-r-a-y_-b-u-f-f-e-r.html">ARRAY_BUFFER</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">ARRAY_BUFFER</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-b-o-o-l-e-a-n.html">BOOLEAN</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BOOLEAN</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-b-u-f-f-e-r.html">BUFFER</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">BUFFER</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-d-a-t-e.html">DATE</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">DATE</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-m-a-p.html">MAP</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">MAP</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-n-e-v-e-r.html">NEVER</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NEVER</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-n-u-l-l.html">NULL</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NULL</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-n-u-m-b-e-r.html">NUMBER</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">NUMBER</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-o-b-j-e-c-t.html">OBJECT</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">OBJECT</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-s-e-t.html">SET</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">SET</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-s-t-r-i-n-g.html">STRING</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">STRING</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-u-n-d-e-f-i-n-e-d.html">UNDEFINED</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">UNDEFINED</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="-v-o-i-d.html">VOID</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">VOID</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="anonymous-type.html">anonymousType</a></h4>
+</td>
+<td>
+<p>Anonymous type name (e.g. <code>{ length: number, name: string }</code>)</p>
+<code><span class="keyword">fun </span><span class="identifier">anonymousType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$anonymousType(kotlin.collections.List((io.outfoxx.typescriptpoet.TypeName.Anonymous.Member)))/members">members</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><span class="identifier">Member</span><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Anonymous</span></code>
+<p>Anonymous type name (e.g. <code>{ length?: number, name: string }</code>)</p>
+<code><span class="keyword">fun </span><span class="identifier">anonymousType</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$anonymousType(kotlin.Array((kotlin.Pair((kotlin.String, io.outfoxx.typescriptpoet.TypeName)))))/members">members</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Anonymous</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="any-type.html">anyType</a></h4>
+</td>
+<td>
+<p>Any class/enum/primitive/etc type name</p>
+<code><span class="keyword">fun </span><span class="identifier">anyType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$anyType(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Any</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">anyType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$anyType(kotlin.String, io.outfoxx.typescriptpoet.SymbolSpec)/usage">usage</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$anyType(kotlin.String, io.outfoxx.typescriptpoet.SymbolSpec)/imported">imported</span><span class="symbol">:</span>&nbsp;<a href="../-symbol-spec/index.html"><span class="identifier">SymbolSpec</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="array-type.html">arrayType</a></h4>
+</td>
+<td>
+<p>Type name for the generic Array type</p>
+<code><span class="keyword">fun </span><span class="identifier">arrayType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$arrayType(io.outfoxx.typescriptpoet.TypeName)/elementType">elementType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="bound.html">bound</a></h4>
+</td>
+<td>
+<p>Factory for type variable bounds</p>
+<code><span class="keyword">fun </span><span class="identifier">bound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(io.outfoxx.typescriptpoet.TypeName, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/type">type</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(io.outfoxx.typescriptpoet.TypeName, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/combiner">combiner</span><span class="symbol">:</span>&nbsp;<span class="identifier">Combiner</span>&nbsp;<span class="symbol">=</span>&nbsp;UNION<span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(io.outfoxx.typescriptpoet.TypeName, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/modifier">modifier</span><span class="symbol">:</span>&nbsp;<span class="identifier">Modifier</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">bound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(kotlin.String, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(kotlin.String, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/combiner">combiner</span><span class="symbol">:</span>&nbsp;<span class="identifier">Combiner</span>&nbsp;<span class="symbol">=</span>&nbsp;UNION<span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$bound(kotlin.String, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner, io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Modifier)/modifier">modifier</span><span class="symbol">:</span>&nbsp;<span class="identifier">Modifier</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="imported-type.html">importedType</a></h4>
+</td>
+<td>
+<p>An imported type name</p>
+<code><span class="keyword">fun </span><span class="identifier">importedType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$importedType(kotlin.String)/spec">spec</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Any</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="intersect-bound.html">intersectBound</a></h4>
+</td>
+<td>
+<p>Factory for type variable bounds</p>
+<code><span class="keyword">fun </span><span class="identifier">intersectBound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$intersectBound(kotlin.String, kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$intersectBound(kotlin.String, kotlin.Boolean)/keyOf">keyOf</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">intersectBound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$intersectBound(io.outfoxx.typescriptpoet.TypeName, kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$intersectBound(io.outfoxx.typescriptpoet.TypeName, kotlin.Boolean)/keyOf">keyOf</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="intersection-type.html">intersectionType</a></h4>
+</td>
+<td>
+<p>Intersection type name (e.g. <code>Person &amp; Serializable &amp; Loggable</code>)</p>
+<code><span class="keyword">fun </span><span class="identifier">intersectionType</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$intersectionType(kotlin.Array((io.outfoxx.typescriptpoet.TypeName)))/typeRequirements">typeRequirements</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Intersection</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="lambda.html">lambda</a></h4>
+</td>
+<td>
+<p>Returns a lambda type with <code>returnType</code> and parameters of listed in <code>parameters</code>.</p>
+<code><span class="keyword">fun </span><span class="identifier">lambda</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$lambda(kotlin.collections.Map((kotlin.String, io.outfoxx.typescriptpoet.TypeName)), io.outfoxx.typescriptpoet.TypeName)/parameters">parameters</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-map/index.html"><span class="identifier">Map</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;emptyMap()<span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$lambda(kotlin.collections.Map((kotlin.String, io.outfoxx.typescriptpoet.TypeName)), io.outfoxx.typescriptpoet.TypeName)/returnType">returnType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Lambda</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">lambda</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$lambda(kotlin.Array((kotlin.Pair((kotlin.String, io.outfoxx.typescriptpoet.TypeName)))), io.outfoxx.typescriptpoet.TypeName)/parameters">parameters</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-pair/index.html"><span class="identifier">Pair</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">&gt;</span>&nbsp;<span class="symbol">=</span>&nbsp;emptyArray()<span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$lambda(kotlin.Array((kotlin.Pair((kotlin.String, io.outfoxx.typescriptpoet.TypeName)))), io.outfoxx.typescriptpoet.TypeName)/returnType">returnType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Lambda</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="map-type.html">mapType</a></h4>
+</td>
+<td>
+<p>Type name for the generic Map type</p>
+<code><span class="keyword">fun </span><span class="identifier">mapType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$mapType(io.outfoxx.typescriptpoet.TypeName, io.outfoxx.typescriptpoet.TypeName)/keyType">keyType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$mapType(io.outfoxx.typescriptpoet.TypeName, io.outfoxx.typescriptpoet.TypeName)/valueType">valueType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="parameterized-type.html">parameterizedType</a></h4>
+</td>
+<td>
+<p>Parameterized type that represents a concrete
+usage of a generic type</p>
+<code><span class="keyword">fun </span><span class="identifier">parameterizedType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$parameterizedType(io.outfoxx.typescriptpoet.TypeName, kotlin.Array((io.outfoxx.typescriptpoet.TypeName)))/rawType">rawType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$parameterizedType(io.outfoxx.typescriptpoet.TypeName, kotlin.Array((io.outfoxx.typescriptpoet.TypeName)))/typeArgs">typeArgs</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Parameterized</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="set-type.html">setType</a></h4>
+</td>
+<td>
+<p>Type name for the generic Set type</p>
+<code><span class="keyword">fun </span><span class="identifier">setType</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$setType(io.outfoxx.typescriptpoet.TypeName)/elementType">elementType</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">TypeName</span></a></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="tuple-type.html">tupleType</a></h4>
+</td>
+<td>
+<p>Tuple type name (e.g. <code>[number, boolean, string]</code>}</p>
+<code><span class="keyword">fun </span><span class="identifier">tupleType</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$tupleType(kotlin.Array((io.outfoxx.typescriptpoet.TypeName)))/memberTypes">memberTypes</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Tuple</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="type-variable.html">typeVariable</a></h4>
+</td>
+<td>
+<p>Type variable represents a single variable type in a
+generic type or function.</p>
+<code><span class="keyword">fun </span><span class="identifier">typeVariable</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$typeVariable(kotlin.String, kotlin.Array((io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound)))/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$typeVariable(kotlin.String, kotlin.Array((io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound)))/bounds">bounds</span><span class="symbol">:</span>&nbsp;<span class="identifier">Bound</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">TypeVariable</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="union-bound.html">unionBound</a></h4>
+</td>
+<td>
+<p>Factory for type variable bounds</p>
+<code><span class="keyword">fun </span><span class="identifier">unionBound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$unionBound(kotlin.String, kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$unionBound(kotlin.String, kotlin.Boolean)/keyOf">keyOf</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">unionBound</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$unionBound(io.outfoxx.typescriptpoet.TypeName, kotlin.Boolean)/type">type</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$unionBound(io.outfoxx.typescriptpoet.TypeName, kotlin.Boolean)/keyOf">keyOf</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a>&nbsp;<span class="symbol">=</span>&nbsp;false<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Bound</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="union-type.html">unionType</a></h4>
+</td>
+<td>
+<p>Union type name (e.g. <code>int | number | any</code>)</p>
+<code><span class="keyword">fun </span><span class="identifier">unionType</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.TypeName.Companion$unionType(kotlin.Array((io.outfoxx.typescriptpoet.TypeName)))/typeChoices">typeChoices</span><span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">TypeName</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Union</span></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
