@@ -16,12 +16,12 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** A generated `enum` declaration. */
 class EnumSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
@@ -44,8 +44,7 @@ private constructor(
       }
       if (i.hasNext()) {
         codeWriter.emit(",\n")
-      }
-      else {
+      } else {
         codeWriter.emit("\n")
       }
     }
@@ -67,9 +66,10 @@ private constructor(
 
   class Builder
   internal constructor(
-     val name: String,
-     val constants: MutableMap<String, CodeBlock?> = mutableMapOf()
+    val name: String,
+    val constants: MutableMap<String, CodeBlock?> = mutableMapOf()
   ) : Taggable.Builder<Builder>() {
+
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
 
@@ -87,7 +87,7 @@ private constructor(
     }
 
     fun addConstant(name: String, initializer: String? = null) =
-       addConstant(name, initializer?.let { CodeBlock.of(it) })
+      addConstant(name, initializer?.let { CodeBlock.of(it) })
 
     fun addConstant(name: String, initializer: CodeBlock?) = apply {
       require(name.isName) { "not a valid enum constant: $name" }
@@ -106,8 +106,7 @@ private constructor(
 
     @JvmStatic
     fun builder(name: TypeName) = Builder(
-       name.reference(null, emptyList()))
-
+      name.reference(null, emptyList())
+    )
   }
-
 }

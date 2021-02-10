@@ -16,12 +16,12 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** A generated property declaration. */
 class PropertySpec
 private constructor(
   builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val name = builder.name
   val type = builder.type
   val javaDoc = builder.javaDoc.build()
@@ -31,17 +31,24 @@ private constructor(
   val optional = builder.optional
 
   internal fun emit(
-     codeWriter: CodeWriter,
-     implicitModifiers: Set<Modifier>,
-     asStatement: Boolean = false,
-     withInitializer: Boolean = true,
-     compactOptionalAllowed: Boolean = false,
-     scope: List<String>
+    codeWriter: CodeWriter,
+    implicitModifiers: Set<Modifier>,
+    asStatement: Boolean = false,
+    withInitializer: Boolean = true,
+    compactOptionalAllowed: Boolean = false,
+    scope: List<String>
   ) {
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitDecorators(decorators, false, scope)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
-    codeWriter.emitCode(CodeBlock.of("%L${if (optional && compactOptionalAllowed) "?" else ""}: %T${if (optional && !compactOptionalAllowed) " | undefined" else ""}", name, type), scope)
+    codeWriter.emitCode(
+      CodeBlock.of(
+        "%L${if (optional && compactOptionalAllowed) "?" else ""}: %T${if (optional && !compactOptionalAllowed) " | undefined" else ""}",
+        name,
+        type
+      ),
+      scope
+    )
     if (withInitializer && initializer != null) {
       codeWriter.emit(" = ")
       codeWriter.emitCode(CodeBlock.of("%[%L%]", initializer), scope)
@@ -53,9 +60,9 @@ private constructor(
 
   fun toBuilder(): Builder {
     val bldr = Builder(name, type, optional)
-       .addJavadoc(javaDoc)
-       .addDecorators(decorators)
-       .addModifiers(*modifiers.toTypedArray())
+      .addJavadoc(javaDoc)
+      .addDecorators(decorators)
+      .addModifiers(*modifiers.toTypedArray())
     initializer?.let { bldr.initializer(it) }
 
     return bldr
@@ -66,6 +73,7 @@ private constructor(
     internal val type: TypeName,
     val optional: Boolean = false
   ) : Taggable.Builder<Builder>() {
+
     internal val javaDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
@@ -78,7 +86,6 @@ private constructor(
     fun addJavadoc(block: CodeBlock) = apply {
       javaDoc.add(block)
     }
-
 
     fun addDecorators(decoratorSpecs: Iterable<DecoratorSpec>) = apply {
       decorators += decoratorSpecs
@@ -93,7 +100,8 @@ private constructor(
     }
 
     fun initializer(format: String, vararg args: Any?) = initializer(
-       CodeBlock.of(format, *args))
+      CodeBlock.of(format, *args)
+    )
 
     fun initializer(codeBlock: CodeBlock) = apply {
       check(this.initializer == null) { "initializer was already set" }
@@ -109,7 +117,5 @@ private constructor(
     fun builder(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier): Builder {
       return Builder(name, type, optional).addModifiers(*modifiers)
     }
-
   }
-
 }

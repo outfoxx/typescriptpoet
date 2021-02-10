@@ -46,20 +46,20 @@ class DecoratorSpecTests {
   @DisplayName("Generate inline")
   fun testGenInline() {
     val testDec = DecoratorSpec.builder("test")
-       .addParameter("value", "100")
-       .addParameter("value2", "20")
-       .build()
+      .addParameter("value", "100")
+      .addParameter("value2", "20")
+      .build()
 
     val out = StringWriter()
     testDec.emit(CodeWriter(out), inline = true, scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             @test(/* value */ 100, /* value2 */ 20)
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -67,23 +67,23 @@ class DecoratorSpecTests {
   @DisplayName("Generate expanded")
   fun testGenExpanded() {
     val testDec = DecoratorSpec.builder("test")
-       .addParameter("value", "100")
-       .addParameter("value2", "20")
-       .build()
+      .addParameter("value", "100")
+      .addParameter("value2", "20")
+      .build()
 
     val out = StringWriter()
     testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             @test(
               /* value */ 100,
               /* value2 */ 20
             )
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -91,18 +91,18 @@ class DecoratorSpecTests {
   @DisplayName("Generate with no-argument")
   fun testGenNoArg() {
     val testDec = DecoratorSpec.builder("test")
-       .build()
+      .build()
 
     val out = StringWriter()
     testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             @test
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -110,19 +110,19 @@ class DecoratorSpecTests {
   @DisplayName("Generate factory with no-argument")
   fun testGenNoArgFactory() {
     val testDec = DecoratorSpec.builder("test")
-       .asFactory()
-       .build()
+      .asFactory()
+      .build()
 
     val out = StringWriter()
     testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             @test()
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -130,15 +130,20 @@ class DecoratorSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testDecBldr = DecoratorSpec.builder("test")
-       .addParameter("value", "100")
-       .addParameter("value2", "20")
-       .asFactory()
-       .build()
-       .toBuilder()
+      .addParameter("value", "100")
+      .addParameter("value2", "20")
+      .asFactory()
+      .build()
+      .toBuilder()
 
     assertThat(testDecBldr.name, equalTo(SymbolSpec.from("test")))
-    assertThat(testDecBldr.parameters, hasItems<Pair<String?, CodeBlock>>(Pair("value", CodeBlock.of("100")), Pair("value2", CodeBlock.of("20"))))
+    assertThat(
+      testDecBldr.parameters,
+      hasItems<Pair<String?, CodeBlock>>(
+        Pair("value", CodeBlock.of("100")),
+        Pair("value2", CodeBlock.of("20"))
+      )
+    )
     assertThat(testDecBldr.factory, equalTo(true))
   }
-
 }

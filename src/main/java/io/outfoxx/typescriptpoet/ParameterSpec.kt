@@ -18,10 +18,10 @@ package io.outfoxx.typescriptpoet
 
 import kotlin.math.min
 
-
 class ParameterSpec private constructor(
   builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val name = builder.name
   val optional = builder.optional
   val decorators = builder.decorators.toImmutableList()
@@ -30,11 +30,11 @@ class ParameterSpec private constructor(
   val defaultValue = builder.defaultValue
 
   internal fun emit(
-     codeWriter: CodeWriter,
-     includeType: Boolean = true,
-     isRest: Boolean = false,
-     optionalAllowed: Boolean = false,
-     scope: List<String>
+    codeWriter: CodeWriter,
+    includeType: Boolean = true,
+    isRest: Boolean = false,
+    optionalAllowed: Boolean = false,
+    scope: List<String>
   ) {
     codeWriter.emitDecorators(decorators, true, scope)
     codeWriter.emitModifiers(modifiers)
@@ -80,10 +80,11 @@ class ParameterSpec private constructor(
   }
 
   class Builder internal constructor(
-     internal val name: String,
-     internal val type: TypeName,
-     val optional: Boolean = false
+    internal val name: String,
+    internal val type: TypeName,
+    val optional: Boolean = false
   ) : Taggable.Builder<Builder>() {
+
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal var defaultValue: CodeBlock? = null
@@ -109,7 +110,8 @@ class ParameterSpec private constructor(
     }
 
     fun defaultValue(format: String, vararg args: Any?) = defaultValue(
-       CodeBlock.of(format, *args))
+      CodeBlock.of(format, *args)
+    )
 
     fun defaultValue(codeBlock: CodeBlock) = apply {
       check(this.defaultValue == null) { "initializer was already set" }
@@ -126,21 +128,19 @@ class ParameterSpec private constructor(
       require(name.isName) { "not a valid name: $name" }
       return Builder(name, type, optional).addModifiers(*modifiers)
     }
-
   }
-
 }
 
 internal fun List<ParameterSpec>.emit(
-   codeWriter: CodeWriter,
-   enclosed: Boolean = true,
-   rest: ParameterSpec? = null,
-   constructorProperties: Map<String, PropertySpec> = emptyMap(),
-   scope: List<String>,
-   emitBlock: (ParameterSpec, Boolean, Boolean, List<String>) -> Unit =
-      { param, isRest, optionalAllowed, pscope ->
-        param.emit(codeWriter, optionalAllowed = optionalAllowed, isRest = isRest, scope = pscope)
-      }
+  codeWriter: CodeWriter,
+  enclosed: Boolean = true,
+  rest: ParameterSpec? = null,
+  constructorProperties: Map<String, PropertySpec> = emptyMap(),
+  scope: List<String>,
+  emitBlock: (ParameterSpec, Boolean, Boolean, List<String>) -> Unit =
+    { param, isRest, optionalAllowed, pscope ->
+      param.emit(codeWriter, optionalAllowed = optionalAllowed, isRest = isRest, scope = pscope)
+    }
 ) = with(codeWriter) {
   val params = this@emit + if (rest != null) listOf(rest) else emptyList()
   if (enclosed) emit("(")
@@ -150,8 +150,7 @@ internal fun List<ParameterSpec>.emit(
       if (index > 0) emit(", ")
       emitBlock(parameter, rest === parameter, optionalAllowed, scope)
     }
-  }
-  else {
+  } else {
     emit("\n")
     indent(2)
     params.forEachIndexed { index, parameter ->

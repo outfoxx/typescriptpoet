@@ -16,12 +16,12 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** A generated function or class decorator declaration. */
 class DecoratorSpec
 internal constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val name = builder.name
   val parameters = builder.parameters
   val factory = builder.factory
@@ -54,9 +54,7 @@ internal constructor(
         codeWriter.emit("\n")
       }
       codeWriter.emit(")")
-
-    }
-    else if (factory ?: parameters.isNotEmpty()) {
+    } else if (factory ?: parameters.isNotEmpty()) {
       codeWriter.emit("()")
     }
   }
@@ -70,8 +68,9 @@ internal constructor(
 
   class Builder
   internal constructor(
-     val name: SymbolSpec
+    val name: SymbolSpec
   ) : Taggable.Builder<Builder>() {
+
     internal val parameters = mutableListOf<Pair<String?, CodeBlock>>()
     internal var factory: Boolean? = null
 
@@ -90,7 +89,6 @@ internal constructor(
     fun build(): DecoratorSpec {
       return DecoratorSpec(this)
     }
-
   }
 
   companion object {
@@ -104,7 +102,5 @@ internal constructor(
     fun builder(name: SymbolSpec): Builder {
       return Builder(name)
     }
-
   }
-
 }

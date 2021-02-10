@@ -18,11 +18,10 @@ package io.outfoxx.typescriptpoet
 
 import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
 
-
 /** A generated `interface` declaration. */
 class InterfaceSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
 
   val name = builder.name
@@ -60,7 +59,13 @@ private constructor(
     // Properties.
     for (propertySpec in propertySpecs) {
       codeWriter.emit("\n")
-      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, compactOptionalAllowed = true, scope = scope)
+      propertySpec.emit(
+        codeWriter,
+        setOf(Modifier.PUBLIC),
+        asStatement = true,
+        compactOptionalAllowed = true,
+        scope = scope
+      )
     }
 
     // Indexables
@@ -149,8 +154,8 @@ private constructor(
       propertySpecs += propertySpec
     }
 
-    fun addProperty(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier)
-       = addProperty(PropertySpec.builder(name, type, optional, *modifiers).build())
+    fun addProperty(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier) =
+      addProperty(PropertySpec.builder(name, type, optional, *modifiers).build())
 
     fun addFunctions(functionSpecs: Iterable<FunctionSpec>) = apply {
       functionSpecs.forEach { addFunction(it) }
@@ -196,12 +201,10 @@ private constructor(
     @JvmStatic
     fun builder(classSpec: ClassSpec): Builder {
       val builder = Builder(classSpec.name)
-         .addModifiers(*classSpec.modifiers.toTypedArray())
-         .addProperties(classSpec.propertySpecs)
+        .addModifiers(*classSpec.modifiers.toTypedArray())
+        .addProperties(classSpec.propertySpecs)
       builder.functionSpecs.forEach { builder.addFunction(it.abstract()) }
       return builder
     }
-
   }
-
 }

@@ -18,11 +18,10 @@ package io.outfoxx.typescriptpoet
 
 import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
 
-
 /** A generated `class` declaration. */
 class ClassSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
 
   val name = builder.name
@@ -40,10 +39,10 @@ private constructor(
   internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
     val constructorProperties: Map<String, PropertySpec> =
-       if (useConstructorPropertiesAutomatically)
-         constructorProperties()
-       else
-         emptyMap()
+      if (useConstructorPropertiesAutomatically)
+        constructorProperties()
+      else
+        emptyMap()
 
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitDecorators(decorators, false, scope)
@@ -71,9 +70,11 @@ private constructor(
         continue
       }
       codeWriter.emit("\n")
-      propertySpec.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true,
-                        compactOptionalAllowed = !useConstructorPropertiesAutomatically,
-                        scope = scope)
+      propertySpec.emit(
+        codeWriter, setOf(Modifier.PUBLIC), asStatement = true,
+        compactOptionalAllowed = !useConstructorPropertiesAutomatically,
+        scope = scope
+      )
     }
 
     // Write the constructor manually, allowing the replacement
@@ -96,17 +97,25 @@ private constructor(
       var body = constructor.body
 
       // Emit constructor parameters & property specs that can be replaced with parameters
-      it.parameters.emit(codeWriter, rest = it.restParameter, scope = scope,
-                         constructorProperties = constructorProperties) { param, isRest, optionalAllowed, scope ->
+      it.parameters.emit(
+        codeWriter, rest = it.restParameter, scope = scope,
+        constructorProperties = constructorProperties
+      ) { param, isRest, optionalAllowed, scope ->
 
         var property = constructorProperties[param.name]
         if (property != null && !isRest) {
 
           // Ensure the parameter always has a modifier (that makes it a property in TS)
-          if (property.modifiers.none { mod ->
-            mod.isOneOf(Modifier.PUBLIC, Modifier.PRIVATE,
-                        Modifier.PROTECTED, Modifier.READONLY)
-          }) {
+          if (
+            property.modifiers.none { mod ->
+              mod.isOneOf(
+                Modifier.PUBLIC,
+                Modifier.PRIVATE,
+                Modifier.PROTECTED,
+                Modifier.READONLY
+              )
+            }
+          ) {
             // Add default public modifier
             property = property.toBuilder().addModifiers(Modifier.PUBLIC).build()
           }
@@ -118,9 +127,13 @@ private constructor(
           val bodyBuilder = body.toBuilder()
           bodyBuilder.remove(constructorPropertyInitSearch(property.name))
           body = bodyBuilder.build()
-        }
-        else {
-          param.emit(codeWriter, isRest = isRest, optionalAllowed = optionalAllowed && !useConstructorPropertiesAutomatically, scope = scope)
+        } else {
+          param.emit(
+            codeWriter,
+            isRest = isRest,
+            optionalAllowed = optionalAllowed && !useConstructorPropertiesAutomatically,
+            scope = scope
+          )
         }
       }
 
@@ -180,8 +193,8 @@ private constructor(
       if (propertySpecs.isNotEmpty()) {
         val constructorProperties = constructorProperties()
         propertySpecs
-           .filterNot { constructorProperties.containsKey(it.name) }
-           .forEach { _ -> return false }
+          .filterNot { constructorProperties.containsKey(it.name) }
+          .forEach { _ -> return false }
       }
       return constructor == null && functionSpecs.isEmpty()
     }
@@ -201,7 +214,7 @@ private constructor(
   }
 
   class Builder(
-     internal val name: String
+    internal val name: String
   ) : Taggable.Builder<Builder>() {
 
     internal val javaDoc = CodeBlock.builder()
@@ -243,7 +256,6 @@ private constructor(
       typeVariables += typeVariable
     }
 
-
     fun superClass(superClass: TypeName) = apply {
       check(this.superClass == null) { "superclass already set to ${this.superClass}" }
       this.superClass = superClass
@@ -274,8 +286,8 @@ private constructor(
       propertySpecs += propertySpec
     }
 
-    fun addProperty(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier)
-       = addProperty(PropertySpec.builder(name, type, optional, *modifiers).build())
+    fun addProperty(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier) =
+      addProperty(PropertySpec.builder(name, type, optional, *modifiers).build())
 
     fun addFunctions(functionSpecs: Iterable<FunctionSpec>) = apply {
       functionSpecs.forEach { addFunction(it) }
@@ -309,7 +321,5 @@ private constructor(
 
     @JvmStatic
     fun builder(name: TypeName) = Builder(name.reference(null, null))
-
   }
-
 }

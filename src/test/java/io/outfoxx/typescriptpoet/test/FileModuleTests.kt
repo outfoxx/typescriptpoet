@@ -44,7 +44,6 @@ class FileModuleTests {
     val source = "!generated/src/main/api/Api"
     val importer = Paths.get("generated/src/main/api/Api2")
 
-
     val path = importPath(importer, source)
     assertThat(path.toString(), equalTo("./Api"))
   }
@@ -55,7 +54,6 @@ class FileModuleTests {
 
     val source = "!Api"
     val importer = Paths.get("Api2")
-
 
     val path = importPath(importer, source)
     assertThat(path.toString(), equalTo("./Api"))
@@ -68,9 +66,7 @@ class FileModuleTests {
     val source = "rxjs/Observable"
     val importer = Paths.get("generated/src/main/impl/Impl")
 
-
     val path = importPath(importer, source)
     assertThat(path.toString(), equalTo("rxjs/Observable"))
   }
-
 }

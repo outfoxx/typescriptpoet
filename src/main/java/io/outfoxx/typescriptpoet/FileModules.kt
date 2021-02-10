@@ -19,7 +19,6 @@ package io.outfoxx.typescriptpoet
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 object FileModules {
 
   private val CURRENT_DIR = Paths.get(".")
@@ -36,13 +35,11 @@ object FileModules {
         importFilePath
       else
         CURRENT_DIR.resolve(importFilePath)
-    }
-    else {
+    } else {
       Paths.get(source)
     }
   }
-
 }
 
 private val Path.parentOrCurrent: Path
-   get() = if (this.parent != null) this.parent else Paths.get(".")
+  get() = if (this.parent != null) this.parent else Paths.get(".")

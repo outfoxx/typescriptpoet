@@ -20,7 +20,6 @@ import io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound
 import io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner
 import io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner.UNION
 
-
 /**
  * Name of any possible type that can be referenced
  *
@@ -36,26 +35,22 @@ sealed class TypeName {
    */
   abstract fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String
 
-
-
   data class Any
   internal constructor(
-     val usage: String,
-     val imported: SymbolSpec?
+    val usage: String,
+    val imported: SymbolSpec?
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       imported?.reference(trackedBy)
       return usage.removePrefix(relativeTo?.joinToString(".")?.plus(".") ?: "")
     }
-
   }
-
 
   data class Parameterized
   internal constructor(
-     val name: TypeName,
-     val typeArgs: List<TypeName>
+    val name: TypeName,
+    val typeArgs: List<TypeName>
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
@@ -63,53 +58,50 @@ sealed class TypeName {
       val typeArgs = typeArgs.map { it.reference(trackedBy, relativeTo) }
       return "$name<${typeArgs.joinToString(", ")}>"
     }
-
   }
-
 
   data class TypeVariable
   internal constructor(
-     val name: String,
-     val bounds: List<Bound>
+    val name: String,
+    val bounds: List<Bound>
   ) : TypeName() {
 
     data class Bound(
-       val type: TypeName,
-       val combiner: Combiner = UNION,
-       val modifier: Bound.Modifier?
+      val type: TypeName,
+      val combiner: Combiner = UNION,
+      val modifier: Bound.Modifier?
     ) {
 
       enum class Combiner(
-         val symbol: String
+        val symbol: String
       ) {
+
         UNION("|"),
         INTERSECT("&")
       }
 
       enum class Modifier(
-         val keyword: String
+        val keyword: String
       ) {
+
         KEY_OF("keyof")
       }
-
     }
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       return name
     }
-
   }
-
 
   data class Anonymous
   internal constructor(
-     val members: List<Member>
+    val members: List<Member>
   ) : TypeName() {
 
     data class Member(
-       val name: String,
-       val type: TypeName,
-       val optional: Boolean
+      val name: String,
+      val type: TypeName,
+      val optional: Boolean
     )
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
@@ -121,60 +113,51 @@ sealed class TypeName {
       }
       return "{ $entries }"
     }
-
   }
-
 
   data class Tuple
   internal constructor(
-     val memberTypes: List<TypeName>
+    val memberTypes: List<TypeName>
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       val typeRequirements = memberTypes.map { it.reference(trackedBy, relativeTo) }
       return "[${typeRequirements.joinToString(", ")}]"
     }
-
   }
-
 
   data class Intersection
   internal constructor(
-     val typeRequirements: List<TypeName>
+    val typeRequirements: List<TypeName>
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       val typeRequirements = typeRequirements.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" & ")
     }
-
   }
-
 
   data class Union
   internal constructor(
-     val typeChoices: List<TypeName>
+    val typeChoices: List<TypeName>
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       val typeRequirements = typeChoices.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" | ")
     }
-
   }
-
 
   data class Lambda
   internal constructor(
-     private val parameters: Map<String, TypeName> = emptyMap(),
-     private val returnType: TypeName = VOID
+    private val parameters: Map<String, TypeName> = emptyMap(),
+    private val returnType: TypeName = VOID
   ) : TypeName() {
 
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       val params = parameters.map { "${it.key}: ${it.value.reference(trackedBy, relativeTo)}" }.joinToString(", ")
       return "($params) => ${returnType.reference(trackedBy, relativeTo)}"
     }
-
   }
 
   companion object {
@@ -217,7 +200,8 @@ sealed class TypeName {
       if (idx != -1) {
         val usage = name.substring(0, idx)
         val imported = SymbolSpec.from(
-           "${usage.split('.').first()}${name.substring(idx)}")
+          "${usage.split('.').first()}${name.substring(idx)}"
+        )
         return anyType(if (usage.isEmpty()) imported.value else usage, imported)
       }
       return anyType(name, null)
@@ -243,7 +227,8 @@ sealed class TypeName {
     @JvmStatic
     fun arrayType(elementType: TypeName): TypeName {
       return parameterizedType(
-         ARRAY, elementType)
+        ARRAY, elementType
+      )
     }
 
     /**
@@ -255,7 +240,8 @@ sealed class TypeName {
     @JvmStatic
     fun setType(elementType: TypeName): TypeName {
       return parameterizedType(
-         SET, elementType)
+        SET, elementType
+      )
     }
 
     /**
@@ -268,7 +254,8 @@ sealed class TypeName {
     @JvmStatic
     fun mapType(keyType: TypeName, valueType: TypeName): TypeName {
       return parameterizedType(
-         MAP, keyType, valueType)
+        MAP, keyType, valueType
+      )
     }
 
     /**
@@ -301,8 +288,11 @@ sealed class TypeName {
      * Factory for type variable bounds
      */
     @JvmStatic
-    fun bound(type: TypeName, combiner: Combiner = UNION,
-              modifier: Bound.Modifier? = null): Bound {
+    fun bound(
+      type: TypeName,
+      combiner: Combiner = UNION,
+      modifier: Bound.Modifier? = null
+    ): Bound {
       return Bound(type, combiner, modifier)
     }
 
@@ -320,7 +310,8 @@ sealed class TypeName {
     @JvmStatic
     fun unionBound(type: String, keyOf: Boolean = false): Bound {
       return unionBound(
-         anyType(type), keyOf)
+        anyType(type), keyOf
+      )
     }
 
     /**
@@ -328,8 +319,10 @@ sealed class TypeName {
      */
     @JvmStatic
     fun unionBound(type: TypeName, keyOf: Boolean = false): Bound {
-      return bound(type, Combiner.UNION,
-                                                                if (keyOf) Bound.Modifier.KEY_OF else null)
+      return bound(
+        type, Combiner.UNION,
+        if (keyOf) Bound.Modifier.KEY_OF else null
+      )
     }
 
     /**
@@ -338,7 +331,8 @@ sealed class TypeName {
     @JvmStatic
     fun intersectBound(type: String, keyOf: Boolean = false): Bound {
       return intersectBound(
-         anyType(type), keyOf)
+        anyType(type), keyOf
+      )
     }
 
     /**
@@ -407,13 +401,11 @@ sealed class TypeName {
     /** Returns a lambda type with `returnType` and parameters of listed in `parameters`. */
     @JvmStatic
     fun lambda(parameters: Map<String, TypeName> = emptyMap(), returnType: TypeName) =
-       Lambda(parameters, returnType)
+      Lambda(parameters, returnType)
 
     /** Returns a lambda type with `returnType` and parameters of listed in `parameters`. */
     @JvmStatic
-    fun lambda(vararg parameters: Pair<String, TypeName> = emptyArray(), returnType: TypeName)
-       = Lambda(parameters.toMap(), returnType)
-
+    fun lambda(vararg parameters: Pair<String, TypeName> = emptyArray(), returnType: TypeName) =
+      Lambda(parameters.toMap(), returnType)
   }
-
 }

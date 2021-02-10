@@ -16,22 +16,25 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /**
  * Specifies a symbol and its related origin, either via import or implicit/local declaration
  *
  * @param value Value of the symbol
  */
 sealed class SymbolSpec(
-   open val value: String
+  open val value: String
 ) {
 
   companion object {
 
-    private val fileNamePattern = """(?:[a-zA-Z0-9._\-]+)""".toRegex()
-    private val modulePattern = """@?(?:(?:!$fileNamePattern)|(?:$fileNamePattern(?:/$fileNamePattern)*))""".toRegex()
-    private val identPattern = """(?:(?:[a-zA-Z][_a-zA-Z0-9.]*)|(?:[_a-zA-Z][_a-zA-Z0-9.]+))""".toRegex()
-    private val importPattern = """($identPattern)?([*@+])($modulePattern)(?:#($identPattern))?""".toRegex()
+    private val fileNamePattern =
+      """(?:[a-zA-Z0-9._\-]+)""".toRegex()
+    private val modulePattern =
+      """@?(?:(?:!$fileNamePattern)|(?:$fileNamePattern(?:/$fileNamePattern)*))""".toRegex()
+    private val identPattern =
+      """(?:(?:[a-zA-Z][_a-zA-Z0-9.]*)|(?:[_a-zA-Z][_a-zA-Z0-9.]+))""".toRegex()
+    private val importPattern =
+      """($identPattern)?([*@+])($modulePattern)(?:#($identPattern))?""".toRegex()
 
     /**
      * Parses a symbol reference pattern to create a symbol. The pattern
@@ -79,8 +82,7 @@ sealed class SymbolSpec(
         val modulePath = matched.groups[3]!!.value
         val type = if (matched.groups[2] != null) {
           matched.groups[2]?.value!!
-        }
-        else {
+        } else {
           "@"
         }
         val symbolName = matched.groups[1]?.value ?: modulePath.split('/').last().dropWhile { it == '!' }
@@ -88,7 +90,11 @@ sealed class SymbolSpec(
         return when (type) {
           "*" -> importsAll(symbolName, modulePath)
           "@" -> importsName(symbolName, modulePath)
-          "+" -> if (targetName == null) sideEffect(symbolName, modulePath) else augmented(symbolName, modulePath, targetName)
+          "+" -> if (targetName == null) sideEffect(symbolName, modulePath) else augmented(
+            symbolName,
+            modulePath,
+            targetName
+          )
           else -> throw IllegalArgumentException("Invalid type character")
         }
       }
@@ -162,7 +168,6 @@ sealed class SymbolSpec(
     fun implicit(name: String): SymbolSpec {
       return Implicit(name)
     }
-
   }
 
   open fun reference(trackedBy: SymbolReferenceTracker?): String {
@@ -175,24 +180,21 @@ sealed class SymbolSpec(
    */
   data class Implicit
   internal constructor(
-     override val value: String
+    override val value: String
   ) : SymbolSpec(value) {
 
     override fun reference(trackedBy: SymbolReferenceTracker?): String {
       return value
     }
-
   }
-
 
   /**
    * Common base class for imported symbols
    */
   abstract class Imported(
-     override val value: String,
-     open val source: String
+    override val value: String,
+    open val source: String
   ) : SymbolSpec(value)
-
 
   /**
    * Imports a single named symbol from the module's exported
@@ -202,10 +204,9 @@ sealed class SymbolSpec(
    */
   data class ImportsName
   internal constructor(
-     override val value: String,
-     override val source: String
+    override val value: String,
+    override val source: String
   ) : Imported(value, source)
-
 
   /**
    * Imports all of the modules exported symbols as a single
@@ -215,8 +216,8 @@ sealed class SymbolSpec(
    */
   data class ImportsAll
   internal constructor(
-     override val value: String,
-     override val source: String
+    override val value: String,
+    override val source: String
   ) : Imported(value, source)
 
   /**
@@ -227,9 +228,9 @@ sealed class SymbolSpec(
    */
   data class Augmented
   internal constructor(
-     override val value: String,
-     override val source: String,
-     val augmented: String
+    override val value: String,
+    override val source: String,
+    val augmented: String
   ) : Imported(value, source)
 
   /**
@@ -240,8 +241,7 @@ sealed class SymbolSpec(
    */
   data class SideEffect
   internal constructor(
-     override val value: String,
-     override val source: String
+    override val value: String,
+    override val source: String
   ) : Imported(value, source)
-
 }
