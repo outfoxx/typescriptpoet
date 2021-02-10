@@ -21,7 +21,7 @@ package io.outfoxx.typescriptpoet
 class DecoratorSpec
 internal constructor(
    builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val parameters = builder.parameters
   val factory = builder.factory
@@ -71,7 +71,7 @@ internal constructor(
   class Builder
   internal constructor(
      val name: SymbolSpec
-  ) {
+  ) : Taggable.Builder<Builder>() {
     internal val parameters = mutableListOf<Pair<String?, CodeBlock>>()
     internal var factory: Boolean? = null
 

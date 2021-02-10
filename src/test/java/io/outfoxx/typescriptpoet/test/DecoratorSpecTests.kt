@@ -20,6 +20,7 @@ import io.outfoxx.typescriptpoet.CodeBlock
 import io.outfoxx.typescriptpoet.CodeWriter
 import io.outfoxx.typescriptpoet.DecoratorSpec
 import io.outfoxx.typescriptpoet.SymbolSpec
+import io.outfoxx.typescriptpoet.tag
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
@@ -27,9 +28,19 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.StringWriter
 
-
 @DisplayName("DecoratorSpec Tests")
 class DecoratorSpecTests {
+
+  @Test
+  @DisplayName("Tags on builders can be retrieved on builders and built specs")
+  fun testTags() {
+    val testBuilder = DecoratorSpec.builder("Test")
+      .tag(5)
+    val testSpec = testBuilder.build()
+
+    assertThat(testBuilder.tags[Integer::class] as? Int, equalTo(5))
+    assertThat(testSpec.tag(), equalTo(5))
+  }
 
   @Test
   @DisplayName("Generate inline")

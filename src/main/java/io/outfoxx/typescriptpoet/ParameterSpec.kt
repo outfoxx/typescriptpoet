@@ -19,7 +19,9 @@ package io.outfoxx.typescriptpoet
 import kotlin.math.min
 
 
-class ParameterSpec private constructor(builder: Builder) {
+class ParameterSpec private constructor(
+  builder: Builder
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val optional = builder.optional
   val decorators = builder.decorators.toImmutableList()
@@ -81,7 +83,7 @@ class ParameterSpec private constructor(builder: Builder) {
      internal val name: String,
      internal val type: TypeName,
      val optional: Boolean = false
-  ) {
+  ) : Taggable.Builder<Builder>() {
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal var defaultValue: CodeBlock? = null

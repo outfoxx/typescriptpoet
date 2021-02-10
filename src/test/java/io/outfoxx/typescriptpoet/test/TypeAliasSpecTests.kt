@@ -20,6 +20,7 @@ import io.outfoxx.typescriptpoet.CodeWriter
 import io.outfoxx.typescriptpoet.Modifier
 import io.outfoxx.typescriptpoet.TypeAliasSpec
 import io.outfoxx.typescriptpoet.TypeName
+import io.outfoxx.typescriptpoet.tag
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
@@ -27,9 +28,19 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.StringWriter
 
-
 @DisplayName("TypeAliasSpec Tests")
 class TypeAliasSpecTests {
+
+  @Test
+  @DisplayName("Tags on builders can be retrieved on builders and built specs")
+  fun testTags() {
+    val testBuilder = TypeAliasSpec.builder("Test", TypeName.STRING)
+      .tag(5)
+    val testSpec = testBuilder.build()
+
+    assertThat(testBuilder.tags[Integer::class] as? Int, equalTo(5))
+    assertThat(testSpec.tag(), equalTo(5))
+  }
 
   @Test
   @DisplayName("Generates JavaDoc at before class definition")

@@ -20,8 +20,8 @@ package io.outfoxx.typescriptpoet
 /** A generated property declaration. */
 class PropertySpec
 private constructor(
-   builder: Builder
-) {
+  builder: Builder
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val type = builder.type
   val javaDoc = builder.javaDoc.build()
@@ -62,10 +62,10 @@ private constructor(
   }
 
   class Builder internal constructor(
-     internal val name: String,
-     internal val type: TypeName,
-     val optional: Boolean = false
-  ) {
+    internal val name: String,
+    internal val type: TypeName,
+    val optional: Boolean = false
+  ) : Taggable.Builder<Builder>() {
     internal val javaDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
