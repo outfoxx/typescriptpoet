@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>EnumSpec.Builder - typescriptpoet</title>
+<link rel="stylesheet" href="../../../../style.css">
+</HEAD>
+<BODY>
+<a href="../../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">EnumSpec</a>&nbsp;/&nbsp;<a href="./index.html">Builder</a><br/>
+<br/>
+<h1>Builder</h1>
+<code><span class="keyword">class </span><span class="identifier">Builder</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Builder</span><span class="symbol">&lt;</span><span class="identifier">Builder</span><span class="symbol">&gt;</span></code>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="constants.html">constants</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">constants</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-map/index.html"><span class="identifier">MutableMap</span></a><span class="symbol">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">,</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">?</span><span class="symbol">&gt;</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="name.html">name</a></h4>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">name</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<h4><a href="add-constant.html">addConstant</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addConstant</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addConstant(kotlin.String, kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addConstant(kotlin.String, kotlin.String)/initializer">initializer</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addConstant</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addConstant(kotlin.String, io.outfoxx.typescriptpoet.CodeBlock)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addConstant(kotlin.String, io.outfoxx.typescriptpoet.CodeBlock)/initializer">initializer</span><span class="symbol">:</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-javadoc.html">addJavadoc</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addJavadoc</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addJavadoc(kotlin.String, kotlin.Array((kotlin.Any)))/format">format</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addJavadoc(kotlin.String, kotlin.Array((kotlin.Any)))/args">args</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html"><span class="identifier">Any</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code><br/>
+<code><span class="keyword">fun </span><span class="identifier">addJavadoc</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addJavadoc(io.outfoxx.typescriptpoet.CodeBlock)/block">block</span><span class="symbol">:</span>&nbsp;<a href="../../-code-block/index.html"><span class="identifier">CodeBlock</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="add-modifiers.html">addModifiers</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addModifiers</span><span class="symbol">(</span><span class="keyword">vararg</span> <span class="identifier" id="io.outfoxx.typescriptpoet.EnumSpec.Builder$addModifiers(kotlin.Array((io.outfoxx.typescriptpoet.Modifier)))/modifiers">modifiers</span><span class="symbol">:</span>&nbsp;<a href="../../-modifier/index.html"><span class="identifier">Modifier</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">Builder</span></code></td>
+</tr>
+<tr>
+<td>
+<h4><a href="build.html">build</a></h4>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">build</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="../index.html"><span class="identifier">EnumSpec</span></a></code></td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
