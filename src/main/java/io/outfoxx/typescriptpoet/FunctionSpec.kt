@@ -16,12 +16,12 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** A generated function declaration. */
 class FunctionSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val decorators = builder.decorators.toImmutableList()
@@ -40,19 +40,19 @@ private constructor(
 
   fun abstract(): FunctionSpec {
     return builder(name)
-       .addModifiers(Modifier.ABSTRACT)
-       .addTypeVariables(typeVariables)
-       .addParameters(parameters)
-       .build()
+      .addModifiers(Modifier.ABSTRACT)
+      .addTypeVariables(typeVariables)
+      .addParameters(parameters)
+      .build()
   }
 
   internal fun parameter(name: String) = parameters.firstOrNull { it.name == name }
 
   internal fun emit(
-     codeWriter: CodeWriter,
-     enclosingName: String?,
-     implicitModifiers: Set<Modifier>,
-     scope: List<String>
+    codeWriter: CodeWriter,
+    enclosingName: String?,
+    implicitModifiers: Set<Modifier>,
+    scope: List<String>
   ) {
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitDecorators(decorators, false, scope)
@@ -74,9 +74,9 @@ private constructor(
   }
 
   private fun emitSignature(
-     codeWriter: CodeWriter,
-     enclosingName: String?,
-     scope: List<String>
+    codeWriter: CodeWriter,
+    enclosingName: String?,
+    scope: List<String>
   ) {
     when {
       isConstructor -> codeWriter.emitCode("constructor")
@@ -94,7 +94,12 @@ private constructor(
       codeWriter.emitTypeVariables(typeVariables, scope)
     }
 
-    parameters.emit(codeWriter, enclosed = !isIndexable, rest = restParameter, scope = scope) { param, isRest, optionalAllowed, pscope ->
+    parameters.emit(
+      codeWriter,
+      enclosed = !isIndexable,
+      rest = restParameter,
+      scope = scope
+    ) { param, isRest, optionalAllowed, pscope ->
       param.emit(codeWriter, isRest = isRest, optionalAllowed = optionalAllowed, scope = pscope)
     }
 
@@ -105,7 +110,6 @@ private constructor(
     if (returnType != null && returnType != TypeName.VOID) {
       codeWriter.emitCode(CodeBlock.of(": %T", returnType), scope)
     }
-
   }
 
   val isConstructor get() = name.isConstructor
@@ -141,6 +145,7 @@ private constructor(
   class Builder internal constructor(
     internal val name: String
   ) : Taggable.Builder<Builder>() {
+
     internal val javaDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableSetOf<Modifier>()
@@ -203,15 +208,23 @@ private constructor(
       parameters += parameterSpec
     }
 
-    fun addParameter(name: String, type: TypeName, optional: Boolean = false, defaultValue: CodeBlock, vararg modifiers: Modifier)
-       = addParameter(ParameterSpec.builder(name, type, optional,
-                                                                                *modifiers).defaultValue(defaultValue).build())
+    fun addParameter(
+      name: String,
+      type: TypeName,
+      optional: Boolean = false,
+      defaultValue: CodeBlock,
+      vararg modifiers: Modifier
+    ) = addParameter(
+      ParameterSpec.builder(
+        name, type, optional,
+        *modifiers
+      ).defaultValue(defaultValue).build()
+    )
 
-    fun addParameter(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier)
-       = addParameter(ParameterSpec.builder(name, type, optional, *modifiers).build())
+    fun addParameter(name: String, type: TypeName, optional: Boolean = false, vararg modifiers: Modifier) =
+      addParameter(ParameterSpec.builder(name, type, optional, *modifiers).build())
 
-    fun restParameter(name: String, type: TypeName)
-       = restParameter(ParameterSpec.builder(name, type).build())
+    fun restParameter(name: String, type: TypeName) = restParameter(ParameterSpec.builder(name, type).build())
 
     fun restParameter(parameterSpec: ParameterSpec) = apply {
       this.restParameter = parameterSpec
@@ -268,6 +281,7 @@ private constructor(
   }
 
   companion object {
+
     private const val CONSTRUCTOR = "constructor()"
     private const val CALLABLE = "callable()"
     private const val INDEXABLE = "indexable()"
@@ -281,15 +295,17 @@ private constructor(
 
     @JvmStatic
     fun constructorBuilder() = Builder(
-       CONSTRUCTOR)
+      CONSTRUCTOR
+    )
 
     @JvmStatic
     fun callableBuilder() = Builder(
-       CALLABLE)
+      CALLABLE
+    )
 
     @JvmStatic
     fun indexableBuilder() = Builder(
-       INDEXABLE)
+      INDEXABLE
+    )
   }
-
 }

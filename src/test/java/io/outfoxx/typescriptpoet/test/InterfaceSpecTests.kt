@@ -16,7 +16,13 @@
 
 package io.outfoxx.typescriptpoet.test
 
-import io.outfoxx.typescriptpoet.*
+import io.outfoxx.typescriptpoet.CodeWriter
+import io.outfoxx.typescriptpoet.FunctionSpec
+import io.outfoxx.typescriptpoet.InterfaceSpec
+import io.outfoxx.typescriptpoet.Modifier
+import io.outfoxx.typescriptpoet.TypeName
+import io.outfoxx.typescriptpoet.tag
+import io.outfoxx.typescriptpoet.toImmutableSet
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,24 +48,24 @@ class InterfaceSpecTests {
   @DisplayName("Generates JavaDoc at before interface definition")
   fun testGenJavaDoc() {
     val testIface = InterfaceSpec.builder("Test")
-       .addJavadoc("this is a comment\n")
-       .build()
+      .addJavadoc("this is a comment\n")
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             /**
              * this is a comment
              */
             interface Test {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -67,52 +73,51 @@ class InterfaceSpecTests {
   @DisplayName("Generates modifiers in order")
   fun testGenModifiersInOrder() {
     val testIface = InterfaceSpec.builder("Test")
-       .addModifiers(Modifier.EXPORT)
-       .build()
+      .addModifiers(Modifier.EXPORT)
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             export interface Test {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
-
 
   @Test
   @DisplayName("Generates type variables")
   fun testGenTypeVars() {
-    val testIface =           InterfaceSpec.builder("Test")
-             .addTypeVariable(
-                TypeName.typeVariable("X", TypeName.bound("Test2"))
-             )
-             .addTypeVariable(
-                TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
-             )
-             .addTypeVariable(
-                TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
-             )
-             .build()
+    val testIface = InterfaceSpec.builder("Test")
+      .addTypeVariable(
+        TypeName.typeVariable("X", TypeName.bound("Test2"))
+      )
+      .addTypeVariable(
+        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+      )
+      .addTypeVariable(
+        TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
+      )
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test<X extends Test2, Y extends Test3 & Test4, Z extends Test5 | keyof Test6> {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -120,22 +125,22 @@ class InterfaceSpecTests {
   @DisplayName("Generates super interfaces")
   fun testGenMixins() {
     val testIface = InterfaceSpec.builder("Test")
-       .addSuperInterface(TypeName.anyType("Test2"))
-       .addSuperInterface(TypeName.anyType("Test3"))
-       .build()
+      .addSuperInterface(TypeName.anyType("Test2"))
+      .addSuperInterface(TypeName.anyType("Test3"))
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test extends Test2, Test3 {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -143,26 +148,26 @@ class InterfaceSpecTests {
   @DisplayName("Generates type vars & super interfaces properly formatted")
   fun testGenTypeVarsAndSuperInterfacesFormatted() {
     val testIface = InterfaceSpec.builder("Test")
-       .addTypeVariable(
-          TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
-       )
-       .addSuperInterface(TypeName.anyType("Test2"))
-       .addSuperInterface(TypeName.anyType("Test3"))
-       .addSuperInterface(TypeName.anyType("Test4"))
-       .build()
+      .addTypeVariable(
+        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+      )
+      .addSuperInterface(TypeName.anyType("Test2"))
+      .addSuperInterface(TypeName.anyType("Test3"))
+      .addSuperInterface(TypeName.anyType("Test4"))
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test<Y extends Test3 & Test4> extends Test2, Test3, Test4 {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -170,17 +175,17 @@ class InterfaceSpecTests {
   @DisplayName("Generates property declarations")
   fun testGenProperties() {
     val testIface = InterfaceSpec.builder("Test")
-       .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
-       .addProperty("value2", TypeName.STRING, true, Modifier.PUBLIC)
-       .build()
+      .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
+      .addProperty("value2", TypeName.STRING, true, Modifier.PUBLIC)
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test {
 
               private value: number;
@@ -189,8 +194,8 @@ class InterfaceSpecTests {
 
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -198,25 +203,25 @@ class InterfaceSpecTests {
   @DisplayName("Generates method declarations")
   fun testGenMethods() {
     val testIface = InterfaceSpec.builder("Test")
-       .addFunction(
-          FunctionSpec.builder("test1")
-             .addModifiers(Modifier.ABSTRACT)
-             .build()
-       )
-       .addFunction(
-          FunctionSpec.builder("test2")
-             .addModifiers(Modifier.ABSTRACT)
-             .build()
-       )
-       .build()
+      .addFunction(
+        FunctionSpec.builder("test1")
+          .addModifiers(Modifier.ABSTRACT)
+          .build()
+      )
+      .addFunction(
+        FunctionSpec.builder("test2")
+          .addModifiers(Modifier.ABSTRACT)
+          .build()
+      )
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test {
 
               test1();
@@ -225,8 +230,8 @@ class InterfaceSpecTests {
 
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -234,29 +239,29 @@ class InterfaceSpecTests {
   @DisplayName("Generates indexing declarations")
   fun testGenIndexables() {
     val testIface = InterfaceSpec.builder("Test")
-       .addIndexable(
-          FunctionSpec.indexableBuilder()
-             .addModifiers(Modifier.ABSTRACT)
-             .addParameter("idx", TypeName.STRING)
-             .returns(TypeName.ANY)
-             .build()
-       )
-       .addIndexable(
-          FunctionSpec.indexableBuilder()
-             .addModifiers(Modifier.READONLY, Modifier.ABSTRACT)
-             .addParameter("idx", TypeName.STRING)
-             .returns(TypeName.ANY)
-             .build()
-       )
-       .build()
+      .addIndexable(
+        FunctionSpec.indexableBuilder()
+          .addModifiers(Modifier.ABSTRACT)
+          .addParameter("idx", TypeName.STRING)
+          .returns(TypeName.ANY)
+          .build()
+      )
+      .addIndexable(
+        FunctionSpec.indexableBuilder()
+          .addModifiers(Modifier.READONLY, Modifier.ABSTRACT)
+          .addParameter("idx", TypeName.STRING)
+          .returns(TypeName.ANY)
+          .build()
+      )
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test {
 
               [idx: string]: any;
@@ -265,8 +270,8 @@ class InterfaceSpecTests {
 
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -274,30 +279,30 @@ class InterfaceSpecTests {
   @DisplayName("Generates callable declaration")
   fun testGenCallable() {
     val testIface = InterfaceSpec.builder("Test")
-       .callable(
-          FunctionSpec.callableBuilder()
-             .addModifiers(Modifier.ABSTRACT)
-             .addParameter("a", TypeName.STRING)
-             .returns(TypeName.anyType("Test"))
-             .build()
-       )
-       .build()
+      .callable(
+        FunctionSpec.callableBuilder()
+          .addModifiers(Modifier.ABSTRACT)
+          .addParameter("a", TypeName.STRING)
+          .returns(TypeName.anyType("Test"))
+          .build()
+      )
+      .build()
 
     val out = StringWriter()
     testIface.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             interface Test {
 
               (a: string): Test;
 
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -305,43 +310,46 @@ class InterfaceSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testIfaceBlder = InterfaceSpec.builder("Test")
-       .addJavadoc("this is a comment\n")
-       .addModifiers(Modifier.ABSTRACT, Modifier.EXPORT)
-       .addTypeVariable(
-          TypeName.typeVariable("X", TypeName.bound("Test2"))
-       )
-       .addSuperInterface(TypeName.anyType("Test3"))
-       .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
-       .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
-       .addFunction(
-          FunctionSpec.builder("test1")
-             .addModifiers(Modifier.ABSTRACT)
-             .build()
-       )
-       .addIndexable(
-          FunctionSpec.indexableBuilder()
-             .addModifiers(Modifier.ABSTRACT)
-             .addParameter("idx", TypeName.STRING)
-             .returns(TypeName.ANY)
-             .build()
-       )
-       .callable(
-          FunctionSpec.callableBuilder()
-             .addModifiers(Modifier.ABSTRACT)
-             .build()
-       )
-       .build()
-       .toBuilder()
+      .addJavadoc("this is a comment\n")
+      .addModifiers(Modifier.ABSTRACT, Modifier.EXPORT)
+      .addTypeVariable(
+        TypeName.typeVariable("X", TypeName.bound("Test2"))
+      )
+      .addSuperInterface(TypeName.anyType("Test3"))
+      .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
+      .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
+      .addFunction(
+        FunctionSpec.builder("test1")
+          .addModifiers(Modifier.ABSTRACT)
+          .build()
+      )
+      .addIndexable(
+        FunctionSpec.indexableBuilder()
+          .addModifiers(Modifier.ABSTRACT)
+          .addParameter("idx", TypeName.STRING)
+          .returns(TypeName.ANY)
+          .build()
+      )
+      .callable(
+        FunctionSpec.callableBuilder()
+          .addModifiers(Modifier.ABSTRACT)
+          .build()
+      )
+      .build()
+      .toBuilder()
 
     assertThat(testIfaceBlder.javaDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testIfaceBlder.modifiers.toImmutableSet(), equalTo(setOf(Modifier.ABSTRACT, Modifier.EXPORT)))
     assertThat(testIfaceBlder.typeVariables.size, equalTo(1))
-    assertThat(testIfaceBlder.superInterfaces, hasItems<TypeName>(
-       TypeName.anyType("Test3")))
+    assertThat(
+      testIfaceBlder.superInterfaces,
+      hasItems<TypeName>(
+        TypeName.anyType("Test3")
+      )
+    )
     assertThat(testIfaceBlder.propertySpecs.map { it.name }, hasItems("value", "value2"))
     assertThat(testIfaceBlder.functionSpecs.map { it.name }, hasItems("test1"))
     assertThat(testIfaceBlder.indexableSpecs.map { it.name }, hasItems("indexable()"))
     assertThat(testIfaceBlder.callable?.name, equalTo("callable()"))
   }
-
 }

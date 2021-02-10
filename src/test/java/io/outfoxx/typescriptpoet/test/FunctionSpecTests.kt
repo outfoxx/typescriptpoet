@@ -16,7 +16,16 @@
 
 package io.outfoxx.typescriptpoet.test
 
-import io.outfoxx.typescriptpoet.*
+import io.outfoxx.typescriptpoet.CodeBlock
+import io.outfoxx.typescriptpoet.CodeWriter
+import io.outfoxx.typescriptpoet.DecoratorSpec
+import io.outfoxx.typescriptpoet.FunctionSpec
+import io.outfoxx.typescriptpoet.Modifier
+import io.outfoxx.typescriptpoet.ParameterSpec
+import io.outfoxx.typescriptpoet.SymbolSpec
+import io.outfoxx.typescriptpoet.TypeName
+import io.outfoxx.typescriptpoet.tag
+import io.outfoxx.typescriptpoet.toImmutableSet
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
@@ -42,24 +51,24 @@ class FunctionSpecTests {
   @DisplayName("Generates JavaDoc at before class definition")
   fun testGenJavaDoc() {
     val testFunc = FunctionSpec.builder("test")
-       .addJavadoc("this is a comment\n")
-       .build()
+      .addJavadoc("this is a comment\n")
+      .build()
 
     val out = StringWriter()
     testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             /**
              * this is a comment
              */
             function test() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -67,21 +76,21 @@ class FunctionSpecTests {
   @DisplayName("Generates decorators formatted")
   fun testGenDecorators() {
     val testFunc = FunctionSpec.builder("test")
-       .addDecorator(
-          DecoratorSpec.builder("decorate")
-             .addParameter(null, "true")
-             .addParameter("targetType", "Test2")
-             .build()
-       )
-       .build()
+      .addDecorator(
+        DecoratorSpec.builder("decorate")
+          .addParameter(null, "true")
+          .addParameter("targetType", "Test2")
+          .build()
+      )
+      .build()
 
     val out = StringWriter()
     testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             @decorate(
               true,
               /* targetType */ Test2
@@ -89,8 +98,8 @@ class FunctionSpecTests {
             function test() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -98,22 +107,22 @@ class FunctionSpecTests {
   @DisplayName("Generates modifiers in order")
   fun testGenModifiersInOrder() {
     val testClass = FunctionSpec.builder("test")
-       .addModifiers(Modifier.PRIVATE, Modifier.GET, Modifier.EXPORT)
-       .addCode("")
-       .build()
+      .addModifiers(Modifier.PRIVATE, Modifier.GET, Modifier.EXPORT)
+      .addCode("")
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             export private get function test() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -121,20 +130,20 @@ class FunctionSpecTests {
   @DisplayName("Generates no block when abstract")
   fun testGenModifiersAbstract() {
     val testClass = FunctionSpec.builder("test")
-       .addModifiers(Modifier.PRIVATE, Modifier.ABSTRACT)
-       .build()
+      .addModifiers(Modifier.PRIVATE, Modifier.ABSTRACT)
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             private abstract function test();
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -142,29 +151,29 @@ class FunctionSpecTests {
   @DisplayName("Generates type variables")
   fun testGenTypeVars() {
     val testClass = FunctionSpec.builder("test")
-       .addTypeVariable(
-          TypeName.typeVariable("X", TypeName.bound("Test2"))
-       )
-       .addTypeVariable(
-          TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
-       )
-       .addTypeVariable(
-          TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
-       )
-       .build()
+      .addTypeVariable(
+        TypeName.typeVariable("X", TypeName.bound("Test2"))
+      )
+      .addTypeVariable(
+        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+      )
+      .addTypeVariable(
+        TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
+      )
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test<X extends Test2, Y extends Test3 & Test4, Z extends Test5 | keyof Test6>() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -172,21 +181,21 @@ class FunctionSpecTests {
   @DisplayName("Generates return type")
   fun testGenReturnType() {
     val testClass = FunctionSpec.builder("test")
-       .returns(TypeName.anyType("Value"))
-       .build()
+      .returns(TypeName.anyType("Value"))
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test(): Value {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -194,21 +203,21 @@ class FunctionSpecTests {
   @DisplayName("Generates no return type when void")
   fun testGenNoReturnTypeForVoid() {
     val testClass = FunctionSpec.builder("test")
-       .returns(TypeName.VOID)
-       .build()
+      .returns(TypeName.VOID)
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -216,20 +225,20 @@ class FunctionSpecTests {
   @DisplayName("Generates no return type when not set")
   fun testGenNoReturnType() {
     val testClass = FunctionSpec.builder("test")
-       .build()
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test() {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -237,21 +246,21 @@ class FunctionSpecTests {
   @DisplayName("Generates parameters")
   fun testGenParameters() {
     val testClass = FunctionSpec.builder("test")
-       .addParameter("b", TypeName.STRING)
-       .build()
+      .addParameter("b", TypeName.STRING)
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test(b: string) {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -259,22 +268,22 @@ class FunctionSpecTests {
   @DisplayName("Generates parameters with rest")
   fun testGenParametersRest() {
     val testClass = FunctionSpec.builder("test")
-       .addParameter("b", TypeName.STRING)
-       .restParameter("c", TypeName.arrayType(TypeName.STRING))
-       .build()
+      .addParameter("b", TypeName.STRING)
+      .restParameter("c", TypeName.arrayType(TypeName.STRING))
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test(b: string, ... c: Array<string>) {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -282,21 +291,21 @@ class FunctionSpecTests {
   @DisplayName("Generates parameters with default values")
   fun testGenParametersDefaults() {
     val testClass = FunctionSpec.builder("test")
-       .addParameter("a", TypeName.NUMBER, false, CodeBlock.of("10"))
-       .build()
+      .addParameter("a", TypeName.NUMBER, false, CodeBlock.of("10"))
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test(a: number = 10) {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -304,41 +313,41 @@ class FunctionSpecTests {
   @DisplayName("Generates parameter decorators")
   fun testGenParameterDecorators() {
     val testClass = FunctionSpec.builder("test")
-       .addParameter(
-          ParameterSpec.builder("a", TypeName.NUMBER)
-             .addDecorator(
-                DecoratorSpec.builder("required")
-                   .build()
-             )
-             .addDecorator(
-                DecoratorSpec.builder("size")
-                   .addParameter("min", "10")
-                   .addParameter("max", "100")
-                   .build()
-             )
-             .addDecorator(
-                DecoratorSpec.builder("logged")
-                   .asFactory()
-                   .build()
-             )
-             .build()
-       )
-       .build()
+      .addParameter(
+        ParameterSpec.builder("a", TypeName.NUMBER)
+          .addDecorator(
+            DecoratorSpec.builder("required")
+              .build()
+          )
+          .addDecorator(
+            DecoratorSpec.builder("size")
+              .addParameter("min", "10")
+              .addParameter("max", "100")
+              .build()
+          )
+          .addDecorator(
+            DecoratorSpec.builder("logged")
+              .asFactory()
+              .build()
+          )
+          .build()
+      )
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             function test(
                 @required @size(/* min */ 10, /* max */ 100) @logged() a: number
             ) {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -346,20 +355,20 @@ class FunctionSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testFuncBlder = FunctionSpec.builder("Test")
-       .addJavadoc("this is a comment\n")
-       .addDecorator(
-          DecoratorSpec.builder("decorate")
-             .addParameter(null, "true")
-             .addParameter("targetType", "Test2")
-             .build()
-       )
-       .addModifiers(Modifier.EXPORT)
-       .addTypeVariable(
-          TypeName.typeVariable("X", TypeName.bound("Test2"))
-       )
-       .addCode("val;\n")
-       .build()
-       .toBuilder()
+      .addJavadoc("this is a comment\n")
+      .addDecorator(
+        DecoratorSpec.builder("decorate")
+          .addParameter(null, "true")
+          .addParameter("targetType", "Test2")
+          .build()
+      )
+      .addModifiers(Modifier.EXPORT)
+      .addTypeVariable(
+        TypeName.typeVariable("X", TypeName.bound("Test2"))
+      )
+      .addCode("val;\n")
+      .build()
+      .toBuilder()
 
     assertThat(testFuncBlder.javaDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testFuncBlder.decorators.size, equalTo(1))
@@ -369,5 +378,4 @@ class FunctionSpecTests {
     assertThat(testFuncBlder.typeVariables.size, equalTo(1))
     assertThat(testFuncBlder.body.formatParts, hasItems("val;\n"))
   }
-
 }

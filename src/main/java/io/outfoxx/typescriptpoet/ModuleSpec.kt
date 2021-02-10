@@ -16,7 +16,6 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** A generated `module` declaration. */
 class ModuleSpec
 private constructor(
@@ -104,14 +103,14 @@ private constructor(
 
     private fun checkMemberModifiers(modifiers: Set<Modifier>) {
       requireNoneOf(
-         modifiers,
-         Modifier.PUBLIC,
-         Modifier.PROTECTED,
-         Modifier.PRIVATE,
-         Modifier.READONLY,
-         Modifier.GET,
-         Modifier.SET,
-         Modifier.STATIC
+        modifiers,
+        Modifier.PUBLIC,
+        Modifier.PROTECTED,
+        Modifier.PRIVATE,
+        Modifier.READONLY,
+        Modifier.GET,
+        Modifier.SET,
+        Modifier.STATIC
       )
     }
 
@@ -124,8 +123,10 @@ private constructor(
     }
 
     fun addModifier(modifier: Modifier) = apply {
-      requireNoneOrOneOf(modifiers + modifier, Modifier.EXPORT,
-                         Modifier.DECLARE)
+      requireNoneOrOneOf(
+        modifiers + modifier, Modifier.EXPORT,
+        Modifier.DECLARE
+      )
       modifiers += modifier
     }
 
@@ -156,9 +157,11 @@ private constructor(
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      requireExactlyOneOf(propertySpec.modifiers, Modifier.CONST,
-                          Modifier.LET,
-                          Modifier.VAR)
+      requireExactlyOneOf(
+        propertySpec.modifiers, Modifier.CONST,
+        Modifier.LET,
+        Modifier.VAR
+      )
       require(propertySpec.decorators.isEmpty()) { "decorators on file properties are not allowed" }
       checkMemberModifiers(propertySpec.modifiers)
       members += propertySpec
@@ -187,7 +190,5 @@ private constructor(
 
     @JvmStatic
     fun builder(name: String) = Builder(name)
-
   }
-
 }

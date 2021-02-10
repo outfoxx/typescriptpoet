@@ -16,18 +16,18 @@
 
 package io.outfoxx.typescriptpoet
 
-import java.util.*
-
+import java.util.EnumSet
 
 /**
  * Converts a [FileSpec] to a string suitable to both human- and tsc-consumption. This honors
  * imports, indentation, and deferred variable names.
  */
 internal class CodeWriter constructor(
-   out: Appendable,
-   private val indent: String = "  ",
-   referencedSymbols: Set<SymbolSpec> = emptySet()
+  out: Appendable,
+  private val indent: String = "  ",
+  referencedSymbols: Set<SymbolSpec> = emptySet()
 ) : SymbolReferenceTracker {
+
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
 
@@ -63,8 +63,7 @@ internal class CodeWriter constructor(
     try {
       emitCode(codeBlock, scope)
       emit("\n")
-    }
-    finally {
+    } finally {
       comment = false
     }
   }
@@ -76,8 +75,7 @@ internal class CodeWriter constructor(
     javaDoc = true
     try {
       emitCode(javaDocCodeBlock, scope)
-    }
-    finally {
+    } finally {
       javaDoc = false
     }
     emit(" */\n")
@@ -95,8 +93,9 @@ internal class CodeWriter constructor(
    * be emitted.
    */
   fun emitModifiers(
-     modifiers: Set<Modifier>,
-     implicitModifiers: Set<Modifier> = emptySet()) {
+    modifiers: Set<Modifier>,
+    implicitModifiers: Set<Modifier> = emptySet()
+  ) {
     if (modifiers.isEmpty()) return
     for (modifier in EnumSet.copyOf(modifiers)) {
       if (implicitModifiers.contains(modifier)) continue
@@ -116,19 +115,21 @@ internal class CodeWriter constructor(
     emit("<")
     typeVariables.forEachIndexed { index, typeVariable ->
       if (index > 0) emit(", ")
-      emitCode(buildString {
-        append(typeVariable.name)
-        if (typeVariable.bounds.isNotEmpty()) {
-          val parts = mutableListOf<String>()
-          parts.add(" extends")
-          typeVariable.bounds.forEachIndexed { index, bound ->
-            if (index > 0) parts.add(bound.combiner.symbol)
-            bound.modifier?.let { parts.add(it.keyword) }
-            parts.add(bound.type.reference(this@CodeWriter, scope))
+      emitCode(
+        buildString {
+          append(typeVariable.name)
+          if (typeVariable.bounds.isNotEmpty()) {
+            val parts = mutableListOf<String>()
+            parts.add(" extends")
+            typeVariable.bounds.forEachIndexed { index, bound ->
+              if (index > 0) parts.add(bound.combiner.symbol)
+              bound.modifier?.let { parts.add(it.keyword) }
+              parts.add(bound.type.reference(this@CodeWriter, scope))
+            }
+            append(parts.joinToString(" "))
           }
-          append(parts.joinToString(" "))
         }
-      })
+      )
     }
     emit(">")
   }
@@ -199,10 +200,12 @@ internal class CodeWriter constructor(
 
   private fun emitString(string: String?) {
     // Emit null as a literal null: no quotes.
-    emit(if (string != null)
-           stringLiteralWithQuotes(string, (0 until (indentLevel + 1)).joinToString("") { indent })
-         else
-           "null")
+    emit(
+      if (string != null)
+        stringLiteralWithQuotes(string, (0 until (indentLevel + 1)).joinToString("") { indent })
+      else
+        "null"
+    )
   }
 
   private fun emitLiteral(o: Any?, scope: List<String>) {
@@ -248,8 +251,7 @@ internal class CodeWriter constructor(
         emitIndentation()
         if (javaDoc) {
           out.append(" * ")
-        }
-        else if (comment) {
+        } else if (comment) {
           out.append("// ")
         }
       }
@@ -272,5 +274,4 @@ internal class CodeWriter constructor(
   fun requiredImports(): Set<SymbolSpec.Imported> {
     return referencedSymbols.filterIsInstance<SymbolSpec.Imported>().toImmutableSet()
   }
-
 }

@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-package io.outfoxx.typescriptpoet.test
+package io.outfoxx.typescriptpoet
 
-import org.junit.platform.runner.JUnitPlatform
-import org.junit.platform.suite.api.SelectPackages
-import org.junit.runner.RunWith
+interface SymbolReferenceTracker {
 
-
-@RunWith(JUnitPlatform::class)
-@SelectPackages("io.outfoxx.typescriptpoet.test")
-
-class AllTestSuite
+  fun referenced(symbol: SymbolSpec)
+}

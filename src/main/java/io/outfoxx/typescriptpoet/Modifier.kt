@@ -16,9 +16,9 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /** Available declaration modifiers. */
 enum class Modifier {
+
   EXPORT,
   PUBLIC,
   PROTECTED,
@@ -35,5 +35,4 @@ enum class Modifier {
 
   val keyword: String
     get() = name.toLowerCase()
-
 }

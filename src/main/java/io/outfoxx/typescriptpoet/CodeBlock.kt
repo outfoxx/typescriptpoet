@@ -16,7 +16,6 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /**
  * A fragment of a .ts file, potentially containing declarations, statements, and documentation.
  * Code blocks are not necessarily well-formed TypeScript code, and are not validated. This class
@@ -47,10 +46,11 @@ package io.outfoxx.typescriptpoet
  */
 class CodeBlock
 private constructor(
-   internal val formatParts: List<String>,
-   internal val args: List<Any?>,
-   internal val referencedSymbols: Set<SymbolSpec>
+  internal val formatParts: List<String>,
+  internal val args: List<Any?>,
+  internal val referencedSymbols: Set<SymbolSpec>
 ) {
+
   /** A heterogeneous list containing string literals and value placeholders.  */
 
   fun isEmpty() = formatParts.isEmpty()
@@ -78,15 +78,13 @@ private constructor(
         // for a string prefix match. If that doesn't match, we're done.
         if (index == prefix.formatParts.size - 1 && formatParts[index].startsWith(formatPart)) {
           firstFormatPart = formatParts[index].substring(formatPart.length)
-        }
-        else {
+        } else {
           return null
         }
       }
 
       // If the matching format part has an argument, check that too.
-      if (formatPart.startsWith("%") && !isNoArgPlaceholder(
-         formatPart[1])) {
+      if (formatPart.startsWith("%") && !isNoArgPlaceholder(formatPart[1])) {
         if (args[prefixArgCount] != prefix.args[prefixArgCount]) {
           return null // Argument doesn't match.
         }
@@ -150,6 +148,7 @@ private constructor(
   }
 
   class Builder : SymbolReferenceTracker {
+
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
     internal val referencedSymbols = mutableSetOf<SymbolSpec>()
@@ -209,8 +208,7 @@ private constructor(
           addArgument(format, formatChar, arguments[argumentName])
           formatParts += "%$formatChar"
           p += matchResult.range.endInclusive + 1
-        }
-        else {
+        } else {
           require(p < format.length - 1) { "dangling % at end" }
           require(isNoArgPlaceholder(format[p + 1])) {
             "unknown format %${format[p + 1]} at ${p + 1} in '$format'"
@@ -257,8 +255,7 @@ private constructor(
         do {
           require(p < format.length) { "dangling format characters in '$format'" }
           c = format[p++]
-        }
-        while (c in '0'..'9')
+        } while (c in '0'..'9')
         val indexEnd = p - 1
 
         // If 'c' doesn't take an argument, we're done.
@@ -278,16 +275,16 @@ private constructor(
           if (args.isNotEmpty()) {
             indexedParameterCount[index % args.size]++ // modulo is needed, checked below anyway
           }
-        }
-        else {
+        } else {
           index = relativeParameterCount
           hasRelative = true
           relativeParameterCount++
         }
 
         require(index >= 0 && index < args.size) {
-          "index ${index + 1} for '${format.substring(indexStart - 1,
-                                                      indexEnd + 1)}' not in range (received ${args.size} arguments)"
+          "index ${index + 1} for '${
+          format.substring(indexStart - 1, indexEnd + 1)
+          }' not in range (received ${args.size} arguments)"
         }
         require(!hasIndexed || !hasRelative) { "cannot mix indexed and positional parameters" }
 
@@ -320,7 +317,8 @@ private constructor(
         'S' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
         else -> throw IllegalArgumentException(
-           String.format("invalid format string: '%s'", format))
+          String.format("invalid format string: '%s'", format)
+        )
       }
     }
 
@@ -400,8 +398,7 @@ private constructor(
             parts.removeAt(i - 1)
             i += 2
           }
-        }
-        else {
+        } else {
           parts.add(s.replace(matching) { it.groups[2]!!.value })
         }
         i += 1
@@ -418,11 +415,14 @@ private constructor(
       formatParts += "%<"
     }
 
-    fun build() = CodeBlock(formatParts.toImmutableList(), args.toImmutableList(),
-                            referencedSymbols.toImmutableSet())
+    fun build() = CodeBlock(
+      formatParts.toImmutableList(), args.toImmutableList(),
+      referencedSymbols.toImmutableSet()
+    )
   }
 
   companion object {
+
     private val NAMED_ARGUMENT = Regex("%([\\w_]+):([\\w]).*")
     private val LOWERCASE = Regex("[a-z]+[\\w_]*")
     private const val ARG_NAME = 1
@@ -441,8 +441,11 @@ private constructor(
     internal fun isNoArgPlaceholder(c: Char) = c.isOneOf('%', '>', '<', '[', ']', 'W')
 
     @JvmOverloads
-    fun Collection<CodeBlock>.joinToCode(separator: CharSequence = ", ", prefix: CharSequence = "",
-                                         suffix: CharSequence = ""): CodeBlock {
+    fun Collection<CodeBlock>.joinToCode(
+      separator: CharSequence = ", ",
+      prefix: CharSequence = "",
+      suffix: CharSequence = ""
+    ): CodeBlock {
       val formatParts = mutableListOf<String>()
 
       if (prefix.isNotEmpty()) {
@@ -460,9 +463,11 @@ private constructor(
         formatParts += suffix.toString()
       }
 
-      return CodeBlock(formatParts, flatMap { it.args }, fold(setOf()) { prev, cur -> cur.referencedSymbols union prev })
+      return CodeBlock(
+        formatParts,
+        flatMap { it.args },
+        fold(setOf()) { prev, cur -> cur.referencedSymbols union prev }
+      )
     }
-
   }
-
 }

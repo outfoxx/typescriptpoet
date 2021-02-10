@@ -17,23 +17,23 @@
 package io.outfoxx.typescriptpoet
 
 import java.lang.Character.isISOControl
-import java.util.*
-
+import java.util.ArrayList
+import java.util.Collections
+import java.util.LinkedHashMap
+import java.util.LinkedHashSet
 
 internal object NullAppendable : Appendable {
+
   override fun append(charSequence: CharSequence) = this
   override fun append(charSequence: CharSequence, start: Int, end: Int) = this
   override fun append(c: Char) = this
 }
 
-internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V>
-   = Collections.unmodifiableMap(LinkedHashMap(this))
+internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> = Collections.unmodifiableMap(LinkedHashMap(this))
 
-internal fun <T> Collection<T>.toImmutableList(): List<T>
-   = Collections.unmodifiableList(ArrayList(this))
+internal fun <T> Collection<T>.toImmutableList(): List<T> = Collections.unmodifiableList(ArrayList(this))
 
-internal fun <T> Collection<T>.toImmutableSet(): Set<T>
-   = Collections.unmodifiableSet(LinkedHashSet(this))
+internal fun <T> Collection<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(LinkedHashSet(this))
 
 internal fun requireExactlyOneOf(modifiers: Set<Modifier>, vararg mutuallyExclusive: Modifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
@@ -56,17 +56,17 @@ internal fun requireNoneOf(modifiers: Set<Modifier>, vararg forbidden: Modifier)
 }
 
 internal fun <T> T.isOneOf(t1: T, t2: T, t3: T? = null, t4: T? = null, t5: T? = null, t6: T? = null) =
-   this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
+  this == t1 || this == t2 || this == t3 || this == t4 || this == t5 || this == t6
 
 // see https://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6
 internal fun characterLiteralWithoutDoubleQuotes(c: Char) = when {
-  c == '\b' -> "\\b"   // \u0008: backspace (BS)
-  c == '\t' -> "\\t"   // \u0009: horizontal tab (HT)
-  c == '\n' -> "\\n"   // \u000a: linefeed (LF)
-  c == '\r' -> "\\r"   // \u000d: carriage return (CR)
-  c == '\"' -> "\\\""  // \u0022: double quote (")
-  c == '\'' -> "'"     // \u0027: single quote (')
-  c == '\\' -> "\\\\"  // \u005c: backslash (\)
+  c == '\b' -> "\\b" // \u0008: backspace (BS)
+  c == '\t' -> "\\t" // \u0009: horizontal tab (HT)
+  c == '\n' -> "\\n" // \u000a: linefeed (LF)
+  c == '\r' -> "\\r" // \u000d: carriage return (CR)
+  c == '\"' -> "\\\"" // \u0022: double quote (")
+  c == '\'' -> "'" // \u0027: single quote (')
+  c == '\\' -> "\\\\" // \u005c: backslash (\)
   isISOControl(c) -> String.format("\\u%04x", c.toInt())
   else -> c.toString()
 }
@@ -103,32 +103,32 @@ internal val String.isName get() = split("\\.").none { it.isKeyword }
 
 // https://github.com/JetBrains/kotlin/blob/master/core/descriptors/src/org/jetbrains/kotlin/renderer/KeywordStringsGenerated.java
 private val KEYWORDS = setOf(
-   "package",
-   "as",
-   "typealias",
-   "class",
-   "this",
-   "super",
-   "val",
-   "var",
-   "fun",
-   "for",
-   "null",
-   "true",
-   "false",
-   "is",
-   "in",
-   "throw",
-   "return",
-   "break",
-   "continue",
-   "object",
-   "if",
-   "try",
-   "else",
-   "while",
-   "do",
-   "when",
-   "interface",
-   "typeof"
+  "package",
+  "as",
+  "typealias",
+  "class",
+  "this",
+  "super",
+  "val",
+  "var",
+  "fun",
+  "for",
+  "null",
+  "true",
+  "false",
+  "is",
+  "in",
+  "throw",
+  "return",
+  "break",
+  "continue",
+  "object",
+  "if",
+  "try",
+  "else",
+  "while",
+  "do",
+  "when",
+  "interface",
+  "typeof"
 )

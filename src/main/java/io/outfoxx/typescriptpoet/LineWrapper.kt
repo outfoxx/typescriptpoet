@@ -16,16 +16,16 @@
 
 package io.outfoxx.typescriptpoet
 
-
 /**
  * Implements soft line wrapping on an appendable. To use, append characters using
  * [LineWrapper.append] or soft-wrapping spaces using [LineWrapper.wrappingSpace].
  */
 internal class LineWrapper(
-   private val out: Appendable,
-   private val indent: String,
-   private val columnLimit: Int
+  private val out: Appendable,
+  private val indent: String,
+  private val columnLimit: Int
 ) {
+
   private var closed = false
 
   /** Characters written since the last wrapping space that haven't yet been flushed.  */
@@ -89,8 +89,7 @@ internal class LineWrapper(
       }
       column = indentLevel * indent.length
       column += buffer.length
-    }
-    else {
+    } else {
       out.append(' ')
     }
     out.append(buffer)
@@ -101,5 +100,4 @@ internal class LineWrapper(
   override fun toString(): String {
     return out.toString()
   }
-
 }

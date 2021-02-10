@@ -24,7 +24,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-
 /**
  * A TypeScript file containing top level objects like classes, objects, functions, properties, and type
  * aliases.
@@ -36,13 +35,13 @@ import java.nio.file.Paths
  */
 class FileSpec
 private constructor(
-   builder: Builder
+  builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
+
   val path = builder.path
   val comment = builder.comment.build()
   val members = builder.members.toList()
   val indent = builder.indent
-
 
   fun exportType(typeName: String): TypeName? {
     val typeNameParts = typeName.split('.')
@@ -53,20 +52,20 @@ private constructor(
 
   fun exportNamed(symbolName: String): SymbolSpec? {
     return members
-       .map {
-         when (it) {
-           is ModuleSpec -> it.name
-           is ClassSpec -> it.name
-           is InterfaceSpec -> it.name
-           is EnumSpec -> it.name
-           is FunctionSpec -> it.name
-           is PropertySpec -> it.name
-           is TypeAliasSpec -> it.name
-           else -> throw IllegalStateException("unrecognized member type")
-         }
-       }
-       .firstOrNull { it == symbolName }
-       ?.let { SymbolSpec.importsName(symbolName, "!" + path) }
+      .map {
+        when (it) {
+          is ModuleSpec -> it.name
+          is ClassSpec -> it.name
+          is InterfaceSpec -> it.name
+          is EnumSpec -> it.name
+          is FunctionSpec -> it.name
+          is PropertySpec -> it.name
+          is TypeAliasSpec -> it.name
+          else -> throw IllegalStateException("unrecognized member type")
+        }
+      }
+      .firstOrNull { it == symbolName }
+      ?.let { SymbolSpec.importsName(symbolName, "!" + path) }
   }
 
   fun exportAll(localName: String): SymbolSpec {
@@ -108,52 +107,51 @@ private constructor(
 
     val imports = codeWriter.requiredImports()
     val augmentImports = imports
-       .filterIsInstance<SymbolSpec.Augmented>()
-       .groupBy { it.augmented }
+      .filterIsInstance<SymbolSpec.Augmented>()
+      .groupBy { it.augmented }
     val sideEffectImports = imports
-       .filterIsInstance<SymbolSpec.SideEffect>()
-       .groupBy { it.source }
+      .filterIsInstance<SymbolSpec.SideEffect>()
+      .groupBy { it.source }
 
     if (imports.isNotEmpty()) {
       imports
-         .filter { it !is SymbolSpec.Augmented || it !is SymbolSpec.SideEffect }
-         .groupBy { FileModules.importPath(path, it.source) }
-         .toSortedMap()
-         .forEach { (sourceImportPath, imports) ->
-           if (path == sourceImportPath || Paths.get(".").resolve(path) == sourceImportPath) {
-             return@forEach
-           }
+        .filter { it !is SymbolSpec.Augmented || it !is SymbolSpec.SideEffect }
+        .groupBy { FileModules.importPath(path, it.source) }
+        .toSortedMap()
+        .forEach { (sourceImportPath, imports) ->
+          if (path == sourceImportPath || Paths.get(".").resolve(path) == sourceImportPath) {
+            return@forEach
+          }
 
-           imports.filterIsInstance<SymbolSpec.ImportsAll>().forEach { import ->
-             // Output star imports individually
-             codeWriter.emitCode(CodeBlock.of("%[import * as %L from '%L';\n%]", import.value, sourceImportPath), scope)
-             // Output related augments
-             augmentImports[import.value]?.forEach { augment ->
-               codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
-             }
-           }
+          imports.filterIsInstance<SymbolSpec.ImportsAll>().forEach { import ->
+            // Output star imports individually
+            codeWriter.emitCode(CodeBlock.of("%[import * as %L from '%L';\n%]", import.value, sourceImportPath), scope)
+            // Output related augments
+            augmentImports[import.value]?.forEach { augment ->
+              codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
+            }
+          }
 
-           imports.filterIsInstance<SymbolSpec.ImportsName>()
-              .map { it.value }
-              .toSortedSet()
-              .let { names ->
-                if (names.isEmpty()) return@let
-                // Output named imports as a group
-                codeWriter
-                   .emitCode("import {")
-                   .indent()
-                   .emitCode(names.joinToString(", "))
-                   .unindent()
-                   .emitCode(CodeBlock.of("} from '%L';\n", sourceImportPath), scope)
-                // Output related augments
-                names.forEach { name ->
-                  augmentImports[name]?.forEach { augment ->
-                    codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
-                  }
+          imports.filterIsInstance<SymbolSpec.ImportsName>()
+            .map { it.value }
+            .toSortedSet()
+            .let { names ->
+              if (names.isEmpty()) return@let
+              // Output named imports as a group
+              codeWriter
+                .emitCode("import {")
+                .indent()
+                .emitCode(names.joinToString(", "))
+                .unindent()
+                .emitCode(CodeBlock.of("} from '%L';\n", sourceImportPath), scope)
+              // Output related augments
+              names.forEach { name ->
+                augmentImports[name]?.forEach { augment ->
+                  codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
                 }
               }
-
-         }
+            }
+        }
 
       sideEffectImports.forEach {
         codeWriter.emitCode(CodeBlock.of("%[import %S;\n%]", it.key), scope)
@@ -186,7 +184,6 @@ private constructor(
       codeWriter.emit("\n")
       codeWriter.emitCode(member, scope)
     }
-
   }
 
   override fun equals(other: Any?): Boolean {
@@ -217,25 +214,26 @@ private constructor(
   }
 
   class Builder internal constructor(
-     internal val path: Path
+    internal val path: Path
   ) : Taggable.Builder<Builder>() {
+
     internal val comment = CodeBlock.builder()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()
 
     private fun checkMemberModifiers(modifiers: Set<Modifier>) {
       requireNoneOf(
-         modifiers,
-         Modifier.PUBLIC,
-         Modifier.PROTECTED,
-         Modifier.PRIVATE,
-         Modifier.READONLY,
-         Modifier.GET,
-         Modifier.SET,
-         Modifier.STATIC,
-         Modifier.CONST,
-         Modifier.LET,
-         Modifier.VAR
+        modifiers,
+        Modifier.PUBLIC,
+        Modifier.PROTECTED,
+        Modifier.PRIVATE,
+        Modifier.READONLY,
+        Modifier.GET,
+        Modifier.SET,
+        Modifier.STATIC,
+        Modifier.CONST,
+        Modifier.LET,
+        Modifier.VAR
       )
     }
 
@@ -270,9 +268,11 @@ private constructor(
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
-      requireExactlyOneOf(propertySpec.modifiers, Modifier.CONST,
-                                                    Modifier.LET,
-                                                    Modifier.VAR)
+      requireExactlyOneOf(
+        propertySpec.modifiers, Modifier.CONST,
+        Modifier.LET,
+        Modifier.VAR
+      )
       require(propertySpec.decorators.isEmpty()) { "decorators on file properties are not allowed" }
       checkMemberModifiers(propertySpec.modifiers)
       members += propertySpec
@@ -305,7 +305,8 @@ private constructor(
 
     @JvmStatic
     fun builder(fileName: String, directory: Path) = Builder(
-       directory.resolve(fileName))
+      directory.resolve(fileName)
+    )
 
     @JvmStatic
     fun builder(filePath: String) = Builder(Paths.get(filePath))
@@ -319,7 +320,5 @@ private constructor(
       file.members.addAll(module.members.toMutableList())
       return file
     }
-
   }
-
 }

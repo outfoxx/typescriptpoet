@@ -155,5 +155,4 @@ class SymbolSpecTests {
     assertThat(sym.source, equalTo("rxjs/add/operator/toPromise"))
     assertThat(sym.augmented, equalTo("Observable"))
   }
-
 }

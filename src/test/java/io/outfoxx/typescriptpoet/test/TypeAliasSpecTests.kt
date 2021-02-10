@@ -46,23 +46,23 @@ class TypeAliasSpecTests {
   @DisplayName("Generates JavaDoc at before class definition")
   fun testGenJavaDoc() {
     val testAlias = TypeAliasSpec.builder("Integer", TypeName.NUMBER)
-       .addJavadoc("this is a comment\n")
-       .build()
+      .addJavadoc("this is a comment\n")
+      .build()
 
     val out = StringWriter()
     testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             /**
              * this is a comment
              */
             type Integer = number;
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -70,65 +70,72 @@ class TypeAliasSpecTests {
   @DisplayName("Generates modifiers in order")
   fun testGenModifiersInOrder() {
     val testAlias = TypeAliasSpec.builder("Integer", TypeName.NUMBER)
-       .addModifiers(Modifier.EXPORT)
-       .build()
+      .addModifiers(Modifier.EXPORT)
+      .build()
 
     val out = StringWriter()
     testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             export type Integer = number;
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
-
 
   @Test
   @DisplayName("Generates simple alias")
   fun testSimpleAlias() {
     val testAlias = TypeAliasSpec.builder("Integer", TypeName.NUMBER)
-       .build()
+      .build()
 
     val out = StringWriter()
     testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             type Integer = number;
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
   @Test
   @DisplayName("Generates generic alias")
   fun testGenericAlias() {
-    val typeVar = TypeName.typeVariable("A", TypeName.bound(
-       TypeName.anyType("Test")))
-    val testAlias = TypeAliasSpec.builder("StringMap", TypeName.mapType(
-       TypeName.STRING, typeVar))
-       .addTypeVariable(typeVar)
-       .build()
+    val typeVar = TypeName.typeVariable(
+      "A",
+      TypeName.bound(
+        TypeName.anyType("Test")
+      )
+    )
+    val testAlias = TypeAliasSpec.builder(
+      "StringMap",
+      TypeName.mapType(
+        TypeName.STRING, typeVar
+      )
+    )
+      .addTypeVariable(typeVar)
+      .build()
 
     val out = StringWriter()
     testAlias.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             type StringMap<A extends Test> = Map<string, A>;
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -136,12 +143,18 @@ class TypeAliasSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testAliasBldr = TypeAliasSpec.builder("Test", TypeName.NUMBER)
-       .addJavadoc("this is a comment\n")
-       .addModifiers(Modifier.EXPORT)
-       .addTypeVariable(TypeName.typeVariable("A", TypeName.bound(
-          TypeName.anyType("Test"))))
-       .build()
-       .toBuilder()
+      .addJavadoc("this is a comment\n")
+      .addModifiers(Modifier.EXPORT)
+      .addTypeVariable(
+        TypeName.typeVariable(
+          "A",
+          TypeName.bound(
+            TypeName.anyType("Test")
+          )
+        )
+      )
+      .build()
+      .toBuilder()
 
     assertThat(testAliasBldr.name, equalTo("Test"))
     assertThat(testAliasBldr.type, equalTo<TypeName>(TypeName.NUMBER))
@@ -149,5 +162,4 @@ class TypeAliasSpecTests {
     assertThat(testAliasBldr.modifiers, hasItems(Modifier.EXPORT))
     assertThat(testAliasBldr.typeVariables.map { it.name }, hasItems("A"))
   }
-
 }

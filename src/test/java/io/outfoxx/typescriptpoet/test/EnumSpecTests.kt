@@ -17,7 +17,6 @@
 package io.outfoxx.typescriptpoet.test
 
 import io.outfoxx.typescriptpoet.CodeWriter
-import io.outfoxx.typescriptpoet.DecoratorSpec
 import io.outfoxx.typescriptpoet.EnumSpec
 import io.outfoxx.typescriptpoet.Modifier
 import io.outfoxx.typescriptpoet.tag
@@ -46,24 +45,24 @@ class EnumSpecTests {
   @DisplayName("Generates JavaDoc at before class definition")
   fun testGenJavaDoc() {
     val testClass = EnumSpec.builder("Test")
-       .addJavadoc("this is a comment\n")
-       .build()
+      .addJavadoc("this is a comment\n")
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             /**
              * this is a comment
              */
             enum Test {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -71,21 +70,21 @@ class EnumSpecTests {
   @DisplayName("Generates modifiers in order")
   fun testGenModifiersInOrder() {
     val testClass = EnumSpec.builder("Test")
-       .addModifiers(Modifier.EXPORT)
-       .build()
+      .addModifiers(Modifier.EXPORT)
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             export enum Test {
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -93,26 +92,26 @@ class EnumSpecTests {
   @DisplayName("Generates formatted constants")
   fun testGenConstants() {
     val testClass = EnumSpec.builder("Test")
-       .addConstant("A", "10")
-       .addConstant("B", "20")
-       .addConstant("C", "30")
-       .build()
+      .addConstant("A", "10")
+      .addConstant("B", "20")
+      .addConstant("C", "30")
+      .build()
 
     val out = StringWriter()
     testClass.emit(CodeWriter(out), scope = emptyList())
 
     assertThat(
-       out.toString(),
-       equalTo(
-          """
+      out.toString(),
+      equalTo(
+        """
             enum Test {
               A = 10,
               B = 20,
               C = 30
             }
 
-          """.trimIndent()
-       )
+        """.trimIndent()
+      )
     )
   }
 
@@ -120,16 +119,15 @@ class EnumSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testEnumBldr = EnumSpec.builder("Test")
-       .addJavadoc("this is a comment\n")
-       .addModifiers(Modifier.EXPORT)
-       .addConstant("A", "10")
-       .build()
-       .toBuilder()
+      .addJavadoc("this is a comment\n")
+      .addModifiers(Modifier.EXPORT)
+      .addConstant("A", "10")
+      .build()
+      .toBuilder()
 
     assertThat(testEnumBldr.name, equalTo("Test"))
     assertThat(testEnumBldr.javaDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testEnumBldr.modifiers, hasItems(Modifier.EXPORT))
     assertThat(testEnumBldr.constants.keys, hasItems("A"))
   }
-
 }
