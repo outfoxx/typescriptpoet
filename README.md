@@ -76,14 +76,14 @@ Download [the latest .jar][dl] or depend via Maven:
 <dependency>
   <groupId>io.outfoxx</groupId>
   <artifactId>typescriptpoet</artifactId>
-  <version>0.1.0</version>
+  <version>{RELEASE}</version>
 </dependency>
 ```
 
 or Gradle:
 
 ```groovy
-compile 'io.outfoxx:typescriptpoet:0.1.0'
+compile 'io.outfoxx:typescriptpoet:{RELEASE}'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
