@@ -23,7 +23,7 @@ import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
 class InterfaceSpec
 private constructor(
    builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
 
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
@@ -103,8 +103,8 @@ private constructor(
   }
 
   class Builder(
-     internal val name: String
-  ) {
+    internal val name: String
+  ) : Taggable.Builder<Builder>() {
 
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()

@@ -21,7 +21,7 @@ package io.outfoxx.typescriptpoet
 class EnumSpec
 private constructor(
    builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
@@ -69,7 +69,7 @@ private constructor(
   internal constructor(
      val name: String,
      val constants: MutableMap<String, CodeBlock?> = mutableMapOf()
-  ) {
+  ) : Taggable.Builder<Builder>() {
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
 

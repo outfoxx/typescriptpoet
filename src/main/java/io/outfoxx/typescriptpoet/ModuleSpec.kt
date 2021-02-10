@@ -21,7 +21,7 @@ package io.outfoxx.typescriptpoet
 class ModuleSpec
 private constructor(
   builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
 
   enum class Type(val keyword: String) {
     MODULE("module"),
@@ -96,7 +96,7 @@ private constructor(
   internal constructor(
     internal val name: String,
     internal val type: Type = Type.NAMESPACE
-  ) {
+  ) : Taggable.Builder<Builder>() {
 
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()

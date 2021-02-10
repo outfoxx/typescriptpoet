@@ -23,9 +23,19 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.StringWriter
 
-
 @DisplayName("ClassSpec Tests")
 class ClassSpecTests {
+
+  @Test
+  @DisplayName("Tags on builders can be retrieved on builders and built specs")
+  fun testTags() {
+    val testClassBuilder = ClassSpec.builder("Test")
+      .tag(5)
+    val testClass = testClassBuilder.build()
+
+    assertThat(testClassBuilder.tags[Integer::class] as? Int, equalTo(5))
+    assertThat(testClass.tag(), equalTo(5))
+  }
 
   @Test
   @DisplayName("Generates JavaDoc at before class definition")

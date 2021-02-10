@@ -37,7 +37,7 @@ import java.nio.file.Paths
 class FileSpec
 private constructor(
    builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
   val path = builder.path
   val comment = builder.comment.build()
   val members = builder.members.toList()
@@ -218,7 +218,7 @@ private constructor(
 
   class Builder internal constructor(
      internal val path: Path
-  ) {
+  ) : Taggable.Builder<Builder>() {
     internal val comment = CodeBlock.builder()
     internal var indent = "  "
     internal val members = mutableListOf<Any>()

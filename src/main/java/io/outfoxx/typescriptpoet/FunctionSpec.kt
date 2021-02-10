@@ -21,7 +21,7 @@ package io.outfoxx.typescriptpoet
 class FunctionSpec
 private constructor(
    builder: Builder
-) {
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val decorators = builder.decorators.toImmutableList()
@@ -138,7 +138,9 @@ private constructor(
     return builder
   }
 
-  class Builder internal constructor(internal val name: String) {
+  class Builder internal constructor(
+    internal val name: String
+  ) : Taggable.Builder<Builder>() {
     internal val javaDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableSetOf<Modifier>()

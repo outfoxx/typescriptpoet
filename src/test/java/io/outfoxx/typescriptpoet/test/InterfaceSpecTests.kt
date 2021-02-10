@@ -24,9 +24,19 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import java.io.StringWriter
 
-
 @DisplayName("InterfaceSpec Tests")
 class InterfaceSpecTests {
+
+  @Test
+  @DisplayName("Tags on builders can be retrieved on builders and built specs")
+  fun testTags() {
+    val testBuilder = InterfaceSpec.builder("Test")
+      .tag(5)
+    val testSpec = testBuilder.build()
+
+    assertThat(testBuilder.tags[Integer::class] as? Int, equalTo(5))
+    assertThat(testSpec.tag(), equalTo(5))
+  }
 
   @Test
   @DisplayName("Generates JavaDoc at before interface definition")

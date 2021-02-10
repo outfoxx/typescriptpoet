@@ -20,8 +20,8 @@ package io.outfoxx.typescriptpoet
 /** A generated typealias declaration */
 class TypeAliasSpec
 private constructor(
-   builder: Builder
-) {
+  builder: Builder
+) : Taggable(builder.tags.toImmutableMap()) {
   val name = builder.name
   val type = builder.type
   val javaDoc = builder.javaDoc.build()
@@ -57,9 +57,9 @@ private constructor(
   }
 
   class Builder internal constructor(
-     internal val name: String,
-     internal val type: TypeName
-  ) {
+    internal val name: String,
+    internal val type: TypeName
+  ) : Taggable.Builder<Builder>() {
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()
     internal val typeVariables = mutableSetOf<TypeName.TypeVariable>()
