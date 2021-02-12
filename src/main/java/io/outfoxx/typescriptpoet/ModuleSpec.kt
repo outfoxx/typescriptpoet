@@ -191,6 +191,9 @@ private constructor(
   companion object {
 
     @JvmStatic
-    fun builder(name: String) = Builder(name)
+    fun builder(name: String, type: Type = Type.NAMESPACE) = Builder(name, type)
+
+    @JvmStatic
+    fun builder(name: TypeName, type: Type = Type.NAMESPACE) = builder(name.reference(), type)
   }
 }
