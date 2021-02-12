@@ -20,14 +20,14 @@ package io.outfoxx.typescriptpoet
 class EnumSpec
 private constructor(
   builder: Builder
-) : Taggable(builder.tags.toImmutableMap()) {
+) : TypeSpec<EnumSpec, EnumSpec.Builder>(builder) {
 
-  val name = builder.name
+  override val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val constants = builder.constants.toImmutableMap()
 
-  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers, setOf())
@@ -66,9 +66,9 @@ private constructor(
 
   class Builder
   internal constructor(
-    val name: String,
+    name: String,
     val constants: MutableMap<String, CodeBlock?> = mutableMapOf()
-  ) : Taggable.Builder<Builder>() {
+  ) : TypeSpec.Builder<EnumSpec, Builder>(name) {
 
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
@@ -94,7 +94,7 @@ private constructor(
       constants.put(name, initializer)
     }
 
-    fun build(): EnumSpec {
+    override fun build(): EnumSpec {
       return EnumSpec(this)
     }
   }

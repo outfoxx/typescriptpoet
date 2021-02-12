@@ -22,9 +22,9 @@ import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
 class InterfaceSpec
 private constructor(
   builder: Builder
-) : Taggable(builder.tags.toImmutableMap()) {
+) : TypeSpec<InterfaceSpec, InterfaceSpec.Builder>(builder) {
 
-  val name = builder.name
+  override val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -34,7 +34,7 @@ private constructor(
   val indexableSpecs = builder.indexableSpecs.toImmutableList()
   val callable = builder.callable
 
-  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers, setOf())
@@ -108,8 +108,8 @@ private constructor(
   }
 
   class Builder(
-    internal val name: String
-  ) : Taggable.Builder<Builder>() {
+    name: String
+  ) : TypeSpec.Builder<InterfaceSpec, Builder>(name) {
 
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
@@ -188,7 +188,7 @@ private constructor(
       this.callable = callable
     }
 
-    fun build(): InterfaceSpec {
+    override fun build(): InterfaceSpec {
       return InterfaceSpec(this)
     }
   }

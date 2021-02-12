@@ -22,9 +22,9 @@ import io.outfoxx.typescriptpoet.CodeBlock.Companion.joinToCode
 class ClassSpec
 private constructor(
   builder: Builder
-) : Taggable(builder.tags.toImmutableMap()) {
+) : TypeSpec<ClassSpec, ClassSpec.Builder>(builder) {
 
-  val name = builder.name
+  override val name = builder.name
   val javaDoc = builder.javaDoc.build()
   val decorators = builder.decorators.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
@@ -36,7 +36,7 @@ private constructor(
   val functionSpecs = builder.functionSpecs.toImmutableList()
   val useConstructorPropertiesAutomatically = builder.useConstructorPropertiesAutomatically
 
-  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
 
     val constructorProperties: Map<String, PropertySpec> =
       if (useConstructorPropertiesAutomatically)
@@ -190,8 +190,8 @@ private constructor(
   }
 
   class Builder(
-    internal val name: String
-  ) : Taggable.Builder<Builder>() {
+    name: String
+  ) : TypeSpec.Builder<ClassSpec, Builder>(name) {
 
     internal val javaDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
@@ -278,7 +278,7 @@ private constructor(
       this.useConstructorPropertiesAutomatically = value
     }
 
-    fun build(): ClassSpec {
+    override fun build(): ClassSpec {
       val isAbstract = modifiers.contains(Modifier.ABSTRACT)
       for (functionSpec in functionSpecs) {
         require(isAbstract || !functionSpec.modifiers.contains(Modifier.ABSTRACT)) {
