@@ -94,7 +94,7 @@ private constructor(
 
       codeWriter.emit("constructor")
 
-      var body = constructor.body
+      val body = constructor.body
 
       // Emit constructor parameters & property specs that can be replaced with parameters
       it.parameters.emit(
@@ -121,12 +121,6 @@ private constructor(
           }
           property.emit(codeWriter, setOf(), compactOptionalAllowed = false, withInitializer = false, scope = scope)
           param.emitDefaultValue(codeWriter, scope)
-
-          // Remove initializing statements
-
-          val bodyBuilder = body.toBuilder()
-          bodyBuilder.remove(constructorPropertyInitSearch(property.name))
-          body = bodyBuilder.build()
         } else {
           param.emit(
             codeWriter,
@@ -167,26 +161,8 @@ private constructor(
   }
 
   /** Returns the properties that can be declared inline as constructor parameters. */
-  private fun constructorProperties(): Map<String, PropertySpec> {
-    val result: MutableMap<String, PropertySpec> = LinkedHashMap()
-    val body = constructor?.body?.toString() ?: return result
-    for (property in propertySpecs) {
-      val parameter = constructor.parameter(property.name) ?: continue
-      if (parameter.type != property.type) continue
-      if (parameter.optional != property.optional) continue
-      if (property.initializer != null) continue
-      if (!body.contains(constructorPropertyInitSearch(property.name))) continue
-      result[property.name] =
-        property.toBuilder()
-          .addDecorators(parameter.decorators)
-          .build()
-    }
-    return result
-  }
-
-  private fun constructorPropertyInitSearch(name: String): Regex {
-    return """(\A|\n|;)\s*\Qthis.$name = $name\E[ \t\x0B\f\r]*(\n|;|\z)""".toRegex()
-  }
+  private fun constructorProperties(): Map<String, PropertySpec> =
+    propertySpecs.filter { it.name == it.initializer?.toString() }.map { it.name to it }.toMap()
 
   private val hasNoBody: Boolean
     get() {
