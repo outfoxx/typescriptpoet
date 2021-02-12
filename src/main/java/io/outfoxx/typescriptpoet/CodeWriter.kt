@@ -152,6 +152,8 @@ internal class CodeWriter constructor(
 
         "%S" -> emitString(codeBlock.args[a++] as String?)
 
+        "%P" -> emitStringTemplate(codeBlock.args[a++] as String?)
+
         "%T" -> emitTypeName(codeBlock.args[a++] as TypeName, scope)
 
         "%%" -> emit("%")
@@ -203,6 +205,16 @@ internal class CodeWriter constructor(
     emit(
       if (string != null)
         stringLiteralWithQuotes(string, (0 until (indentLevel + 1)).joinToString("") { indent })
+      else
+        "null"
+    )
+  }
+
+  private fun emitStringTemplate(string: String?) {
+    // Emit null as a literal null: no quotes.
+    emit(
+      if (string != null)
+        stringTemplateLiteralWithBackticks(string, (0 until (indentLevel + 1)).joinToString("") { indent })
       else
         "null"
     )

@@ -32,6 +32,8 @@ package io.outfoxx.typescriptpoet
  *    [properties][PropertySpec], [functions][FunSpec], and [types][ClassSpec].
  *  * `%S` escapes the value as a *string*, wraps it with double quotes, and emits that. For
  *    example, `6" sandwich` is emitted `"6\" sandwich"`.
+ *  * `%P` escapes the value as a *template*, wraps it with backticks, and emits that. For
+ *    example, `6" sandwich` is emitted `\`6" sandwich\``.
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
@@ -314,7 +316,7 @@ private constructor(
       when (c) {
         'N' -> this.args += argToName(arg)
         'L' -> this.args += argToLiteral(arg)
-        'S' -> this.args += argToString(arg)
+        'S', 'P' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
         else -> throw IllegalArgumentException(
           String.format("invalid format string: '%s'", format)
