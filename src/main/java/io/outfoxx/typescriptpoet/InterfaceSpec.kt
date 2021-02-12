@@ -199,6 +199,9 @@ private constructor(
     fun builder(name: String) = Builder(name)
 
     @JvmStatic
+    fun builder(name: TypeName) = Builder(name.reference(null, null))
+
+    @JvmStatic
     fun builder(classSpec: ClassSpec): Builder {
       val builder = Builder(classSpec.name)
         .addModifiers(*classSpec.modifiers.toTypedArray())
