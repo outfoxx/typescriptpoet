@@ -59,6 +59,8 @@ internal constructor(
     }
   }
 
+  override fun toString() = buildCodeString { emit(this, false, emptyList()) }
+
   fun toBuilder(): Builder {
     val builder = Builder(name)
     builder.parameters += parameters

@@ -275,3 +275,9 @@ internal class CodeWriter constructor(
     return referencedSymbols.filterIsInstance<SymbolSpec.Imported>().toImmutableSet()
   }
 }
+
+internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
+  val stringBuilder = StringBuilder()
+  CodeWriter(stringBuilder).builderAction()
+  return stringBuilder.toString()
+}

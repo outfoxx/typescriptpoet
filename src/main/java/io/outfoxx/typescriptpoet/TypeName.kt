@@ -33,7 +33,9 @@ sealed class TypeName {
    * @param trackedBy An optional symbol tracker that is notified of each symbol used
    * @return String type representation in TypeScript syntax
    */
-  abstract fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String
+  abstract fun reference(trackedBy: SymbolReferenceTracker? = null, relativeTo: List<String>? = null): String
+
+  override fun toString() = reference()
 
   data class Any
   internal constructor(
@@ -45,6 +47,8 @@ sealed class TypeName {
       imported?.reference(trackedBy)
       return usage.removePrefix(relativeTo?.joinToString(".")?.plus(".") ?: "")
     }
+
+    override fun toString() = reference()
   }
 
   data class Parameterized
@@ -58,6 +62,8 @@ sealed class TypeName {
       val typeArgs = typeArgs.map { it.reference(trackedBy, relativeTo) }
       return "$name<${typeArgs.joinToString(", ")}>"
     }
+
+    override fun toString() = reference()
   }
 
   data class TypeVariable
@@ -91,6 +97,8 @@ sealed class TypeName {
     override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
       return name
     }
+
+    override fun toString() = reference()
   }
 
   data class Anonymous
@@ -113,6 +121,8 @@ sealed class TypeName {
       }
       return "{ $entries }"
     }
+
+    override fun toString() = reference()
   }
 
   data class Tuple
@@ -124,6 +134,8 @@ sealed class TypeName {
       val typeRequirements = memberTypes.map { it.reference(trackedBy, relativeTo) }
       return "[${typeRequirements.joinToString(", ")}]"
     }
+
+    override fun toString() = reference()
   }
 
   data class Intersection
@@ -135,6 +147,8 @@ sealed class TypeName {
       val typeRequirements = typeRequirements.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" & ")
     }
+
+    override fun toString() = reference()
   }
 
   data class Union
@@ -146,6 +160,8 @@ sealed class TypeName {
       val typeRequirements = typeChoices.map { it.reference(trackedBy, relativeTo) }
       return typeRequirements.joinToString(" | ")
     }
+
+    override fun toString() = reference()
   }
 
   data class Lambda
@@ -158,6 +174,8 @@ sealed class TypeName {
       val params = parameters.map { "${it.key}: ${it.value.reference(trackedBy, relativeTo)}" }.joinToString(", ")
       return "($params) => ${returnType.reference(trackedBy, relativeTo)}"
     }
+
+    override fun toString() = reference()
   }
 
   companion object {
