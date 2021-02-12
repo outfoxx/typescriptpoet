@@ -186,6 +186,14 @@ private constructor(
     }
   }
 
+  fun isEmpty(): Boolean {
+    return members.isEmpty()
+  }
+
+  fun isNotEmpty(): Boolean {
+    return !isEmpty()
+  }
+
   override fun equals(other: Any?): Boolean {
     if (this === other) return true
     if (other == null) return false
@@ -195,15 +203,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { writeTo(this) }
-
-  fun isEmpty(): Boolean {
-    return members.isEmpty()
-  }
-
-  fun isNotEmpty(): Boolean {
-    return !isEmpty()
-  }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(): Builder {
     val builder = Builder(path)

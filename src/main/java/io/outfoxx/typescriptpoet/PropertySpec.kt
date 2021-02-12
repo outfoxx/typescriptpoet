@@ -58,6 +58,8 @@ private constructor(
     }
   }
 
+  override fun toString() = buildCodeString { emit(this, emptySet(), scope = emptyList()) }
+
   fun toBuilder(): Builder {
     val bldr = Builder(name, type, optional)
       .addJavadoc(javaDoc)

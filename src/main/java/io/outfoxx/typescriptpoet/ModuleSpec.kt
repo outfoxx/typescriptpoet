@@ -83,6 +83,8 @@ private constructor(
     return !isEmpty()
   }
 
+  override fun toString() = buildCodeString { emit(this, emptyList()) }
+
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
     builder.javaDoc.add(javaDoc)
