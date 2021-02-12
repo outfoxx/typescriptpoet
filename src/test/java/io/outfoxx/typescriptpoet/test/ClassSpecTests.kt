@@ -318,8 +318,12 @@ class ClassSpecTests {
   @DisplayName("Generates constructor with shorthand properties")
   fun testGenConstructorShorthandProperties() {
     val testClass = ClassSpec.builder("Test")
-      .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
-      .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
+      .addProperty(
+        PropertySpec.builder("value", TypeName.NUMBER, false, Modifier.PRIVATE).initializer("value").build()
+      )
+      .addProperty(
+        PropertySpec.builder("value2", TypeName.STRING, false, Modifier.PUBLIC).initializer("value2").build()
+      )
       .addProperty("value3", TypeName.BOOLEAN, true, Modifier.PUBLIC)
       .constructor(
         FunctionSpec.constructorBuilder()
@@ -328,9 +332,8 @@ class ClassSpecTests {
           .addParameter("value3", TypeName.BOOLEAN, true)
           .addCode(
             CodeBlock.builder()
-              .add("val testing = 'need other code'; this.value = value\n")
+              .addStatement("val testing = 'need other code'")
               .addStatement("anotherTestStatement()")
-              .addStatement("this.value2 = value2")
               .addStatement("this.value3 = value3 || testing == ''")
               .build()
           )
@@ -350,7 +353,7 @@ class ClassSpecTests {
               value3: boolean | undefined;
 
               constructor(private value: number, public value2: string, value3: boolean | undefined) {
-                val testing = 'need other code'
+                val testing = 'need other code';
                 anotherTestStatement();
                 this.value3 = value3 || testing == '';
               }
@@ -411,18 +414,20 @@ class ClassSpecTests {
         """
             class Test {
 
+              private value: number;
+
+              value2: string;
+
               value3: boolean | undefined;
 
               constructor(
-                  @MyDec(
-                    /* value */ 'test-value'
-                  )
-                  private value: number,
-                  public value2: string,
+                  @MyDec(/* value */ 'test-value') value: number,
+                  value2: string,
                   @MyDec('test-value') value3: boolean | undefined
               ) {
-                val testing = 'need other code'
+                val testing = 'need other code'; this.value = value
                 anotherTestStatement();
+                this.value2 = value2;
                 this.value3 = value3 || testing == '';
               }
 
@@ -444,9 +449,14 @@ class ClassSpecTests {
               .addParameter("value", "%S", "test-value")
               .build()
           )
+          .initializer("value")
           .build()
       )
-      .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
+      .addProperty(
+        PropertySpec.builder("value2", TypeName.STRING, false, Modifier.PUBLIC)
+          .initializer("value2")
+          .build()
+      )
       .addProperty("value3", TypeName.BOOLEAN, true, Modifier.PUBLIC)
       .constructor(
         FunctionSpec.constructorBuilder()
@@ -455,9 +465,8 @@ class ClassSpecTests {
           .addParameter("value3", TypeName.BOOLEAN, true)
           .addCode(
             CodeBlock.builder()
-              .add("val testing = 'need other code'; this.value = value\n")
+              .addStatement("val testing = 'need other code'")
               .addStatement("anotherTestStatement()")
-              .addStatement("this.value2 = value2")
               .addStatement("this.value3 = value3 || testing == ''")
               .build()
           )
@@ -484,7 +493,7 @@ class ClassSpecTests {
                   public value2: string,
                   value3: boolean | undefined
               ) {
-                val testing = 'need other code'
+                val testing = 'need other code';
                 anotherTestStatement();
                 this.value3 = value3 || testing == '';
               }
