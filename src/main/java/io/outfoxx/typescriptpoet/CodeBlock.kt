@@ -331,7 +331,7 @@ private constructor(
       is ParameterSpec -> o.name
       is PropertySpec -> o.name
       is FunctionSpec -> o.name
-      is ClassSpec -> o.name
+      is TypeSpec<*, *> -> o.name
       else -> throw IllegalArgumentException("expected name but was $o")
     }
 
