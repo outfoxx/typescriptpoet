@@ -20,15 +20,15 @@ package io.outfoxx.typescriptpoet
 class TypeAliasSpec
 private constructor(
   builder: Builder
-) : Taggable(builder.tags.toImmutableMap()) {
+) : TypeSpec<TypeAliasSpec, TypeAliasSpec.Builder>(builder) {
 
-  val name = builder.name
+  override val name = builder.name
   val type = builder.type
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
 
-  internal fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
     codeWriter.emitJavaDoc(javaDoc, scope)
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode(CodeBlock.of("type %L", name), scope)
@@ -57,9 +57,9 @@ private constructor(
   }
 
   class Builder internal constructor(
-    internal val name: String,
+    name: String,
     internal val type: TypeName
-  ) : Taggable.Builder<Builder>() {
+  ) : TypeSpec.Builder<TypeAliasSpec, Builder>(name) {
 
     internal val javaDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()
@@ -96,7 +96,7 @@ private constructor(
       typeVariables += typeVariable
     }
 
-    fun build() = TypeAliasSpec(this)
+    override fun build() = TypeAliasSpec(this)
   }
 
   companion object {
