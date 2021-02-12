@@ -82,7 +82,7 @@ class ParameterSpec private constructor(
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-    val optional: Boolean = false
+    internal var optional: Boolean
   ) : Taggable.Builder<Builder>() {
 
     internal val decorators = mutableListOf<DecoratorSpec>()
@@ -107,6 +107,10 @@ class ParameterSpec private constructor(
 
     fun addModifiers(modifiers: Iterable<Modifier>) = apply {
       this.modifiers += modifiers
+    }
+
+    fun optional(optional: Boolean) = apply {
+      this.optional = optional
     }
 
     fun defaultValue(format: String, vararg args: Any?) = defaultValue(

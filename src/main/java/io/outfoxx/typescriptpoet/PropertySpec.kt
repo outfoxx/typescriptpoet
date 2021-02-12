@@ -73,7 +73,7 @@ private constructor(
   class Builder internal constructor(
     internal val name: String,
     internal val type: TypeName,
-    val optional: Boolean = false
+    internal var optional: Boolean
   ) : Taggable.Builder<Builder>() {
 
     internal val javaDoc = CodeBlock.builder()
@@ -99,6 +99,10 @@ private constructor(
 
     fun addModifiers(vararg modifiers: Modifier) = apply {
       this.modifiers += modifiers
+    }
+
+    fun optional(optional: Boolean) = apply {
+      this.optional = optional
     }
 
     fun initializer(format: String, vararg args: Any?) = initializer(
