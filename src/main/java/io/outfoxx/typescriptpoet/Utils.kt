@@ -82,6 +82,11 @@ internal fun stringLiteralWithQuotes(value: String, multiLineIndent: String): St
         result.append("\\\'")
         continue
       }
+      // Trivial case: dollar sign must be escaped.
+      if (c == '$') {
+        result.append("\\$")
+        continue
+      }
       // Trivial case: double quotes must not be escaped.
       if (c == '\"') {
         result.append('"')
@@ -89,9 +94,36 @@ internal fun stringLiteralWithQuotes(value: String, multiLineIndent: String): St
       }
       // Default case: just let character literal do its work.
       result.append(characterLiteralWithoutDoubleQuotes(c))
-      // Need to append indent after linefeed?
     }
     result.append('\'')
+
+    result.toString()
+  }
+}
+
+/** Returns the string template literal representing `value`, including wrapping backticks.  */
+internal fun stringTemplateLiteralWithBackticks(value: String, multiLineIndent: String): String {
+  return value.split("\n").joinToString("\n$multiLineIndent", prefix = "`", postfix = "`") { line ->
+    val result = StringBuilder(line.length + 32)
+    for (c in line) {
+      // Trivial case: single quote must not be escaped.
+      if (c == '\'') {
+        result.append("'")
+        continue
+      }
+      // Trivial case: dollar sign must not be escaped.
+      if (c == '$') {
+        result.append("$")
+        continue
+      }
+      // Trivial case: double quotes must not be escaped.
+      if (c == '\"') {
+        result.append('"')
+        continue
+      }
+      // Default case: just let character literal do its work.
+      result.append(characterLiteralWithoutDoubleQuotes(c))
+    }
 
     result.toString()
   }
