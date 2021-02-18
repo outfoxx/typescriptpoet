@@ -50,10 +50,6 @@ internal class CodeWriter constructor(
     scope.pop()
   }
 
-  fun addSymbol(symbol: SymbolSpec) {
-    referencedSymbols.add(symbol)
-  }
-
   /**
    * When emitting a statement, this is the line of the statement currently being written. The first
    * line of a statement is indented normally and subsequent wrapped lines are double-indented. This
@@ -151,8 +147,16 @@ internal class CodeWriter constructor(
   }
 
   fun emitSymbol(symbolSpec: SymbolSpec) {
-    referencedSymbols.add(symbolSpec)
-    emit(renamedSymbols[symbolSpec] ?: symbolSpec.value)
+    if (symbolSpec.isTopLevel) {
+      referencedSymbols.add(symbolSpec)
+      emit(renamedSymbols[symbolSpec] ?: symbolSpec.value)
+    } else {
+      val topLevel = symbolSpec.topLevel()
+      referencedSymbols.add(topLevel)
+      emit(renamedSymbols[topLevel] ?: topLevel.value)
+      emit(".")
+      emit(symbolSpec.value.split(".").drop(1).joinToString("."))
+    }
   }
 
   fun emitCode(s: String) = emitCode(CodeBlock.of(s))
@@ -162,8 +166,7 @@ internal class CodeWriter constructor(
     var a = 0
     val partIterator = codeBlock.formatParts.listIterator()
     while (partIterator.hasNext()) {
-      val part = partIterator.next()
-      when (part) {
+      when (val part = partIterator.next()) {
         "%L" -> emitLiteral(codeBlock.args[a++])
 
         "%N" -> emit(codeBlock.args[a++] as String)
@@ -243,7 +246,7 @@ internal class CodeWriter constructor(
       is ClassSpec -> o.emit(this)
       is InterfaceSpec -> o.emit(this)
       is EnumSpec -> o.emit(this)
-      is DecoratorSpec -> o.emit(this, true, true)
+      is DecoratorSpec -> o.emit(this, inline = true, asParameter = true)
       is CodeBlock -> emitCode(o)
       else -> emit(o.toString())
     }

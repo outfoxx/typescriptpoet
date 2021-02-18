@@ -25,6 +25,13 @@ sealed class SymbolSpec(
   open val value: String
 ) {
 
+  abstract fun nested(name: String): SymbolSpec
+  abstract fun enclosing(): SymbolSpec?
+  abstract fun topLevel(): SymbolSpec
+
+  val isTopLevel: Boolean
+    get() = value.count { it == '.' } == 0
+
   companion object {
 
     private val fileNamePattern =
@@ -103,20 +110,6 @@ sealed class SymbolSpec(
     }
 
     /**
-     * Creates an import of all the modules exported symbols as a single
-     * local named symbol
-     *
-     * e.g. `import * as Engine from 'templates';`
-     *
-     * @param localName The local name of the imported symbols
-     * @param from The module to import the symbols from
-     */
-    @JvmStatic
-    fun importsAll(localName: String, from: String): SymbolSpec {
-      return ImportsAll(localName, from)
-    }
-
-    /**
      * Creates an import of a single named symbol from the module's exported
      * symbols.
      *
@@ -128,6 +121,20 @@ sealed class SymbolSpec(
     @JvmStatic
     fun importsName(exportedName: String, from: String): SymbolSpec {
       return ImportsName(exportedName, from)
+    }
+
+    /**
+     * Creates an import of all the modules exported symbols as a single
+     * local named symbol
+     *
+     * e.g. `import * as Engine from 'templates';`
+     *
+     * @param localName The local name of the imported symbols
+     * @param from The module to import the symbols from
+     */
+    @JvmStatic
+    fun importsAll(localName: String, from: String): SymbolSpec {
+      return ImportsAll(localName, from)
     }
 
     /**
@@ -176,7 +183,12 @@ sealed class SymbolSpec(
   data class Implicit
   internal constructor(
     override val value: String
-  ) : SymbolSpec(value)
+  ) : SymbolSpec(value) {
+
+    override fun nested(name: String) = Implicit("$value.$name")
+    override fun enclosing() = value.parentSegment()?.let { Implicit(it) }
+    override fun topLevel() = Implicit(value.topLevelSegment())
+  }
 
   /**
    * Common base class for imported symbols
@@ -196,7 +208,12 @@ sealed class SymbolSpec(
   internal constructor(
     override val value: String,
     override val source: String
-  ) : Imported(value, source)
+  ) : Imported(value, source) {
+
+    override fun nested(name: String) = ImportsName("$value.$name", source)
+    override fun enclosing() = value.parentSegment()?.let { ImportsName(it, source) }
+    override fun topLevel() = ImportsName(value.topLevelSegment(), source)
+  }
 
   /**
    * Imports all of the modules exported symbols as a single
@@ -208,7 +225,12 @@ sealed class SymbolSpec(
   internal constructor(
     override val value: String,
     override val source: String
-  ) : Imported(value, source)
+  ) : Imported(value, source) {
+
+    override fun nested(name: String) = ImportsAll("$value.$name", source)
+    override fun enclosing() = value.parentSegment()?.let { ImportsAll(it, source) }
+    override fun topLevel() = ImportsAll(value.topLevelSegment(), source)
+  }
 
   /**
    * A symbol that is brought in by a whole module import
@@ -221,7 +243,12 @@ sealed class SymbolSpec(
     override val value: String,
     override val source: String,
     val augmented: String
-  ) : Imported(value, source)
+  ) : Imported(value, source) {
+
+    override fun nested(name: String) = Augmented("$value.$name", source, augmented)
+    override fun enclosing() = value.parentSegment()?.let { Augmented(it, source, augmented) }
+    override fun topLevel() = Augmented(value.topLevelSegment(), source, augmented)
+  }
 
   /**
    * A symbol that is brought in as a side effect of an
@@ -233,5 +260,10 @@ sealed class SymbolSpec(
   internal constructor(
     override val value: String,
     override val source: String
-  ) : Imported(value, source)
+  ) : Imported(value, source) {
+
+    override fun nested(name: String) = SideEffect("$value.$name", source)
+    override fun enclosing() = value.parentSegment()?.let { SideEffect(it, source) }
+    override fun topLevel() = SideEffect(value.topLevelSegment(), source)
+  }
 }
