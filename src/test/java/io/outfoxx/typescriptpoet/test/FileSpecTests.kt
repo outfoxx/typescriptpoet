@@ -100,7 +100,7 @@ class FileSpecTests {
   @Test
   @DisplayName("Generates star imports")
   fun testStarImports() {
-    val typeName = TypeName.symbolized(
+    val typeName = TypeName.standard(
       SymbolSpec.importsAll("stuff", "stuff/types")
     )
 
@@ -133,7 +133,7 @@ class FileSpecTests {
   @DisplayName("Generates augment imports")
   fun testAugmentImports() {
     val typeName1 = TypeName.namedImport("Observable", "rxjs/observable")
-    val typeName2 = TypeName.symbolized(
+    val typeName2 = TypeName.standard(
       SymbolSpec.augmented("flatMap", "rxjs/operators/flatMap", "Observable")
     )
 
@@ -172,7 +172,7 @@ class FileSpecTests {
   @Test
   @DisplayName("Generates side effect imports")
   fun testSideEffectImports() {
-    val typeName = TypeName.symbolized(
+    val typeName = TypeName.standard(
       SymbolSpec.sideEffect("describe", "mocha")
     )
 
@@ -240,6 +240,51 @@ class FileSpecTests {
           type LocalTest2 = Test_;
           
           type Another = Another_;
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  @DisplayName("Generates renamed imports on collision for nested types")
+  fun testCollisionRenamesNested() {
+    val typeName1 = TypeName.namedImport("Test", "test1")
+    val typeName2 = TypeName.namedImport("Test.Kind", "test2")
+    val typeName3 = TypeName.namedImport("Another.Kind", "test1")
+
+    val testFile =
+      FileSpec.builder("test.ts")
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest1", typeName1)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest2", typeName2)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("Another", typeName3)
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          import {Another as Another_, Test} from 'test1';
+          import {Test as Test_} from 'test2';
+          
+          
+          type LocalTest1 = Test;
+
+          type LocalTest2 = Test_.Kind;
+          
+          type Another = Another_.Kind;
           
         """.trimIndent()
       )

@@ -16,6 +16,7 @@
 
 package io.outfoxx.typescriptpoet.test
 
+import io.outfoxx.typescriptpoet.SymbolSpec
 import io.outfoxx.typescriptpoet.TypeName
 import io.outfoxx.typescriptpoet.TypeName.Anonymous.Member
 import io.outfoxx.typescriptpoet.TypeName.Companion.BOOLEAN
@@ -27,6 +28,7 @@ import org.hamcrest.CoreMatchers.hasItems
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 
 @DisplayName("TypeName Tests")
 class TypeNameTests {
@@ -37,8 +39,9 @@ class TypeNameTests {
 
     val typeName = TypeName.namedImport("This", "!Api").nested("Is.Nested")
 
-    assertThat(typeName.name, equalTo(TypeName.namedImport("This", "!Api")))
-    assertThat(typeName.nestedPath, hasItems("Is", "Nested"))
+    val symbol = typeName.base as? SymbolSpec.ImportsName ?: fail("ImportsName symbol expected")
+    assertThat(symbol.value, equalTo("This.Is.Nested"))
+    assertThat(symbol.source, equalTo("!Api"))
   }
 
   @Test

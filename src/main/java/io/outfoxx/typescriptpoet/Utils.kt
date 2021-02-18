@@ -29,6 +29,16 @@ internal object NullAppendable : Appendable {
   override fun append(c: Char) = this
 }
 
+internal fun String.parentSegment(separator: String = "."): String? {
+  val parts = split(separator)
+  val parent = parts.dropLast(1).joinToString(separator)
+  return if (parent.isEmpty()) null else parent
+}
+
+internal fun String.topLevelSegment(separator: String = "."): String {
+  return split(separator).first()
+}
+
 internal fun <K, V> Map<K, V>.toImmutableMap(): Map<K, V> = Collections.unmodifiableMap(LinkedHashMap(this))
 
 internal fun <T> Collection<T>.toImmutableList(): List<T> = Collections.unmodifiableList(ArrayList(this))

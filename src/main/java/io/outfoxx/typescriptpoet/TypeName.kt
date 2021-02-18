@@ -26,57 +26,43 @@ import io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner.UNION
  */
 sealed class TypeName {
 
-  fun nested(name: String): Nested =
-    when (this) {
-      is Nested -> Nested(this.name, nestedPath + name.split("."))
-      else -> Nested(this, name.split("."))
-    }
-
   internal abstract fun emit(codeWriter: CodeWriter)
-  internal open fun basePath(codeWriter: CodeWriter): List<String> = emptyList()
 
-  data class Symbolized
+  data class Standard
   internal constructor(
-    val symbol: SymbolSpec
+    val base: SymbolSpec,
   ) : TypeName() {
 
-    override fun emit(codeWriter: CodeWriter) {
-      codeWriter.emitSymbol(symbol)
-    }
+    fun nested(name: String) = Standard(base.nested(name))
+    fun enclosing() = base.enclosing()?.let { Standard(it) }
+    fun topLevel() = Standard(base.topLevel())
 
-    override fun basePath(codeWriter: CodeWriter): List<String> {
-      codeWriter.addSymbol(symbol)
-      return listOf(symbol.value)
-    }
-
-    override fun toString() = buildCodeString { emit(this) }
-  }
-
-  data class Nested(
-    val name: TypeName,
-    val nestedPath: List<String>,
-  ) : TypeName() {
+    val isTopLevel: Boolean
+      get() = base.isTopLevel
 
     override fun emit(codeWriter: CodeWriter) {
-      val fullPath = name.basePath(codeWriter) + nestedPath
+      val fullPath = base.value.split(".")
       val relativePath = fullPath.dropCommon(codeWriter.currentScope())
+      val relativeName = relativePath.joinToString(".")
 
-      codeWriter.emit(relativePath.joinToString("."))
+      if (relativeName == base.value) {
+        codeWriter.emitSymbol(base)
+      } else {
+        codeWriter.emitSymbol(SymbolSpec.implicit(relativeName))
+      }
     }
-
-    override fun basePath(codeWriter: CodeWriter): List<String> = name.basePath(codeWriter)
 
     override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Parameterized
   internal constructor(
-    val name: TypeName,
+    val rawType: Standard,
     val typeArgs: List<TypeName>
   ) : TypeName() {
 
     override fun emit(codeWriter: CodeWriter) {
-      name.emit(codeWriter)
+      rawType.emit(codeWriter)
       codeWriter.emit("<")
       typeArgs.forEachIndexed { idx, typeArg ->
         typeArg.emit(codeWriter)
@@ -87,10 +73,6 @@ sealed class TypeName {
       }
       codeWriter.emit(">")
     }
-
-    override fun basePath(codeWriter: CodeWriter): List<String> = name.basePath(codeWriter)
-
-    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class TypeVariable
@@ -299,32 +281,42 @@ sealed class TypeName {
     /**
      * Any class/enum/primitive/etc type name
      *
-     * @param exportedName The symbol that is both exported and imported
-     * @param from The module the symbol is exported from
+     * @param exportedName The name of the symbol exported from module `from`
+     * @param from The module the that `exportedName` is exported from
      */
     @JvmStatic
-    fun namedImport(exportedName: String, from: String): Symbolized {
-      return Symbolized(SymbolSpec.importsName(exportedName, from))
+    fun namedImport(exportedName: String, from: String): Standard {
+      return Standard(SymbolSpec.importsName(exportedName, from))
     }
 
     /**
      * Any class/enum/primitive/etc type name
      *
-     * @param name Name for the type, will be symbolized
+     * @param name Name for the implicit type, will be symbolized
      */
     @JvmStatic
-    fun implicit(name: String): Symbolized {
-      return Symbolized(SymbolSpec.implicit(name))
+    fun implicit(name: String): Standard {
+      return Standard(SymbolSpec.implicit(name))
     }
 
     /**
      * Any class/enum/primitive/etc type name
      *
-     * @param name Name for the type, will be symbolized
+     * @param symbolSpec Serialized symbol spec
      */
     @JvmStatic
-    fun symbolized(symbol: SymbolSpec): Symbolized {
-      return Symbolized(symbol)
+    fun standard(symbolSpec: String): Standard {
+      return Standard(SymbolSpec.from(symbolSpec))
+    }
+
+    /**
+     * Any class/enum/primitive/etc type name
+     *
+     * @param symbolSpec Symbol spec
+     */
+    @JvmStatic
+    fun standard(symbolSpec: SymbolSpec): Standard {
+      return Standard(symbolSpec)
     }
 
     /**
@@ -376,7 +368,7 @@ sealed class TypeName {
      * @return Type name of the new parameterized type
      */
     @JvmStatic
-    fun parameterizedType(rawType: TypeName, vararg typeArgs: TypeName): Parameterized {
+    fun parameterizedType(rawType: Standard, vararg typeArgs: TypeName): Parameterized {
       return Parameterized(rawType, typeArgs.toList())
     }
 
