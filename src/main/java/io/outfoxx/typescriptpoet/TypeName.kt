@@ -263,12 +263,38 @@ sealed class TypeName {
     val OBJECT_CLASS = implicit("Object")
     val SYMBOL_CLASS = implicit("Symbol")
 
+    val FUNCTION = implicit("Function")
+    val ERROR = implicit("Error")
+    val REGEXP = implicit("RegExp")
+    val MATH = implicit("Math")
     val DATE = implicit("Date")
-    val ARRAY = implicit("Array")
+
     val SET = implicit("Set")
+    val WEAK_SET = implicit("WeakSet")
     val MAP = implicit("Map")
-    val BUFFER = implicit("Buffer")
+    val WEAK_MAP = implicit("WeakMap")
+
+    val ARRAY = implicit("Array")
+    val INT8_ARRAY = implicit("Int8Array")
+    val UINT8_ARRAY = implicit("Uint8Array")
+    val UINT8_CLAMPED_ARRAY = implicit("Uint8ClampedArray")
+    val INT16_ARRAY = implicit("Int16Array")
+    val UINT16_ARRAY = implicit("Uint16Array")
+    val INT32_ARRAY = implicit("Int32Array")
+    val UINT32_ARRAY = implicit("Uint32Array")
+    val FLOAT32_ARRAY = implicit("Float32Array")
+    val FLOAT64_ARRAY = implicit("Float64Array")
+    val BIG_INT64_ARRAY = implicit("BigInt64Array")
+    val BIG_UINT64_ARRAY = implicit("BigUint64Array")
+
     val ARRAY_BUFFER = implicit("ArrayBuffer")
+    val SHARED_ARRAY_BUFFER = implicit("SharedArrayBuffer")
+    val ATOMICS = implicit("Atomics")
+    val DATA_VIEW = implicit("DataView")
+    val JSON = implicit("JSON")
+
+    val PROMISE = implicit("Promise")
+    val GENERATOR = implicit("Generator")
 
     /**
      * Any class/enum/primitive/etc type name
