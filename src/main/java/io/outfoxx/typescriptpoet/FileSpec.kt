@@ -64,12 +64,20 @@ private constructor(
 
     // Pass local type name & imports to name allocator to resolve collisions
     val topLevelNameAllocator = NameAllocator()
-    members.filterIsInstance<TypeSpec<*, *>>().map {
-      topLevelNameAllocator.newName(it.name, it)
-    }
-    importedSymbols.forEach {
-      topLevelNameAllocator.newName(it.value, it)
-    }
+
+    // Allocate unique set of top level members
+    members
+      .filterIsInstance<TypeSpec<*, *>>()
+      .map { it.name }
+      .toSet()
+      .forEach {
+        topLevelNameAllocator.newName(it)
+      }
+
+    importedSymbols
+      .forEach {
+        topLevelNameAllocator.newName(it.value, it)
+      }
 
     val renamedSymbols =
       topLevelNameAllocator.tagsToNames()
