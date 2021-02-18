@@ -1,159 +1,263 @@
-<HTML>
-<HEAD>
-<meta charset="UTF-8">
-<title>SymbolSpec - typescriptpoet</title>
-<link rel="stylesheet" href="../../../style.css">
-</HEAD>
-<BODY>
-<a href="../../index.html">typescriptpoet</a>&nbsp;/&nbsp;<a href="../index.html">io.outfoxx.typescriptpoet</a>&nbsp;/&nbsp;<a href="./index.html">SymbolSpec</a><br/>
-<br/>
-<h1>SymbolSpec</h1>
-<code><span class="keyword">sealed</span> <span class="keyword">class </span><span class="identifier">SymbolSpec</span></code>
-<p>Specifies a symbol and its related origin, either via import or implicit/local declaration</p>
-<h3>Parameters</h3>
-<p><a name="value"></a>
-<code>value</code> - Value of the symbol</p>
-<h3>Types</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="-augmented/index.html">Augmented</a></h4>
-</td>
-<td>
-<p>A symbol that is brought in by a whole module import
-that "augments" an existing symbol.</p>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Augmented</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-implicit/index.html">Implicit</a></h4>
-</td>
-<td>
-<p>Non-imported symbol</p>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">Implicit</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-imported/index.html">Imported</a></h4>
-</td>
-<td>
-<p>Common base class for imported symbols</p>
-<code><span class="keyword">abstract</span> <span class="keyword">class </span><span class="identifier">Imported</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-imports-all/index.html">ImportsAll</a></h4>
-</td>
-<td>
-<p>Imports all of the modules exported symbols as a single
-named symbol</p>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsAll</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-imports-name/index.html">ImportsName</a></h4>
-</td>
-<td>
-<p>Imports a single named symbol from the module's exported
-symbols.</p>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">ImportsName</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="-side-effect/index.html">SideEffect</a></h4>
-</td>
-<td>
-<p>A symbol that is brought in as a side effect of an
-import.</p>
-<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">SideEffect</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">Imported</span></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Properties</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="value.html">value</a></h4>
-</td>
-<td>
-<p>Value of the symbol</p>
-<code><span class="keyword">open</span> <span class="keyword">val </span><span class="identifier">value</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="reference.html">reference</a></h4>
-</td>
-<td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">reference</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec$reference(io.outfoxx.typescriptpoet.SymbolReferenceTracker)/trackedBy">trackedBy</span><span class="symbol">:</span>&nbsp;<a href="../-symbol-reference-tracker/index.html"><span class="identifier">SymbolReferenceTracker</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code></td>
-</tr>
-</tbody>
-</table>
-<h3>Companion Object Functions</h3>
-<table>
-<tbody>
-<tr>
-<td>
-<h4><a href="augmented.html">augmented</a></h4>
-</td>
-<td>
-<p>Creates a symbol that is brought in by a whole module import
-that "augments" an existing symbol.</p>
-<code><span class="keyword">fun </span><span class="identifier">augmented</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/symbolName">symbolName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$augmented(kotlin.String, kotlin.String, kotlin.String)/target">target</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="from.html">from</a></h4>
-</td>
-<td>
-<p>Parses a symbol reference pattern to create a symbol. The pattern
-allows the simple definition of all symbol types including any possible
-import variation. If the spec to parse does not follow the proper format
-an implicit symbol is created from the unparsed spec.</p>
-<code><span class="keyword">fun </span><span class="identifier">from</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$from(kotlin.String)/spec">spec</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="implicit.html">implicit</a></h4>
-</td>
-<td>
-<p>An implied symbol that does no tracking of imports</p>
-<code><span class="keyword">fun </span><span class="identifier">implicit</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$implicit(kotlin.String)/name">name</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="imports-all.html">importsAll</a></h4>
-</td>
-<td>
-<p>Creates an import of all the modules exported symbols as a single
-local named symbol</p>
-<code><span class="keyword">fun </span><span class="identifier">importsAll</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsAll(kotlin.String, kotlin.String)/localName">localName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsAll(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="imports-name.html">importsName</a></h4>
-</td>
-<td>
-<p>Creates an import of a single named symbol from the module's exported
-symbols.</p>
-<code><span class="keyword">fun </span><span class="identifier">importsName</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsName(kotlin.String, kotlin.String)/exportedName">exportedName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$importsName(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-<tr>
-<td>
-<h4><a href="side-effect.html">sideEffect</a></h4>
-</td>
-<td>
-<p>Creates a symbol that is brought in as a side effect of
-an import.</p>
-<code><span class="keyword">fun </span><span class="identifier">sideEffect</span><span class="symbol">(</span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$sideEffect(kotlin.String, kotlin.String)/symbolName">symbolName</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="io.outfoxx.typescriptpoet.SymbolSpec.Companion$sideEffect(kotlin.String, kotlin.String)/from">from</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">SymbolSpec</span></a></code></td>
-</tr>
-</tbody>
-</table>
-</BODY>
-</HTML>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>SymbolSpec</title>
+    <link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../";</script>
+    <script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async="async"></script>
+    <link href="../../../styles/style.css" rel="Stylesheet">
+    <link href="../../../styles/logo-styles.css" rel="Stylesheet">
+    <link href="../../../styles/jetbrains-mono.css" rel="Stylesheet">
+    <link href="../../../styles/main.css" rel="Stylesheet">
+    <script type="text/javascript" src="../../../scripts/clipboard.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/navigation-loader.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/platform-content-handler.js" async="async"></script>
+    <script type="text/javascript" src="../../../scripts/main.js" async="async"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="leftColumn">
+        <div id="logo"></div>
+        <div id="paneSearch"></div>
+        <div id="sideMenu"></div>
+      </div>
+      <div id="main">
+        <div id="leftToggler"><span class="icon-toggler"></span></div>
+        <script type="text/javascript" src="../../../scripts/pages.js"></script>
+        <script type="text/javascript" src="../../../scripts/main.js"></script>
+        <div class="main-content" id="content" pageIds="io.outfoxx.typescriptpoet/SymbolSpec///PointingToDeclaration//-1539643278">
+          <div class="navigation-wrapper" id="navigation-wrapper">
+            <div class="breadcrumbs"><a href="../../index.html">typescriptpoet</a>/<a href="../index.html">io.outfoxx.typescriptpoet</a>/<a href="index.html">SymbolSpec</a></div>
+            <div class="pull-right d-flex">
+              <div id="searchBar"></div>
+            </div>
+          </div>
+          <div class="cover ">
+            <h1 class="cover"><span>Symbol</span><wbr></wbr><span>Spec</span></h1>
+            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">sealed class <a href="index.html">SymbolSpec</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Specifies a symbol and its related origin, either via import or implicit/local declaration</p></div></div>
+          </div>
+          <div class="tabbedcontent">
+            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Types">Types</button><button class="section-tab" data-togglable="Functions">Functions</button><button class="section-tab" data-togglable="Properties">Properties</button><button class="section-tab" data-togglable="Parameters">Parameters</button><button class="section-tab" data-togglable="Inheritors">Inheritors</button></div>
+            <div class="tabs-section-body">
+              <h2 class="">Parameters</h2>
+              <div data-togglable="Parameters">
+                <div class="platform-hinted WithExtraAttributes" data-platform-hinted="data-platform-hinted" data-togglable="Parameters"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div data-togglable="Parameters"><div class="table" data-togglable="Parameters"><div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="main-subrow keyValue WithExtraAttributes"><div class=""><span class="inline-flex">value</span></div><div><div class="title"><div data-togglable="Parameters"><p class="paragraph">Value of the symbol</p></div></div></div></div></div></div></div></div></div>
+              </div>
+              <h2 class="">Types</h2>
+              <div class="table" data-togglable="Types"><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Augmented" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-augmented/index.html">Augmented</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">data class <a href="-augmented/index.html">Augmented</a> : <a href="-imported/index.html">SymbolSpec.Imported</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Augmented" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Augmented" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Augmented%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>A symbol that is brought in by a whole module import that &quot;augments&quot; an existing symbol.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Companion%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Companion" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Companion%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-companion/index.html">Companion</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Companion%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">object <a href="-companion/index.html">Companion</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Implicit" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-implicit/index.html">Implicit</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">data class <a href="-implicit/index.html">Implicit</a> : <a href="index.html">SymbolSpec</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Implicit" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Implicit" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>Non-imported symbol</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Imported" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-imported/index.html">Imported</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">abstract class <a href="-imported/index.html">Imported</a>(value: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>, source: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a>) : <a href="index.html">SymbolSpec</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Imported" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="Imported" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>Common base class for imported symbols</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsAll" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-imports-all/index.html">ImportsAll</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">data class <a href="-imports-all/index.html">ImportsAll</a> : <a href="-imported/index.html">SymbolSpec.Imported</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsAll" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsAll" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsAll%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>Imports all of the modules exported symbols as a single named symbole.g.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsName" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-imports-name/index.html">ImportsName</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">data class <a href="-imports-name/index.html">ImportsName</a> : <a href="-imported/index.html">SymbolSpec.Imported</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsName" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="ImportsName" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.ImportsName%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>Imports a single named symbol from the module's exported symbols.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="SideEffect" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-side-effect/index.html">SideEffect</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">data class <a href="-side-effect/index.html">SideEffect</a> : <a href="-imported/index.html">SymbolSpec.Imported</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="SideEffect" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" anchor-label="SideEffect" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.SideEffect%2F%2F%2FPointingToDeclaration%2F%5D%2FClasslikes%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>A symbol that is brought in as a side effect of an import.</div></div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Functions</h2>
+              <div class="table" data-togglable="Functions"><a data-name="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" anchor-label="equals" id="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">equals</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open operator fun <a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2Fequals%2F%23kotlin.Any%3F%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">equals</a>(other: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-any/index.html">Any</a>?): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html">Boolean</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" anchor-label="hashCode" id="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">hashCode</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open fun <a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2FhashCode%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">hashCode</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+<a data-name="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" anchor-label="toString" id="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">toString</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title"><div class="divergent-group" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main"><div class="with-platform-tags"><span class="pull-right"></span></div>
+
+  <div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><div class="symbol monospace">open fun <a href="../-type-spec/-builder/index.html#%5Bkotlin%2FAny%2FtoString%2F%23%2FPointingToDeclaration%2F%5D%2FFunctions%2F-1539643278">toString</a>(): <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
+  </div>
+</div>
+</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Properties</h2>
+              <div class="table" data-togglable="Properties"><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" anchor-label="value" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="value.html">value</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div>
+                      <div class="title">
+                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":dokkaHtml/main"><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" anchor-label="value" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a><div class="symbol monospace">open val <a href="value.html">value</a>: <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html">String</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" anchor-label="value" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec%2Fvalue%2F%23%2FPointingToDeclaration%2F%5D%2FProperties%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>Value of the symbol</div></div></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <h2 class="">Inheritors</h2>
+              <div class="table" data-togglable="Inheritors"><a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278" anchor-label="SymbolSpec" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-implicit/index.html">SymbolSpec</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Implicit%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div></div>
+                  </div>
+                </div>
+<a data-name="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278" anchor-label="SymbolSpec" id="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278" data-filterable-set=":dokkaHtml/main"></a>
+                <div class="table-row" data-filterable-current=":dokkaHtml/main" data-filterable-set=":dokkaHtml/main">
+                  <div class="main-subrow keyValue ">
+                    <div class=""><span class="inline-flex"><a href="-imported/index.html">SymbolSpec</a><span class="anchor-wrapper"><span class="anchor-icon" pointing-to="%5Bio.outfoxx.typescriptpoet%2FSymbolSpec.Imported%2F%2F%2FPointingToDeclaration%2F%5D%2FInheritors%2F-1539643278"></span>
+                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                        </span></span></div>
+                    <div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content"></a></span><span>© 2020 Copyright</span><span class="pull-right"><span>Sponsored and developed by dokka</span><a href="https://github.com/Kotlin/dokka"><span class="padded-icon"></span></a></span></div>
+      </div>
+    </div>
+  </body>
+</html>
+
