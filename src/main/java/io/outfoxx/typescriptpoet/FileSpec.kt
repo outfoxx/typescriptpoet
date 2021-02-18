@@ -330,8 +330,8 @@ private constructor(
     fun builder(filePath: Path) = Builder(filePath)
 
     @JvmStatic
-    fun builder(module: ModuleSpec): Builder {
-      val file = builder(module.name)
+    fun builder(module: ModuleSpec, filePath: Path = Paths.get(module.name)): Builder {
+      val file = builder(filePath)
       file.members.addAll(module.members.toMutableList())
       return file
     }
