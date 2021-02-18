@@ -25,7 +25,7 @@ private constructor(
 ) : TypeSpec<ClassSpec, ClassSpec.Builder>(builder) {
 
   override val name = builder.name
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val decorators = builder.decorators.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
@@ -44,7 +44,7 @@ private constructor(
       else
         emptyMap()
 
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitTSDoc(tsDoc)
     codeWriter.emitDecorators(decorators, false)
     codeWriter.emitModifiers(modifiers, setOf(Modifier.PUBLIC))
     codeWriter.emit("class")
@@ -175,7 +175,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(name)
-    builder.javaDoc.add(javaDoc)
+    builder.tsDoc.add(tsDoc)
     builder.decorators += decorators
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
@@ -191,7 +191,7 @@ private constructor(
     name: String
   ) : TypeSpec.Builder<ClassSpec, Builder>(name) {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal val typeVariables = mutableListOf<TypeName.TypeVariable>()
@@ -202,12 +202,12 @@ private constructor(
     internal val functionSpecs = mutableListOf<FunctionSpec>()
     internal var useConstructorPropertiesAutomatically = true
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addDecorators(decoratorSpecs: Iterable<DecoratorSpec>) = apply {

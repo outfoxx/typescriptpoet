@@ -24,7 +24,7 @@ private constructor(
 
   val name = builder.name
   val type = builder.type
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val decorators = builder.decorators.toImmutableList()
   val modifiers = builder.modifiers.toImmutableSet()
   val initializer = builder.initializer
@@ -37,7 +37,7 @@ private constructor(
     withInitializer: Boolean = true,
     compactOptionalAllowed: Boolean = false,
   ) {
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitTSDoc(tsDoc)
     codeWriter.emitDecorators(decorators, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
     codeWriter.emitCode(
@@ -60,7 +60,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val bldr = Builder(name, type, optional)
-      .addJavadoc(javaDoc)
+      .addTSDoc(tsDoc)
       .addDecorators(decorators)
       .addModifiers(*modifiers.toTypedArray())
     initializer?.let { bldr.initializer(it) }
@@ -74,17 +74,17 @@ private constructor(
     internal var optional: Boolean
   ) : Taggable.Builder<Builder>() {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val decorators = mutableListOf<DecoratorSpec>()
     internal val modifiers = mutableListOf<Modifier>()
     internal var initializer: CodeBlock? = null
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addDecorators(decoratorSpecs: Iterable<DecoratorSpec>) = apply {
