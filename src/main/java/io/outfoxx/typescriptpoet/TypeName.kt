@@ -40,6 +40,8 @@ sealed class TypeName {
     val isTopLevel: Boolean
       get() = base.isTopLevel
 
+    fun parameterized(vararg typeArgs: TypeName) = parameterizedType(this, *typeArgs)
+
     override fun emit(codeWriter: CodeWriter) {
       val fullPath = base.value.split(".")
       val relativeName =
