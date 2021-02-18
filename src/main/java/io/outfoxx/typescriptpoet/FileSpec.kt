@@ -49,7 +49,18 @@ private constructor(
     val importsCollector = CodeWriter(NullAppendable, indent)
     emit(importsCollector)
 
-    val importedSymbols = importsCollector.referencedSymbols<SymbolSpec.Imported>()
+    val importedSymbols =
+      importsCollector.referencedSymbols<SymbolSpec.Imported>()
+        .filterNot {
+          // Filter imports from same file
+          if (it.source.startsWith("./")) {
+            it.source.equals(path.toString(), ignoreCase = true) ||
+              it.source.removePrefix("./").equals(path.toString(), ignoreCase = true)
+          } else {
+            false
+          }
+        }
+        .toSet()
 
     // Pass local type name & imports to name allocator to resolve collisions
     val topLevelNameAllocator = NameAllocator()
