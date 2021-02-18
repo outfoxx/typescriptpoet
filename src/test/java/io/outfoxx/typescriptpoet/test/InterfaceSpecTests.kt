@@ -52,7 +52,7 @@ class InterfaceSpecTests {
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -77,7 +77,7 @@ class InterfaceSpecTests {
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -96,18 +96,18 @@ class InterfaceSpecTests {
   fun testGenTypeVars() {
     val testIface = InterfaceSpec.builder("Test")
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+        TypeName.typeVariable("Y", TypeName.bound(TypeName.implicit("Test3")), TypeName.intersectBound(TypeName.implicit("Test4")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
+        TypeName.typeVariable("Z", TypeName.bound(TypeName.implicit("Test5")), TypeName.unionBound(TypeName.implicit("Test6"), true))
       )
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -125,12 +125,12 @@ class InterfaceSpecTests {
   @DisplayName("Generates super interfaces")
   fun testGenMixins() {
     val testIface = InterfaceSpec.builder("Test")
-      .addSuperInterface(TypeName.anyType("Test2"))
-      .addSuperInterface(TypeName.anyType("Test3"))
+      .addSuperInterface(TypeName.implicit("Test2"))
+      .addSuperInterface(TypeName.implicit("Test3"))
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -149,15 +149,15 @@ class InterfaceSpecTests {
   fun testGenTypeVarsAndSuperInterfacesFormatted() {
     val testIface = InterfaceSpec.builder("Test")
       .addTypeVariable(
-        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+        TypeName.typeVariable("Y", TypeName.bound(TypeName.implicit("Test3")), TypeName.intersectBound(TypeName.implicit("Test4")))
       )
-      .addSuperInterface(TypeName.anyType("Test2"))
-      .addSuperInterface(TypeName.anyType("Test3"))
-      .addSuperInterface(TypeName.anyType("Test4"))
+      .addSuperInterface(TypeName.implicit("Test2"))
+      .addSuperInterface(TypeName.implicit("Test3"))
+      .addSuperInterface(TypeName.implicit("Test4"))
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -180,7 +180,7 @@ class InterfaceSpecTests {
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -216,7 +216,7 @@ class InterfaceSpecTests {
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -256,7 +256,7 @@ class InterfaceSpecTests {
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -283,13 +283,13 @@ class InterfaceSpecTests {
         FunctionSpec.callableBuilder()
           .addModifiers(Modifier.ABSTRACT)
           .addParameter("a", TypeName.STRING)
-          .returns(TypeName.anyType("Test"))
+          .returns(TypeName.implicit("Test"))
           .build()
       )
       .build()
 
     val out = StringWriter()
-    testIface.emit(CodeWriter(out), scope = emptyList())
+    testIface.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -313,9 +313,9 @@ class InterfaceSpecTests {
       .addJavadoc("this is a comment\n")
       .addModifiers(Modifier.ABSTRACT, Modifier.EXPORT)
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
-      .addSuperInterface(TypeName.anyType("Test3"))
+      .addSuperInterface(TypeName.implicit("Test3"))
       .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE)
       .addProperty("value2", TypeName.STRING, false, Modifier.PUBLIC)
       .addFunction(
@@ -343,8 +343,8 @@ class InterfaceSpecTests {
     assertThat(testIfaceBlder.typeVariables.size, equalTo(1))
     assertThat(
       testIfaceBlder.superInterfaces,
-      hasItems<TypeName>(
-        TypeName.anyType("Test3")
+      hasItems(
+        TypeName.implicit("Test3")
       )
     )
     assertThat(testIfaceBlder.propertySpecs.map { it.name }, hasItems("value", "value2"))

@@ -24,7 +24,6 @@ import io.outfoxx.typescriptpoet.TypeName.Companion.NUMBER
 import io.outfoxx.typescriptpoet.TypeName.Companion.STRING
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.hasItems
-import org.hamcrest.CoreMatchers.notNullValue
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -36,11 +35,10 @@ class TypeNameTests {
   @DisplayName("Parsing nested type import only imports root symbol while referencing fully nested import")
   fun testParsingNestedImport() {
 
-    val typeName = TypeName.anyType("This.Is.Nested@!Api")
+    val typeName = TypeName.namedImport("This", "!Api").nested("Is.Nested")
 
-    assertThat(typeName.usage, equalTo("This.Is.Nested"))
-    assertThat(typeName.imported, notNullValue())
-    assertThat(typeName.imported!!.value, equalTo("This"))
+    assertThat(typeName.name, equalTo(TypeName.namedImport("This", "!Api")))
+    assertThat(typeName.nestedPath, hasItems("Is", "Nested"))
   }
 
   @Test
@@ -57,7 +55,7 @@ class TypeNameTests {
         Member("C", BOOLEAN, false)
       )
     )
-    assertThat(typeName.reference(null, emptyList()), equalTo("{ a: string, b: number, C: boolean }"))
+    assertThat(typeName.toString(), equalTo("{ a: string, b: number, C: boolean }"))
 
     val typeName2 = TypeName.anonymousType(
       arrayListOf(
@@ -75,6 +73,6 @@ class TypeNameTests {
         Member("c", DATE, true)
       )
     )
-    assertThat(typeName2.reference(null, emptyList()), equalTo("{ a?: number, B: string, c?: Date }"))
+    assertThat(typeName2.toString(), equalTo("{ a?: number, B: string, c?: Date }"))
   }
 }

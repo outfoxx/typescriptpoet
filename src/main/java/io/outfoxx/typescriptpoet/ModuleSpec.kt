@@ -22,7 +22,7 @@ private constructor(
   builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
 
-  enum class Type(val keyword: String) {
+  enum class Kind(val keyword: String) {
     MODULE("module"),
     NAMESPACE("namespace")
   }
@@ -31,48 +31,52 @@ private constructor(
   val javaDoc = builder.javaDoc.build()
   val modifiers = builder.modifiers.toImmutableList()
   val members = builder.members.toImmutableList()
-  val type = builder.type
+  val kind = builder.kind
 
-  internal fun emit(codeWriter: CodeWriter, parentScope: List<String>) {
-    val scope = parentScope.plus(name)
+  internal fun emit(codeWriter: CodeWriter) {
+    codeWriter.pushScope(name)
+    try {
 
-    if (javaDoc.isNotEmpty()) {
-      codeWriter.emitComment(javaDoc, scope)
-    }
-
-    if (modifiers.isNotEmpty()) {
-      codeWriter.emitCode(CodeBlock.of("%L ", modifiers.joinToString(" ") { it.keyword }), scope)
-    }
-    codeWriter.emitCode(CodeBlock.of("${type.keyword} %L {\n", name), scope)
-    codeWriter.indent()
-
-    if (members.isNotEmpty()) {
-      codeWriter.emitCode("\n")
-    }
-
-    members.forEachIndexed { index, member ->
-      if (index > 0) codeWriter.emit("\n")
-      when (member) {
-        is ModuleSpec -> member.emit(codeWriter, scope)
-        is InterfaceSpec -> member.emit(codeWriter, scope)
-        is ClassSpec -> member.emit(codeWriter, scope)
-        is EnumSpec -> member.emit(codeWriter, scope)
-        is FunctionSpec ->
-          member.emit(codeWriter, null, setOf(Modifier.PUBLIC), scope)
-        is PropertySpec ->
-          member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, scope = scope)
-        is TypeAliasSpec -> member.emit(codeWriter, scope)
-        is CodeBlock -> codeWriter.emitCode(member, scope)
-        else -> throw AssertionError()
+      if (javaDoc.isNotEmpty()) {
+        codeWriter.emitComment(javaDoc)
       }
-    }
 
-    if (members.isNotEmpty()) {
-      codeWriter.emitCode("\n")
-    }
+      if (modifiers.isNotEmpty()) {
+        codeWriter.emitCode(CodeBlock.of("%L ", modifiers.joinToString(" ") { it.keyword }))
+      }
+      codeWriter.emitCode(CodeBlock.of("${kind.keyword} %L {\n", name))
+      codeWriter.indent()
 
-    codeWriter.unindent()
-    codeWriter.emitCode("}\n")
+      if (members.isNotEmpty()) {
+        codeWriter.emitCode("\n")
+      }
+
+      members.forEachIndexed { index, member ->
+        if (index > 0) codeWriter.emit("\n")
+        when (member) {
+          is ModuleSpec -> member.emit(codeWriter)
+          is InterfaceSpec -> member.emit(codeWriter)
+          is ClassSpec -> member.emit(codeWriter)
+          is EnumSpec -> member.emit(codeWriter)
+          is FunctionSpec ->
+            member.emit(codeWriter, null, setOf(Modifier.PUBLIC))
+          is PropertySpec ->
+            member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true)
+          is TypeAliasSpec -> member.emit(codeWriter)
+          is CodeBlock -> codeWriter.emitCode(member)
+          else -> throw AssertionError()
+        }
+      }
+
+      if (members.isNotEmpty()) {
+        codeWriter.emitCode("\n")
+      }
+
+      codeWriter.unindent()
+      codeWriter.emitCode("}\n")
+    } finally {
+      codeWriter.popScope()
+    }
   }
 
   fun isEmpty(): Boolean {
@@ -83,10 +87,10 @@ private constructor(
     return !isEmpty()
   }
 
-  override fun toString() = buildCodeString { emit(this, emptyList()) }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(): Builder {
-    val builder = Builder(name, type)
+    val builder = Builder(name, kind)
     builder.javaDoc.add(javaDoc)
     builder.modifiers += modifiers
     builder.members.addAll(this.members)
@@ -96,7 +100,7 @@ private constructor(
   open class Builder
   internal constructor(
     internal val name: String,
-    internal val type: Type = Type.NAMESPACE
+    internal val kind: Kind = Kind.NAMESPACE
   ) : Taggable.Builder<Builder>() {
 
     internal val javaDoc = CodeBlock.builder()
@@ -191,9 +195,9 @@ private constructor(
   companion object {
 
     @JvmStatic
-    fun builder(name: String, type: Type = Type.NAMESPACE) = Builder(name, type)
+    fun builder(name: String, kind: Kind = Kind.NAMESPACE) = Builder(name, kind)
 
     @JvmStatic
-    fun builder(name: TypeName, type: Type = Type.NAMESPACE) = builder(name.reference(), type)
+    fun builder(name: TypeName, kind: Kind = Kind.NAMESPACE) = builder("$name", kind)
   }
 }

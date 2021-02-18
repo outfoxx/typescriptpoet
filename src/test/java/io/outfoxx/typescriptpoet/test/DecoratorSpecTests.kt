@@ -51,7 +51,7 @@ class DecoratorSpecTests {
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = true, scope = emptyList())
+    testDec.emit(CodeWriter(out), inline = true)
 
     assertThat(
       out.toString(),
@@ -72,7 +72,7 @@ class DecoratorSpecTests {
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
+    testDec.emit(CodeWriter(out), inline = false)
 
     assertThat(
       out.toString(),
@@ -94,7 +94,7 @@ class DecoratorSpecTests {
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
+    testDec.emit(CodeWriter(out), inline = false)
 
     assertThat(
       out.toString(),
@@ -114,7 +114,7 @@ class DecoratorSpecTests {
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false, scope = emptyList())
+    testDec.emit(CodeWriter(out), inline = false)
 
     assertThat(
       out.toString(),
@@ -139,7 +139,7 @@ class DecoratorSpecTests {
     assertThat(testDecBldr.name, equalTo(SymbolSpec.from("test")))
     assertThat(
       testDecBldr.parameters,
-      hasItems<Pair<String?, CodeBlock>>(
+      hasItems(
         Pair("value", CodeBlock.of("100")),
         Pair("value2", CodeBlock.of("20"))
       )

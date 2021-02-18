@@ -58,7 +58,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -87,7 +87,7 @@ class ClassSpecTests {
       )
       .build()
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -113,7 +113,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -132,18 +132,18 @@ class ClassSpecTests {
   fun testGenTypeVars() {
     val testClass = ClassSpec.builder("Test")
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+        TypeName.typeVariable("Y", TypeName.bound(TypeName.implicit("Test3")), TypeName.intersectBound(TypeName.implicit("Test4")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
+        TypeName.typeVariable("Z", TypeName.bound(TypeName.implicit("Test5")), TypeName.unionBound(TypeName.implicit("Test6"), true))
       )
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -161,11 +161,11 @@ class ClassSpecTests {
   @DisplayName("Generates super class")
   fun testGenSuperClass() {
     val testClass = ClassSpec.builder("Test")
-      .superClass(TypeName.anyType("Test2"))
+      .superClass(TypeName.implicit("Test2"))
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -183,12 +183,12 @@ class ClassSpecTests {
   @DisplayName("Generates mixins")
   fun testGenMixins() {
     val testClass = ClassSpec.builder("Test")
-      .addMixin(TypeName.anyType("Test2"))
-      .addMixin(TypeName.anyType("Test3"))
+      .addMixin(TypeName.implicit("Test2"))
+      .addMixin(TypeName.implicit("Test3"))
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -206,13 +206,13 @@ class ClassSpecTests {
   @DisplayName("Generates super class & mixins properly formatted")
   fun testGenSuperClassAndMixinsFormatted() {
     val testClass = ClassSpec.builder("Test")
-      .superClass(TypeName.anyType("Test2"))
-      .addMixin(TypeName.anyType("Test3"))
-      .addMixin(TypeName.anyType("Test4"))
+      .superClass(TypeName.implicit("Test2"))
+      .addMixin(TypeName.implicit("Test3"))
+      .addMixin(TypeName.implicit("Test4"))
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -231,15 +231,15 @@ class ClassSpecTests {
   fun testGenTypeVarsAndSuperClassAndMixinsFormatted() {
     val testClass = ClassSpec.builder("Test")
       .addTypeVariable(
-        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+        TypeName.typeVariable("Y", TypeName.bound(TypeName.implicit("Test3")), TypeName.intersectBound(TypeName.implicit("Test4")))
       )
-      .superClass(TypeName.anyType("Test2"))
-      .addMixin(TypeName.anyType("Test3"))
-      .addMixin(TypeName.anyType("Test4"))
+      .superClass(TypeName.implicit("Test2"))
+      .addMixin(TypeName.implicit("Test3"))
+      .addMixin(TypeName.implicit("Test4"))
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -265,7 +265,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -296,7 +296,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -342,7 +342,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -406,7 +406,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -475,7 +475,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -546,7 +546,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -602,7 +602,7 @@ class ClassSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), emptyList())
+    testClass.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -640,10 +640,10 @@ class ClassSpecTests {
       )
       .addModifiers(Modifier.ABSTRACT, Modifier.EXPORT)
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
-      .superClass(TypeName.anyType("Test2"))
-      .addMixin(TypeName.anyType("Test3"))
+      .superClass(TypeName.implicit("Test2"))
+      .addMixin(TypeName.implicit("Test3"))
       .constructor(
         FunctionSpec.constructorBuilder()
           .addParameter("value", TypeName.NUMBER)
@@ -668,13 +668,13 @@ class ClassSpecTests {
     assertThat(
       testClassBlder.superClass,
       equalTo<TypeName>(
-        TypeName.anyType("Test2")
+        TypeName.implicit("Test2")
       )
     )
     assertThat(
       testClassBlder.mixins,
-      hasItems<TypeName>(
-        TypeName.anyType("Test3")
+      hasItems(
+        TypeName.implicit("Test3")
       )
     )
     assertThat(testClassBlder.propertySpecs.map { it.name }, hasItems("value", "value2"))

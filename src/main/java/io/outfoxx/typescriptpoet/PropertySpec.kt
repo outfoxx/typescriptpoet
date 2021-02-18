@@ -36,10 +36,9 @@ private constructor(
     asStatement: Boolean = false,
     withInitializer: Boolean = true,
     compactOptionalAllowed: Boolean = false,
-    scope: List<String>
   ) {
-    codeWriter.emitJavaDoc(javaDoc, scope)
-    codeWriter.emitDecorators(decorators, false, scope)
+    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitDecorators(decorators, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
     codeWriter.emitCode(
       CodeBlock.of(
@@ -47,18 +46,17 @@ private constructor(
         name,
         type
       ),
-      scope
     )
     if (withInitializer && initializer != null) {
       codeWriter.emit(" = ")
-      codeWriter.emitCode(CodeBlock.of("%[%L%]", initializer), scope)
+      codeWriter.emitCode(CodeBlock.of("%[%L%]", initializer))
     }
     if (asStatement) {
       codeWriter.emit(";\n")
     }
   }
 
-  override fun toString() = buildCodeString { emit(this, emptySet(), scope = emptyList()) }
+  override fun toString() = buildCodeString { emit(this, emptySet()) }
 
   fun toBuilder(): Builder {
     val bldr = Builder(name, type, optional)

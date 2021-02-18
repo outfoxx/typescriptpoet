@@ -23,9 +23,9 @@ protected constructor(
 
   abstract val name: String
 
-  internal abstract fun emit(codeWriter: CodeWriter, scope: List<String>)
+  internal abstract fun emit(codeWriter: CodeWriter)
 
-  override fun toString() = buildCodeString { emit(this, emptyList()) }
+  override fun toString() = buildCodeString { emit(this) }
 
   abstract class Builder<T : TypeSpec<T, B>, B : Builder<T, B>>(
     internal val name: String

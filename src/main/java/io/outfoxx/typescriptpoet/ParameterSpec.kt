@@ -34,29 +34,28 @@ class ParameterSpec private constructor(
     includeType: Boolean = true,
     isRest: Boolean = false,
     optionalAllowed: Boolean = false,
-    scope: List<String>
   ) {
-    codeWriter.emitDecorators(decorators, true, scope)
+    codeWriter.emitDecorators(decorators, true)
     codeWriter.emitModifiers(modifiers)
     if (isRest) {
       codeWriter.emitCode("... ")
     }
-    codeWriter.emitCode(CodeBlock.of("%L", name), scope)
+    codeWriter.emitCode(CodeBlock.of("%L", name))
     if (includeType) {
       if (optional && optionalAllowed) {
         codeWriter.emitCode("?")
       }
-      codeWriter.emitCode(CodeBlock.of(": %T", type), scope)
+      codeWriter.emitCode(CodeBlock.of(": %T", type))
       if (optional && !optionalAllowed) {
         codeWriter.emitCode(" | undefined")
       }
     }
-    emitDefaultValue(codeWriter, scope)
+    emitDefaultValue(codeWriter)
   }
 
-  internal fun emitDefaultValue(codeWriter: CodeWriter, scope: List<String>) {
+  internal fun emitDefaultValue(codeWriter: CodeWriter) {
     if (defaultValue != null) {
-      codeWriter.emitCode(CodeBlock.of(" = %[%L%]", defaultValue), scope)
+      codeWriter.emitCode(CodeBlock.of(" = %[%L%]", defaultValue))
     }
   }
 
@@ -69,7 +68,7 @@ class ParameterSpec private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this, scope = emptyList()) }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(name: String = this.name, type: TypeName = this.type): Builder {
     val builder = Builder(name, type, optional)
@@ -140,10 +139,9 @@ internal fun List<ParameterSpec>.emit(
   enclosed: Boolean = true,
   rest: ParameterSpec? = null,
   constructorProperties: Map<String, PropertySpec> = emptyMap(),
-  scope: List<String>,
-  emitBlock: (ParameterSpec, Boolean, Boolean, List<String>) -> Unit =
-    { param, isRest, optionalAllowed, pscope ->
-      param.emit(codeWriter, optionalAllowed = optionalAllowed, isRest = isRest, scope = pscope)
+  emitBlock: (ParameterSpec, Boolean, Boolean) -> Unit =
+    { param, isRest, optionalAllowed ->
+      param.emit(codeWriter, optionalAllowed = optionalAllowed, isRest = isRest)
     }
 ) = with(codeWriter) {
   val params = this@emit + if (rest != null) listOf(rest) else emptyList()
@@ -152,7 +150,7 @@ internal fun List<ParameterSpec>.emit(
     params.forEachIndexed { index, parameter ->
       val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
       if (index > 0) emit(", ")
-      emitBlock(parameter, rest === parameter, optionalAllowed, scope)
+      emitBlock(parameter, rest === parameter, optionalAllowed)
     }
   } else {
     emit("\n")
@@ -160,7 +158,7 @@ internal fun List<ParameterSpec>.emit(
     params.forEachIndexed { index, parameter ->
       val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
       if (index > 0) emit(",\n")
-      emitBlock(parameter, rest === parameter, optionalAllowed, scope)
+      emitBlock(parameter, rest === parameter, optionalAllowed)
     }
     unindent(2)
     emit("\n")

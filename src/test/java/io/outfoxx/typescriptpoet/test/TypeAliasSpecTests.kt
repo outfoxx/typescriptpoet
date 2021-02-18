@@ -50,7 +50,7 @@ class TypeAliasSpecTests {
       .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out), scope = emptyList())
+    testAlias.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -74,7 +74,7 @@ class TypeAliasSpecTests {
       .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out), scope = emptyList())
+    testAlias.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -94,7 +94,7 @@ class TypeAliasSpecTests {
       .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out), scope = emptyList())
+    testAlias.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -113,7 +113,7 @@ class TypeAliasSpecTests {
     val typeVar = TypeName.typeVariable(
       "A",
       TypeName.bound(
-        TypeName.anyType("Test")
+        TypeName.implicit("Test")
       )
     )
     val testAlias = TypeAliasSpec.builder(
@@ -126,7 +126,7 @@ class TypeAliasSpecTests {
       .build()
 
     val out = StringWriter()
-    testAlias.emit(CodeWriter(out), scope = emptyList())
+    testAlias.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -149,7 +149,7 @@ class TypeAliasSpecTests {
         TypeName.typeVariable(
           "A",
           TypeName.bound(
-            TypeName.anyType("Test")
+            TypeName.implicit("Test")
           )
         )
       )
@@ -157,7 +157,7 @@ class TypeAliasSpecTests {
       .toBuilder()
 
     assertThat(testAliasBldr.name, equalTo("Test"))
-    assertThat(testAliasBldr.type, equalTo<TypeName>(TypeName.NUMBER))
+    assertThat(testAliasBldr.type, equalTo(TypeName.NUMBER))
     assertThat(testAliasBldr.javaDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testAliasBldr.modifiers, hasItems(Modifier.EXPORT))
     assertThat(testAliasBldr.typeVariables.map { it.name }, hasItems("A"))
