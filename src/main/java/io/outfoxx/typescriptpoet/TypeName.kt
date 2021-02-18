@@ -251,13 +251,17 @@ sealed class TypeName {
 
     val BOOLEAN = implicit("boolean")
     val NUMBER = implicit("number")
+    val BIGINT = implicit("bigint")
     val STRING = implicit("string")
     val OBJECT = implicit("object")
+    val SYMBOL = implicit("symbol")
 
     val BOOLEAN_CLASS = implicit("Boolean")
     val NUMBER_CLASS = implicit("Number")
+    val BIGINT_CLASS = implicit("BigInt")
     val STRING_CLASS = implicit("String")
     val OBJECT_CLASS = implicit("Object")
+    val SYMBOL_CLASS = implicit("Symbol")
 
     val DATE = implicit("Date")
     val ARRAY = implicit("Array")
