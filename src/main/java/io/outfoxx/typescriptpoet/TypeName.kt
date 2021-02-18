@@ -42,8 +42,13 @@ sealed class TypeName {
 
     override fun emit(codeWriter: CodeWriter) {
       val fullPath = base.value.split(".")
-      val relativePath = fullPath.dropCommon(codeWriter.currentScope())
-      val relativeName = relativePath.joinToString(".")
+      val relativeName =
+        if (fullPath.size != 1) {
+          val relativePath = fullPath.dropCommon(codeWriter.currentScope())
+          relativePath.joinToString(".")
+        } else {
+          fullPath.first()
+        }
 
       if (relativeName == base.value) {
         codeWriter.emitSymbol(base)
