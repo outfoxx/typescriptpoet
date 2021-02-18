@@ -35,6 +35,18 @@ internal fun <T> Collection<T>.toImmutableList(): List<T> = Collections.unmodifi
 
 internal fun <T> Collection<T>.toImmutableSet(): Set<T> = Collections.unmodifiableSet(LinkedHashSet(this))
 
+internal fun <T> List<T>.dropCommon(other: List<T>): List<T> {
+  if (size < other.size) return this
+  var lastDiff = 0
+  for (idx in other.indices) {
+    if (get(idx) != other[idx]) {
+      break
+    }
+    lastDiff = idx + 1
+  }
+  return subList(lastDiff, size)
+}
+
 internal fun requireExactlyOneOf(modifiers: Set<Modifier>, vararg mutuallyExclusive: Modifier) {
   val count = mutuallyExclusive.count(modifiers::contains)
   require(count == 1) {

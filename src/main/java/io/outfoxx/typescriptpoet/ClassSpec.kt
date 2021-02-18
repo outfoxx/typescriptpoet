@@ -36,7 +36,7 @@ private constructor(
   val functionSpecs = builder.functionSpecs.toImmutableList()
   val useConstructorPropertiesAutomatically = builder.useConstructorPropertiesAutomatically
 
-  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter) {
 
     val constructorProperties: Map<String, PropertySpec> =
       if (useConstructorPropertiesAutomatically)
@@ -44,12 +44,12 @@ private constructor(
       else
         emptyMap()
 
-    codeWriter.emitJavaDoc(javaDoc, scope)
-    codeWriter.emitDecorators(decorators, false, scope)
+    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitDecorators(decorators, false)
     codeWriter.emitModifiers(modifiers, setOf(Modifier.PUBLIC))
     codeWriter.emit("class")
-    codeWriter.emitCode(CodeBlock.of(" %L", name), scope)
-    codeWriter.emitTypeVariables(typeVariables, scope)
+    codeWriter.emitCode(CodeBlock.of(" %L", name))
+    codeWriter.emitTypeVariables(typeVariables)
 
     val superClass = if (superClass != null) CodeBlock.of("extends %T", superClass) else CodeBlock.empty()
     val mixins = mixins.map { CodeBlock.of("%T", it) }.let {
@@ -58,7 +58,7 @@ private constructor(
 
     val parents = (listOf(superClass) + mixins).filter { it.isNotEmpty() }
     if (parents.any { it.isNotEmpty() }) {
-      codeWriter.emitCode(parents.joinToCode(separator = " ", prefix = " "), scope)
+      codeWriter.emitCode(parents.joinToCode(separator = " ", prefix = " "))
     }
 
     codeWriter.emit(" {\n")
@@ -73,7 +73,6 @@ private constructor(
       propertySpec.emit(
         codeWriter, setOf(Modifier.PUBLIC), asStatement = true,
         compactOptionalAllowed = !useConstructorPropertiesAutomatically,
-        scope = scope
       )
     }
 
@@ -84,7 +83,7 @@ private constructor(
 
       if (it.decorators.isNotEmpty()) {
         codeWriter.emit(" ")
-        codeWriter.emitDecorators(it.decorators, true, scope)
+        codeWriter.emitDecorators(it.decorators, true)
         codeWriter.emit("\n")
       }
 
@@ -98,9 +97,9 @@ private constructor(
 
       // Emit constructor parameters & property specs that can be replaced with parameters
       it.parameters.emit(
-        codeWriter, rest = it.restParameter, scope = scope,
+        codeWriter, rest = it.restParameter,
         constructorProperties = constructorProperties
-      ) { param, isRest, optionalAllowed, scope ->
+      ) { param, isRest, optionalAllowed ->
 
         var property = constructorProperties[param.name]
         if (property != null && !isRest) {
@@ -119,21 +118,20 @@ private constructor(
             // Add default public modifier
             property = property.toBuilder().addModifiers(Modifier.PUBLIC).build()
           }
-          property.emit(codeWriter, setOf(), compactOptionalAllowed = false, withInitializer = false, scope = scope)
-          param.emitDefaultValue(codeWriter, scope)
+          property.emit(codeWriter, setOf(), compactOptionalAllowed = false, withInitializer = false)
+          param.emitDefaultValue(codeWriter)
         } else {
           param.emit(
             codeWriter,
             isRest = isRest,
             optionalAllowed = optionalAllowed && !useConstructorPropertiesAutomatically,
-            scope = scope
           )
         }
       }
 
       codeWriter.emit(" {\n")
       codeWriter.indent()
-      codeWriter.emitCode(body, scope)
+      codeWriter.emitCode(body)
       codeWriter.unindent()
       codeWriter.emit("}\n")
     }
@@ -142,14 +140,14 @@ private constructor(
     for (funSpec in functionSpecs) {
       if (!funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC), scope)
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC))
     }
 
     // Functions (static and non-static).
     for (funSpec in functionSpecs) {
       if (funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC), scope)
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC))
     }
 
     codeWriter.unindent()
@@ -296,6 +294,6 @@ private constructor(
     fun builder(name: String) = Builder(name)
 
     @JvmStatic
-    fun builder(name: TypeName) = Builder(name.reference(null, null))
+    fun builder(name: TypeName) = Builder("$name")
   }
 }

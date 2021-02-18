@@ -50,7 +50,6 @@ class CodeBlock
 private constructor(
   internal val formatParts: List<String>,
   internal val args: List<Any?>,
-  internal val referencedSymbols: Set<SymbolSpec>
 ) {
 
   /** A heterogeneous list containing string literals and value placeholders.  */
@@ -108,7 +107,7 @@ private constructor(
       resultArgs.add(args[i])
     }
 
-    return CodeBlock(resultFormatParts, resultArgs, referencedSymbols)
+    return CodeBlock(resultFormatParts, resultArgs)
   }
 
   /**
@@ -125,7 +124,7 @@ private constructor(
       end--
     }
     return when {
-      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args, referencedSymbols)
+      start > 0 || end < formatParts.size -> CodeBlock(formatParts.subList(start, end), args)
       else -> this
     }
   }
@@ -139,29 +138,23 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock, emptyList()) }
+  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock) }
 
   fun toBuilder(): Builder {
     val builder = Builder()
     builder.formatParts += formatParts
     builder.args.addAll(args)
-    builder.referencedSymbols.addAll(referencedSymbols)
     return builder
   }
 
-  class Builder : SymbolReferenceTracker {
+  class Builder {
 
     internal val formatParts = mutableListOf<String>()
     internal val args = mutableListOf<Any?>()
-    internal val referencedSymbols = mutableSetOf<SymbolSpec>()
 
     fun isEmpty() = formatParts.isEmpty()
 
     fun isNotEmpty() = !isEmpty()
-
-    override fun referenced(symbol: SymbolSpec) {
-      referencedSymbols.add(symbol)
-    }
 
     /**
      * Adds code using named arguments.
@@ -326,8 +319,8 @@ private constructor(
 
     private fun argToName(o: Any?) = when (o) {
       is CharSequence -> o.toString()
-      is SymbolSpec -> o.reference(this)
-      is TypeName -> o.reference(this, emptyList())
+      is SymbolSpec -> o.value
+      is TypeName -> o.toString()
       is ParameterSpec -> o.name
       is PropertySpec -> o.name
       is FunctionSpec -> o.name
@@ -336,21 +329,14 @@ private constructor(
     }
 
     private fun argToLiteral(o: Any?) = when (o) {
-      is SymbolSpec -> o.reference(this)
-      is CodeBlock -> {
-        referencedSymbols += o.referencedSymbols
-        o.toString()
-      }
+      is CodeBlock -> o.toString()
       else -> o.toString()
     }
 
     private fun argToString(o: Any?) = o?.toString()
 
     private fun argToType(o: Any?) = when (o) {
-      is TypeName -> {
-        o.reference(this, emptyList())
-        o
-      }
+      is TypeName -> o
       else -> throw IllegalArgumentException("expected type but was $o")
     }
 
@@ -387,26 +373,6 @@ private constructor(
     fun add(codeBlock: CodeBlock) = apply {
       formatParts += codeBlock.formatParts
       args.addAll(codeBlock.args)
-      referencedSymbols += codeBlock.referencedSymbols
-    }
-
-    fun remove(matching: Regex) = apply {
-      val parts = mutableListOf<String>()
-      var i = 0
-      while (i < formatParts.size) {
-        val s = formatParts[i]
-        if (s.matches(matching)) {
-          if (parts.lastOrNull() == "%[" && formatParts.getOrNull(i + 1) == ";\n" && formatParts.getOrNull(i + 2) == "%]") {
-            parts.removeAt(i - 1)
-            i += 2
-          }
-        } else {
-          parts.add(s.replace(matching) { it.groups[2]!!.value })
-        }
-        i += 1
-      }
-      formatParts.clear()
-      formatParts.addAll(parts)
     }
 
     fun indent() = apply {
@@ -419,7 +385,6 @@ private constructor(
 
     fun build() = CodeBlock(
       formatParts.toImmutableList(), args.toImmutableList(),
-      referencedSymbols.toImmutableSet()
     )
   }
 
@@ -468,7 +433,6 @@ private constructor(
       return CodeBlock(
         formatParts,
         flatMap { it.args },
-        fold(setOf()) { prev, cur -> cur.referencedSymbols union prev }
       )
     }
   }

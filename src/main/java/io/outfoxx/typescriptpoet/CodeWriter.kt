@@ -17,6 +17,7 @@
 package io.outfoxx.typescriptpoet
 
 import java.util.EnumSet
+import java.util.Stack
 
 /**
  * Converts a [FileSpec] to a string suitable to both human- and tsc-consumption. This honors
@@ -25,8 +26,8 @@ import java.util.EnumSet
 internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = "  ",
-  referencedSymbols: Set<SymbolSpec> = emptySet()
-) : SymbolReferenceTracker {
+  val renamedSymbols: Map<SymbolSpec, String> = emptyMap()
+) {
 
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
@@ -34,10 +35,22 @@ internal class CodeWriter constructor(
   private var javaDoc = false
   private var comment = false
   private var trailingNewline = false
+  private var referencedSymbols = mutableSetOf<SymbolSpec>()
+  private val scope = Stack<String>()
 
-  private var referencedSymbols = referencedSymbols.toMutableSet()
+  inline fun <reified S : SymbolSpec> referencedSymbols() = referencedSymbols.filterIsInstance<S>().toImmutableSet()
 
-  override fun referenced(symbol: SymbolSpec) {
+  fun currentScope(): List<String> = scope.toImmutableList()
+
+  fun pushScope(name: String) {
+    scope.push(name)
+  }
+
+  fun popScope() {
+    scope.pop()
+  }
+
+  fun addSymbol(symbol: SymbolSpec) {
     referencedSymbols.add(symbol)
   }
 
@@ -57,33 +70,33 @@ internal class CodeWriter constructor(
     indentLevel -= levels
   }
 
-  fun emitComment(codeBlock: CodeBlock, scope: List<String>) {
+  fun emitComment(codeBlock: CodeBlock) {
     trailingNewline = true // Force the '//' prefix for the comment.
     comment = true
     try {
-      emitCode(codeBlock, scope)
+      emitCode(codeBlock)
       emit("\n")
     } finally {
       comment = false
     }
   }
 
-  fun emitJavaDoc(javaDocCodeBlock: CodeBlock, scope: List<String>) {
+  fun emitJavaDoc(javaDocCodeBlock: CodeBlock) {
     if (javaDocCodeBlock.isEmpty()) return
 
     emit("/**\n")
     javaDoc = true
     try {
-      emitCode(javaDocCodeBlock, scope)
+      emitCode(javaDocCodeBlock)
     } finally {
       javaDoc = false
     }
     emit(" */\n")
   }
 
-  fun emitDecorators(decorators: List<DecoratorSpec>, inline: Boolean, scope: List<String>) {
+  fun emitDecorators(decorators: List<DecoratorSpec>, inline: Boolean) {
     for (decoratorSpec in decorators) {
-      decoratorSpec.emit(this, inline, scope)
+      decoratorSpec.emit(this, inline)
       emit(if (inline) " " else "\n")
     }
   }
@@ -109,44 +122,49 @@ internal class CodeWriter constructor(
    *
    * This should only be used when declaring type variables; everywhere else bounds are omitted.
    */
-  fun emitTypeVariables(typeVariables: List<TypeName.TypeVariable>, scope: List<String>) {
+  fun emitTypeVariables(typeVariables: List<TypeName.TypeVariable>) {
     if (typeVariables.isEmpty()) return
 
     emit("<")
     typeVariables.forEachIndexed { index, typeVariable ->
       if (index > 0) emit(", ")
       emitCode(
-        buildString {
-          append(typeVariable.name)
-          if (typeVariable.bounds.isNotEmpty()) {
-            val parts = mutableListOf<String>()
-            parts.add(" extends")
-            typeVariable.bounds.forEachIndexed { index, bound ->
-              if (index > 0) parts.add(bound.combiner.symbol)
-              bound.modifier?.let { parts.add(it.keyword) }
-              parts.add(bound.type.reference(this@CodeWriter, scope))
+        CodeBlock.of(
+          buildString {
+            append(typeVariable.name)
+            if (typeVariable.bounds.isNotEmpty()) {
+              val parts = mutableListOf<String>()
+              parts.add(" extends")
+              typeVariable.bounds.forEachIndexed { index, bound ->
+                if (index > 0) parts.add(bound.combiner.symbol)
+                bound.modifier?.let { parts.add(it.keyword) }
+                parts.add("${bound.type}")
+              }
+              append(parts.joinToString(" "))
             }
-            append(parts.joinToString(" "))
-          }
-        }
+          },
+          *typeVariable.bounds.map { it.type }.toTypedArray()
+        )
       )
     }
     emit(">")
   }
 
-  fun emitCode(s: String) = emitCode(CodeBlock.of(s), emptyList())
+  fun emitSymbol(symbolSpec: SymbolSpec) {
+    referencedSymbols.add(symbolSpec)
+    emit(renamedSymbols[symbolSpec] ?: symbolSpec.value)
+  }
 
-  fun emitCode(codeBlock: CodeBlock, scope: List<String>) = apply {
+  fun emitCode(s: String) = emitCode(CodeBlock.of(s))
 
-    // Transfer all symbols referenced in the code block
-    this@CodeWriter.referencedSymbols.addAll(codeBlock.referencedSymbols)
+  fun emitCode(codeBlock: CodeBlock) = apply {
 
     var a = 0
     val partIterator = codeBlock.formatParts.listIterator()
     while (partIterator.hasNext()) {
       val part = partIterator.next()
       when (part) {
-        "%L" -> emitLiteral(codeBlock.args[a++], scope)
+        "%L" -> emitLiteral(codeBlock.args[a++])
 
         "%N" -> emit(codeBlock.args[a++] as String)
 
@@ -154,7 +172,7 @@ internal class CodeWriter constructor(
 
         "%P" -> emitStringTemplate(codeBlock.args[a++] as String?)
 
-        "%T" -> emitTypeName(codeBlock.args[a++] as TypeName, scope)
+        "%T" -> emitTypeName(codeBlock.args[a++] as TypeName)
 
         "%%" -> emit("%")
 
@@ -196,8 +214,8 @@ internal class CodeWriter constructor(
     out.wrappingSpace(indentLevel + 2)
   }
 
-  private fun emitTypeName(typeName: TypeName, scope: List<String>) {
-    emit(typeName.reference(this, scope))
+  private fun emitTypeName(typeName: TypeName) {
+    typeName.emit(this)
   }
 
   private fun emitString(string: String?) {
@@ -220,13 +238,13 @@ internal class CodeWriter constructor(
     )
   }
 
-  private fun emitLiteral(o: Any?, scope: List<String>) {
+  private fun emitLiteral(o: Any?) {
     when (o) {
-      is ClassSpec -> o.emit(this, scope)
-      is InterfaceSpec -> o.emit(this, scope)
-      is EnumSpec -> o.emit(this, scope)
-      is DecoratorSpec -> o.emit(this, true, scope, true)
-      is CodeBlock -> emitCode(o, scope)
+      is ClassSpec -> o.emit(this)
+      is InterfaceSpec -> o.emit(this)
+      is EnumSpec -> o.emit(this)
+      is DecoratorSpec -> o.emit(this, true, true)
+      is CodeBlock -> emitCode(o)
       else -> emit(o.toString())
     }
   }
@@ -277,14 +295,6 @@ internal class CodeWriter constructor(
     for (j in 0 until indentLevel) {
       out.append(indent)
     }
-  }
-
-  /**
-   * Returns the symbols that are required to be imported for this code. If there were any simple name
-   * collisions, that symbol's first use is imported; which may cause compilation issues.
-   */
-  fun requiredImports(): Set<SymbolSpec.Imported> {
-    return referencedSymbols.filterIsInstance<SymbolSpec.Imported>().toImmutableSet()
   }
 }
 

@@ -170,23 +170,13 @@ sealed class SymbolSpec(
     }
   }
 
-  open fun reference(trackedBy: SymbolReferenceTracker?): String {
-    trackedBy?.apply { referenced(this@SymbolSpec) }
-    return value
-  }
-
   /**
    * Non-imported symbol
    */
   data class Implicit
   internal constructor(
     override val value: String
-  ) : SymbolSpec(value) {
-
-    override fun reference(trackedBy: SymbolReferenceTracker?): String {
-      return value
-    }
-  }
+  ) : SymbolSpec(value)
 
   /**
    * Common base class for imported symbols

@@ -26,29 +26,47 @@ import io.outfoxx.typescriptpoet.TypeName.TypeVariable.Bound.Combiner.UNION
  */
 sealed class TypeName {
 
-  /**
-   * Produces a string representation of the type name
-   * in TypeScript syntax.
-   *
-   * @param trackedBy An optional symbol tracker that is notified of each symbol used
-   * @return String type representation in TypeScript syntax
-   */
-  abstract fun reference(trackedBy: SymbolReferenceTracker? = null, relativeTo: List<String>? = null): String
-
-  override fun toString() = reference()
-
-  data class Any
-  internal constructor(
-    val usage: String,
-    val imported: SymbolSpec?
-  ) : TypeName() {
-
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      imported?.reference(trackedBy)
-      return usage.removePrefix(relativeTo?.joinToString(".")?.plus(".") ?: "")
+  fun nested(name: String): Nested =
+    when (this) {
+      is Nested -> Nested(this.name, nestedPath + name.split("."))
+      else -> Nested(this, name.split("."))
     }
 
-    override fun toString() = reference()
+  internal abstract fun emit(codeWriter: CodeWriter)
+  internal open fun basePath(codeWriter: CodeWriter): List<String> = emptyList()
+
+  data class Symbolized
+  internal constructor(
+    val symbol: SymbolSpec
+  ) : TypeName() {
+
+    override fun emit(codeWriter: CodeWriter) {
+      codeWriter.emitSymbol(symbol)
+    }
+
+    override fun basePath(codeWriter: CodeWriter): List<String> {
+      codeWriter.addSymbol(symbol)
+      return listOf(symbol.value)
+    }
+
+    override fun toString() = buildCodeString { emit(this) }
+  }
+
+  data class Nested(
+    val name: TypeName,
+    val nestedPath: List<String>,
+  ) : TypeName() {
+
+    override fun emit(codeWriter: CodeWriter) {
+      val fullPath = name.basePath(codeWriter) + nestedPath
+      val relativePath = fullPath.dropCommon(codeWriter.currentScope())
+
+      codeWriter.emit(relativePath.joinToString("."))
+    }
+
+    override fun basePath(codeWriter: CodeWriter): List<String> = name.basePath(codeWriter)
+
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Parameterized
@@ -57,13 +75,22 @@ sealed class TypeName {
     val typeArgs: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val name = name.reference(trackedBy, relativeTo)
-      val typeArgs = typeArgs.map { it.reference(trackedBy, relativeTo) }
-      return "$name<${typeArgs.joinToString(", ")}>"
+    override fun emit(codeWriter: CodeWriter) {
+      name.emit(codeWriter)
+      codeWriter.emit("<")
+      typeArgs.forEachIndexed { idx, typeArg ->
+        typeArg.emit(codeWriter)
+
+        if (idx < typeArgs.size - 1) {
+          codeWriter.emit(", ")
+        }
+      }
+      codeWriter.emit(">")
     }
 
-    override fun toString() = reference()
+    override fun basePath(codeWriter: CodeWriter): List<String> = name.basePath(codeWriter)
+
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class TypeVariable
@@ -75,7 +102,7 @@ sealed class TypeName {
     data class Bound(
       val type: TypeName,
       val combiner: Combiner = UNION,
-      val modifier: Bound.Modifier?
+      val modifier: Modifier?
     ) {
 
       enum class Combiner(
@@ -94,11 +121,11 @@ sealed class TypeName {
       }
     }
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      return name
+    override fun emit(codeWriter: CodeWriter) {
+      codeWriter.emit(name)
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Anonymous
@@ -112,17 +139,24 @@ sealed class TypeName {
       val optional: Boolean
     )
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val entries = members.joinToString(", ") {
-        val name = it.name
-        val opt = if (it.optional) "?" else ""
-        val type = it.type.reference(trackedBy, relativeTo)
-        "$name$opt: $type"
+    override fun emit(codeWriter: CodeWriter) {
+      codeWriter.emit("{ ")
+      members.forEachIndexed { idx, member ->
+        codeWriter.emit(member.name)
+        if (member.optional) {
+          codeWriter.emit("?")
+        }
+        codeWriter.emit(": ")
+        member.type.emit(codeWriter)
+
+        if (idx != members.size - 1) {
+          codeWriter.emit(", ")
+        }
       }
-      return "{ $entries }"
+      codeWriter.emit(" }")
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Tuple
@@ -130,12 +164,19 @@ sealed class TypeName {
     val memberTypes: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val typeRequirements = memberTypes.map { it.reference(trackedBy, relativeTo) }
-      return "[${typeRequirements.joinToString(", ")}]"
+    override fun emit(codeWriter: CodeWriter) {
+      codeWriter.emit("[")
+      memberTypes.forEachIndexed { idx, memberType ->
+        memberType.emit(codeWriter)
+
+        if (idx != memberTypes.size - 1) {
+          codeWriter.emit(", ")
+        }
+      }
+      codeWriter.emit("]")
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Intersection
@@ -143,12 +184,17 @@ sealed class TypeName {
     val typeRequirements: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val typeRequirements = typeRequirements.map { it.reference(trackedBy, relativeTo) }
-      return typeRequirements.joinToString(" & ")
+    override fun emit(codeWriter: CodeWriter) {
+      typeRequirements.forEachIndexed { idx, typeRequirement ->
+        typeRequirement.emit(codeWriter)
+
+        if (idx != typeRequirements.size - 1) {
+          codeWriter.emit(" & ")
+        }
+      }
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Union
@@ -156,12 +202,17 @@ sealed class TypeName {
     val typeChoices: List<TypeName>
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val typeRequirements = typeChoices.map { it.reference(trackedBy, relativeTo) }
-      return typeRequirements.joinToString(" | ")
+    override fun emit(codeWriter: CodeWriter) {
+      typeChoices.forEachIndexed { idx, typeChoice ->
+        typeChoice.emit(codeWriter)
+
+        if (idx != typeChoices.size - 1) {
+          codeWriter.emit(" | ")
+        }
+      }
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   data class Lambda
@@ -170,41 +221,60 @@ sealed class TypeName {
     private val returnType: TypeName = VOID
   ) : TypeName() {
 
-    override fun reference(trackedBy: SymbolReferenceTracker?, relativeTo: List<String>?): String {
-      val params = parameters.map { "${it.key}: ${it.value.reference(trackedBy, relativeTo)}" }.joinToString(", ")
-      return "($params) => ${returnType.reference(trackedBy, relativeTo)}"
+    override fun emit(codeWriter: CodeWriter) {
+      codeWriter.emit("(")
+      parameters.entries.forEachIndexed { idx, entry ->
+        val (name, type) = entry
+
+        codeWriter.emit(name)
+        codeWriter.emit(": ")
+        type.emit(codeWriter)
+
+        if (idx != parameters.size - 1) {
+          codeWriter.emit(", ")
+        }
+      }
+      codeWriter.emit(") => ")
+      returnType.emit(codeWriter)
     }
 
-    override fun toString() = reference()
+    override fun toString() = buildCodeString { emit(this) }
   }
 
   companion object {
 
-    val NULL = anyType("null")
-    val UNDEFINED = anyType("undefined")
-    val NEVER = anyType("never")
-    val VOID = anyType("void")
-    val ANY = anyType("any")
-    val BOOLEAN = anyType("boolean")
-    val NUMBER = anyType("number")
-    val STRING = anyType("string")
-    val OBJECT = anyType("Object")
-    val DATE = anyType("Date")
-    val ARRAY = anyType("Array")
-    val SET = anyType("Set")
-    val MAP = anyType("Map")
-    val BUFFER = anyType("Buffer")
-    val ARRAY_BUFFER = anyType("ArrayBuffer")
+    val NULL = implicit("null")
+    val UNDEFINED = implicit("undefined")
+    val NEVER = implicit("never")
+    val VOID = implicit("void")
+    val ANY = implicit("any")
+
+    val BOOLEAN = implicit("boolean")
+    val NUMBER = implicit("number")
+    val STRING = implicit("string")
+    val OBJECT = implicit("object")
+
+    val BOOLEAN_CLASS = implicit("Boolean")
+    val NUMBER_CLASS = implicit("Number")
+    val STRING_CLASS = implicit("String")
+    val OBJECT_CLASS = implicit("Object")
+
+    val DATE = implicit("Date")
+    val ARRAY = implicit("Array")
+    val SET = implicit("Set")
+    val MAP = implicit("Map")
+    val BUFFER = implicit("Buffer")
+    val ARRAY_BUFFER = implicit("ArrayBuffer")
 
     /**
-     * An imported type name
+     * Any class/enum/primitive/etc type name
      *
-     * @param spec Import spec for type name
+     * @param exportedName The symbol that is both exported and imported
+     * @param from The module the symbol is exported from
      */
     @JvmStatic
-    fun importedType(spec: String): Any {
-      val symbolSpec = SymbolSpec.from(spec)
-      return anyType(symbolSpec.value, symbolSpec)
+    fun namedImport(exportedName: String, from: String): Symbolized {
+      return Symbolized(SymbolSpec.importsName(exportedName, from))
     }
 
     /**
@@ -213,27 +283,18 @@ sealed class TypeName {
      * @param name Name for the type, will be symbolized
      */
     @JvmStatic
-    fun anyType(name: String): Any {
-      val idx = name.indexOfAny("*@+".toCharArray())
-      if (idx != -1) {
-        val usage = name.substring(0, idx)
-        val imported = SymbolSpec.from(
-          "${usage.split('.').first()}${name.substring(idx)}"
-        )
-        return anyType(if (usage.isEmpty()) imported.value else usage, imported)
-      }
-      return anyType(name, null)
+    fun implicit(name: String): Symbolized {
+      return Symbolized(SymbolSpec.implicit(name))
     }
 
     /**
      * Any class/enum/primitive/etc type name
      *
      * @param name Name for the type, will be symbolized
-     * @param imported
      */
     @JvmStatic
-    fun anyType(usage: String, imported: SymbolSpec?): Any {
-      return Any(usage, imported)
+    fun symbolized(symbol: SymbolSpec): Symbolized {
+      return Symbolized(symbol)
     }
 
     /**
@@ -318,39 +379,8 @@ sealed class TypeName {
      * Factory for type variable bounds
      */
     @JvmStatic
-    fun bound(type: String, combiner: Combiner = UNION, modifier: Bound.Modifier? = null): Bound {
-      return Bound(anyType(type), combiner, modifier)
-    }
-
-    /**
-     * Factory for type variable bounds
-     */
-    @JvmStatic
-    fun unionBound(type: String, keyOf: Boolean = false): Bound {
-      return unionBound(
-        anyType(type), keyOf
-      )
-    }
-
-    /**
-     * Factory for type variable bounds
-     */
-    @JvmStatic
     fun unionBound(type: TypeName, keyOf: Boolean = false): Bound {
-      return bound(
-        type, Combiner.UNION,
-        if (keyOf) Bound.Modifier.KEY_OF else null
-      )
-    }
-
-    /**
-     * Factory for type variable bounds
-     */
-    @JvmStatic
-    fun intersectBound(type: String, keyOf: Boolean = false): Bound {
-      return intersectBound(
-        anyType(type), keyOf
-      )
+      return bound(type, UNION, if (keyOf) Bound.Modifier.KEY_OF else null)
     }
 
     /**

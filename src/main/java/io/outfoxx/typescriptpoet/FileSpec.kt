@@ -43,45 +43,32 @@ private constructor(
   val members = builder.members.toList()
   val indent = builder.indent
 
-  fun exportType(typeName: String): TypeName? {
-    val typeNameParts = typeName.split('.')
-    return exportNamed(typeNameParts.first())?.let {
-      TypeName.anyType(typeName, it)
-    }
-  }
-
-  fun exportNamed(symbolName: String): SymbolSpec? {
-    return members
-      .map {
-        when (it) {
-          is ModuleSpec -> it.name
-          is ClassSpec -> it.name
-          is InterfaceSpec -> it.name
-          is EnumSpec -> it.name
-          is FunctionSpec -> it.name
-          is PropertySpec -> it.name
-          is TypeAliasSpec -> it.name
-          else -> throw IllegalStateException("unrecognized member type")
-        }
-      }
-      .firstOrNull { it == symbolName }
-      ?.let { SymbolSpec.importsName(symbolName, "!" + path) }
-  }
-
-  fun exportAll(localName: String): SymbolSpec {
-    return SymbolSpec.importsAll(localName, "!" + path)
-  }
-
   @Throws(IOException::class)
   fun writeTo(out: Appendable) {
-    // First pass: emit the entire class, just to collect the types we'll need to import.
+    // First pass: emit the entire file, just to collect the symbols we'll need to import.
     val importsCollector = CodeWriter(NullAppendable, indent)
     emit(importsCollector)
-    val requiredImports = importsCollector.requiredImports()
+
+    val importedSymbols = importsCollector.referencedSymbols<SymbolSpec.Imported>()
+
+    // Pass local type name & imports to name allocator to resolve collisions
+    val topLevelNameAllocator = NameAllocator()
+    members.filterIsInstance<TypeSpec<*, *>>().map {
+      topLevelNameAllocator.newName(it.name, it)
+    }
+    importedSymbols.forEach {
+      topLevelNameAllocator.newName(it.value, it)
+    }
+
+    val renamedSymbols =
+      topLevelNameAllocator.tagsToNames()
+        .filterKeys { it is SymbolSpec }
+        .mapKeys { it.key as SymbolSpec }
+        .filter { it.key.value != it.value }
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, requiredImports)
-    emit(codeWriter)
+    val codeWriter = CodeWriter(out, indent, renamedSymbols)
+    emit(codeWriter, importedSymbols)
   }
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
@@ -98,17 +85,48 @@ private constructor(
   @Throws(IOException::class)
   fun writeTo(directory: File) = writeTo(directory.toPath())
 
-  private fun emit(codeWriter: CodeWriter) {
-    val scope = emptyList<String>()
+  private fun emit(codeWriter: CodeWriter, imports: Set<SymbolSpec.Imported> = emptySet()) {
 
     if (comment.isNotEmpty()) {
-      codeWriter.emitComment(comment, scope)
+      codeWriter.emitComment(comment)
     }
 
-    val imports = codeWriter.requiredImports()
+    if (imports.isNotEmpty()) {
+      emitImports(codeWriter, imports)
+    }
+
+    members.filterNot { it is ModuleSpec || it is CodeBlock }.forEach { member ->
+      codeWriter.emit("\n")
+      when (member) {
+        is ModuleSpec -> member.emit(codeWriter)
+        is InterfaceSpec -> member.emit(codeWriter)
+        is ClassSpec -> member.emit(codeWriter)
+        is EnumSpec -> member.emit(codeWriter)
+        is FunctionSpec -> member.emit(codeWriter, null, setOf(Modifier.PUBLIC))
+        is PropertySpec -> member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true)
+        is TypeAliasSpec -> member.emit(codeWriter)
+        is CodeBlock -> codeWriter.emitCode(member)
+        else -> throw AssertionError()
+      }
+    }
+
+    members.filterIsInstance<ModuleSpec>().forEach { member ->
+      codeWriter.emit("\n")
+      member.emit(codeWriter)
+    }
+
+    members.filterIsInstance<CodeBlock>().forEach { member ->
+      codeWriter.emit("\n")
+      codeWriter.emitCode(member)
+    }
+  }
+
+  private fun emitImports(codeWriter: CodeWriter, imports: Set<SymbolSpec.Imported>) {
+
     val augmentImports = imports
       .filterIsInstance<SymbolSpec.Augmented>()
       .groupBy { it.augmented }
+
     val sideEffectImports = imports
       .filterIsInstance<SymbolSpec.SideEffect>()
       .groupBy { it.source }
@@ -125,15 +143,18 @@ private constructor(
 
           imports.filterIsInstance<SymbolSpec.ImportsAll>().forEach { import ->
             // Output star imports individually
-            codeWriter.emitCode(CodeBlock.of("%[import * as %L from '%L';\n%]", import.value, sourceImportPath), scope)
+            codeWriter.emitCode(CodeBlock.of("%[import * as %L from '%L';\n%]", import.value, sourceImportPath))
             // Output related augments
             augmentImports[import.value]?.forEach { augment ->
-              codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
+              codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source))
             }
           }
 
           imports.filterIsInstance<SymbolSpec.ImportsName>()
-            .map { it.value }
+            .map {
+              val renamed = codeWriter.renamedSymbols[it] ?: return@map it.value
+              "${it.value} as $renamed"
+            }
             .toSortedSet()
             .let { names ->
               if (names.isEmpty()) return@let
@@ -143,46 +164,21 @@ private constructor(
                 .indent()
                 .emitCode(names.joinToString(", "))
                 .unindent()
-                .emitCode(CodeBlock.of("} from '%L';\n", sourceImportPath), scope)
+                .emitCode(CodeBlock.of("} from '%L';\n", sourceImportPath))
               // Output related augments
               names.forEach { name ->
                 augmentImports[name]?.forEach { augment ->
-                  codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source), scope)
+                  codeWriter.emitCode(CodeBlock.of("%[import '%L';\n%]", augment.source))
                 }
               }
             }
         }
 
       sideEffectImports.forEach {
-        codeWriter.emitCode(CodeBlock.of("%[import %S;\n%]", it.key), scope)
+        codeWriter.emitCode(CodeBlock.of("%[import %S;\n%]", it.key))
       }
 
       codeWriter.emit("\n")
-    }
-
-    members.filterNot { it is ModuleSpec || it is CodeBlock }.forEach { member ->
-      codeWriter.emit("\n")
-      when (member) {
-        is ModuleSpec -> member.emit(codeWriter, scope)
-        is InterfaceSpec -> member.emit(codeWriter, scope)
-        is ClassSpec -> member.emit(codeWriter, scope)
-        is EnumSpec -> member.emit(codeWriter, scope)
-        is FunctionSpec -> member.emit(codeWriter, null, setOf(Modifier.PUBLIC), scope)
-        is PropertySpec -> member.emit(codeWriter, setOf(Modifier.PUBLIC), asStatement = true, scope = scope)
-        is TypeAliasSpec -> member.emit(codeWriter, scope)
-        is CodeBlock -> codeWriter.emitCode(member, scope)
-        else -> throw AssertionError()
-      }
-    }
-
-    members.filterIsInstance<ModuleSpec>().forEach { member ->
-      codeWriter.emit("\n")
-      member.emit(codeWriter, scope)
-    }
-
-    members.filterIsInstance<CodeBlock>().forEach { member ->
-      codeWriter.emit("\n")
-      codeWriter.emitCode(member, scope)
     }
   }
 

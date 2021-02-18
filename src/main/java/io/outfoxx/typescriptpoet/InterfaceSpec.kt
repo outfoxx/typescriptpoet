@@ -34,18 +34,18 @@ private constructor(
   val indexableSpecs = builder.indexableSpecs.toImmutableList()
   val callable = builder.callable
 
-  override fun emit(codeWriter: CodeWriter, scope: List<String>) {
+  override fun emit(codeWriter: CodeWriter) {
 
-    codeWriter.emitJavaDoc(javaDoc, scope)
+    codeWriter.emitJavaDoc(javaDoc)
     codeWriter.emitModifiers(modifiers, setOf())
     codeWriter.emit("interface")
-    codeWriter.emitCode(CodeBlock.of(" %L", name), scope)
-    codeWriter.emitTypeVariables(typeVariables, scope)
+    codeWriter.emitCode(CodeBlock.of(" %L", name))
+    codeWriter.emitTypeVariables(typeVariables)
 
     val superClasses = superInterfaces.map { CodeBlock.of("%T", it) }.let {
       if (it.isNotEmpty()) it.joinToCode(prefix = " extends ") else CodeBlock.empty()
     }
-    codeWriter.emitCode(superClasses, scope)
+    codeWriter.emitCode(superClasses)
 
     codeWriter.emit(" {\n")
     codeWriter.indent()
@@ -53,7 +53,7 @@ private constructor(
     // Callable
     callable?.let {
       codeWriter.emitCode("\n")
-      it.emit(codeWriter, null, setOf(Modifier.ABSTRACT), scope)
+      it.emit(codeWriter, null, setOf(Modifier.ABSTRACT))
     }
 
     // Properties.
@@ -64,21 +64,20 @@ private constructor(
         setOf(Modifier.PUBLIC),
         asStatement = true,
         compactOptionalAllowed = true,
-        scope = scope
       )
     }
 
     // Indexables
     for (funSpec in indexableSpecs) {
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, null, setOf(Modifier.PUBLIC, Modifier.ABSTRACT), scope)
+      funSpec.emit(codeWriter, null, setOf(Modifier.PUBLIC, Modifier.ABSTRACT))
     }
 
     // Functions.
     for (funSpec in functionSpecs) {
       if (funSpec.isConstructor) continue
       codeWriter.emit("\n")
-      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC, Modifier.ABSTRACT), scope)
+      funSpec.emit(codeWriter, name, setOf(Modifier.PUBLIC, Modifier.ABSTRACT))
     }
 
     codeWriter.unindent()
@@ -199,7 +198,7 @@ private constructor(
     fun builder(name: String) = Builder(name)
 
     @JvmStatic
-    fun builder(name: TypeName) = Builder(name.reference(null, null))
+    fun builder(name: TypeName) = Builder("$name")
 
     @JvmStatic
     fun builder(classSpec: ClassSpec): Builder {

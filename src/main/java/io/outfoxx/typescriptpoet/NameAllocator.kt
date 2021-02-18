@@ -114,6 +114,8 @@ class NameAllocator private constructor(
   fun copy(): NameAllocator {
     return NameAllocator(allocatedNames.toMutableSet(), tagToName.toMutableMap())
   }
+
+  fun tagsToNames() = tagToName.toImmutableMap()
 }
 
 /**

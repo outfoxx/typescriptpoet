@@ -55,7 +55,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testFunc.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -85,7 +85,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testFunc.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testFunc.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -112,7 +112,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -134,7 +134,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -152,18 +152,18 @@ class FunctionSpecTests {
   fun testGenTypeVars() {
     val testClass = FunctionSpec.builder("test")
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Y", TypeName.bound("Test3"), TypeName.intersectBound("Test4"))
+        TypeName.typeVariable("Y", TypeName.bound(TypeName.implicit("Test3")), TypeName.intersectBound(TypeName.implicit("Test4")))
       )
       .addTypeVariable(
-        TypeName.typeVariable("Z", TypeName.bound("Test5"), TypeName.unionBound("Test6", true))
+        TypeName.typeVariable("Z", TypeName.bound(TypeName.implicit("Test5")), TypeName.unionBound(TypeName.implicit("Test6"), true))
       )
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -181,11 +181,11 @@ class FunctionSpecTests {
   @DisplayName("Generates return type")
   fun testGenReturnType() {
     val testClass = FunctionSpec.builder("test")
-      .returns(TypeName.anyType("Value"))
+      .returns(TypeName.implicit("Value"))
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -207,7 +207,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -228,7 +228,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -250,7 +250,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -273,7 +273,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -295,7 +295,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -335,7 +335,7 @@ class FunctionSpecTests {
       .build()
 
     val out = StringWriter()
-    testClass.emit(CodeWriter(out), null, setOf(), scope = emptyList())
+    testClass.emit(CodeWriter(out), null, setOf())
 
     assertThat(
       out.toString(),
@@ -364,7 +364,7 @@ class FunctionSpecTests {
       )
       .addModifiers(Modifier.EXPORT)
       .addTypeVariable(
-        TypeName.typeVariable("X", TypeName.bound("Test2"))
+        TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
       )
       .addCode("val;\n")
       .build()

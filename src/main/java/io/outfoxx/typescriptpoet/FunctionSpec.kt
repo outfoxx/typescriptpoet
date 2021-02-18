@@ -52,13 +52,12 @@ private constructor(
     codeWriter: CodeWriter,
     enclosingName: String?,
     implicitModifiers: Set<Modifier>,
-    scope: List<String>
   ) {
-    codeWriter.emitJavaDoc(javaDoc, scope)
-    codeWriter.emitDecorators(decorators, false, scope)
+    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitDecorators(decorators, false)
     codeWriter.emitModifiers(modifiers, implicitModifiers)
 
-    emitSignature(codeWriter, enclosingName, scope)
+    emitSignature(codeWriter, enclosingName)
 
     val isEmptyConstructor = isConstructor && body.isEmpty()
     if (Modifier.ABSTRACT in modifiers || isEmptyConstructor) {
@@ -68,7 +67,7 @@ private constructor(
 
     codeWriter.emit(" {\n")
     codeWriter.indent()
-    codeWriter.emitCode(body, scope)
+    codeWriter.emitCode(body)
     codeWriter.unindent()
     codeWriter.emit("}\n")
   }
@@ -76,7 +75,6 @@ private constructor(
   private fun emitSignature(
     codeWriter: CodeWriter,
     enclosingName: String?,
-    scope: List<String>
   ) {
     when {
       isConstructor -> codeWriter.emitCode("constructor")
@@ -86,21 +84,20 @@ private constructor(
         if (enclosingName == null) {
           codeWriter.emit("function ")
         }
-        codeWriter.emitCode(CodeBlock.of("%L", name), scope)
+        codeWriter.emitCode(CodeBlock.of("%L", name))
       }
     }
 
     if (typeVariables.isNotEmpty()) {
-      codeWriter.emitTypeVariables(typeVariables, scope)
+      codeWriter.emitTypeVariables(typeVariables)
     }
 
     parameters.emit(
       codeWriter,
       enclosed = !isIndexable,
       rest = restParameter,
-      scope = scope
-    ) { param, isRest, optionalAllowed, pscope ->
-      param.emit(codeWriter, isRest = isRest, optionalAllowed = optionalAllowed, scope = pscope)
+    ) { param, isRest, optionalAllowed ->
+      param.emit(codeWriter, isRest = isRest, optionalAllowed = optionalAllowed)
     }
 
     if (isIndexable) {
@@ -108,7 +105,7 @@ private constructor(
     }
 
     if (returnType != null && returnType != TypeName.VOID) {
-      codeWriter.emitCode(CodeBlock.of(": %T", returnType), scope)
+      codeWriter.emitCode(CodeBlock.of(": %T", returnType))
     }
   }
 
@@ -126,7 +123,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this, null, emptySet(), emptyList()) }
+  override fun toString() = buildCodeString { emit(this, null, emptySet()) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name)
