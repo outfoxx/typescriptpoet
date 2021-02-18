@@ -43,10 +43,10 @@ class TypeAliasSpecTests {
   }
 
   @Test
-  @DisplayName("Generates JavaDoc at before class definition")
-  fun testGenJavaDoc() {
+  @DisplayName("Generates TSDoc at before class definition")
+  fun testGenTSDoc() {
     val testAlias = TypeAliasSpec.builder("Integer", TypeName.NUMBER)
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .build()
 
     val out = StringWriter()
@@ -143,7 +143,7 @@ class TypeAliasSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testAliasBldr = TypeAliasSpec.builder("Test", TypeName.NUMBER)
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .addModifiers(Modifier.EXPORT)
       .addTypeVariable(
         TypeName.typeVariable(
@@ -158,7 +158,7 @@ class TypeAliasSpecTests {
 
     assertThat(testAliasBldr.name, equalTo("Test"))
     assertThat(testAliasBldr.type, equalTo(TypeName.NUMBER))
-    assertThat(testAliasBldr.javaDoc.formatParts, hasItems("this is a comment\n"))
+    assertThat(testAliasBldr.tsDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testAliasBldr.modifiers, hasItems(Modifier.EXPORT))
     assertThat(testAliasBldr.typeVariables.map { it.name }, hasItems("A"))
   }

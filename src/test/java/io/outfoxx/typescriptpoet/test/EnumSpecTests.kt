@@ -42,10 +42,10 @@ class EnumSpecTests {
   }
 
   @Test
-  @DisplayName("Generates JavaDoc at before class definition")
-  fun testGenJavaDoc() {
+  @DisplayName("Generates TSDoc at before class definition")
+  fun testGenTSDoc() {
     val testClass = EnumSpec.builder("Test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .build()
 
     val out = StringWriter()
@@ -119,14 +119,14 @@ class EnumSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testEnumBldr = EnumSpec.builder("Test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .addModifiers(Modifier.EXPORT)
       .addConstant("A", "10")
       .build()
       .toBuilder()
 
     assertThat(testEnumBldr.name, equalTo("Test"))
-    assertThat(testEnumBldr.javaDoc.formatParts, hasItems("this is a comment\n"))
+    assertThat(testEnumBldr.tsDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testEnumBldr.modifiers, hasItems(Modifier.EXPORT))
     assertThat(testEnumBldr.constants.keys, hasItems("A"))
   }

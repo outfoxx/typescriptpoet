@@ -48,10 +48,10 @@ class FunctionSpecTests {
   }
 
   @Test
-  @DisplayName("Generates JavaDoc at before class definition")
-  fun testGenJavaDoc() {
+  @DisplayName("Generates TSDoc at before class definition")
+  fun testGenTSDoc() {
     val testFunc = FunctionSpec.builder("test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .build()
 
     val out = StringWriter()
@@ -355,7 +355,7 @@ class FunctionSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testFuncBlder = FunctionSpec.builder("Test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .addDecorator(
         DecoratorSpec.builder("decorate")
           .addParameter(null, "true")
@@ -370,7 +370,7 @@ class FunctionSpecTests {
       .build()
       .toBuilder()
 
-    assertThat(testFuncBlder.javaDoc.formatParts, hasItems("this is a comment\n"))
+    assertThat(testFuncBlder.tsDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testFuncBlder.decorators.size, equalTo(1))
     assertThat(testFuncBlder.decorators[0].name, equalTo(SymbolSpec.from("decorate")))
     assertThat(testFuncBlder.decorators[0].parameters.size, equalTo(2))

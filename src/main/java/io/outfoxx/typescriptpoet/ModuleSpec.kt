@@ -28,7 +28,7 @@ private constructor(
   }
 
   val name = builder.name
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val modifiers = builder.modifiers.toImmutableList()
   val members = builder.members.toImmutableList()
   val kind = builder.kind
@@ -37,8 +37,8 @@ private constructor(
     codeWriter.pushScope(name)
     try {
 
-      if (javaDoc.isNotEmpty()) {
-        codeWriter.emitComment(javaDoc)
+      if (tsDoc.isNotEmpty()) {
+        codeWriter.emitComment(tsDoc)
       }
 
       if (modifiers.isNotEmpty()) {
@@ -91,7 +91,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(name, kind)
-    builder.javaDoc.add(javaDoc)
+    builder.tsDoc.add(tsDoc)
     builder.modifiers += modifiers
     builder.members.addAll(this.members)
     return builder
@@ -103,7 +103,7 @@ private constructor(
     internal val kind: Kind = Kind.NAMESPACE
   ) : Taggable.Builder<Builder>() {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()
     internal val members = mutableListOf<Any>()
 
@@ -120,12 +120,12 @@ private constructor(
       )
     }
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addModifier(modifier: Modifier) = apply {

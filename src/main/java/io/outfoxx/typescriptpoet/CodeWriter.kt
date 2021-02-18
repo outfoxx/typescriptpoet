@@ -32,7 +32,7 @@ internal class CodeWriter constructor(
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
 
-  private var javaDoc = false
+  private var tsDoc = false
   private var comment = false
   private var trailingNewline = false
   private var referencedSymbols = mutableSetOf<SymbolSpec>()
@@ -81,15 +81,15 @@ internal class CodeWriter constructor(
     }
   }
 
-  fun emitJavaDoc(javaDocCodeBlock: CodeBlock) {
-    if (javaDocCodeBlock.isEmpty()) return
+  fun emitTSDoc(tsDocCodeBlock: CodeBlock) {
+    if (tsDocCodeBlock.isEmpty()) return
 
     emit("/**\n")
-    javaDoc = true
+    tsDoc = true
     try {
-      emitCode(javaDocCodeBlock)
+      emitCode(tsDocCodeBlock)
     } finally {
-      javaDoc = false
+      tsDoc = false
     }
     emit(" */\n")
   }
@@ -259,9 +259,9 @@ internal class CodeWriter constructor(
     for (line in s.split('\n')) {
       // Emit a newline character. Make sure blank lines in KDoc & comments look good.
       if (!first) {
-        if ((javaDoc || comment) && trailingNewline) {
+        if ((tsDoc || comment) && trailingNewline) {
           emitIndentation()
-          out.append(if (javaDoc) " *" else "//")
+          out.append(if (tsDoc) " *" else "//")
         }
         out.append("\n")
         trailingNewline = true
@@ -279,7 +279,7 @@ internal class CodeWriter constructor(
       // Emit indentation and comment prefix if necessary.
       if (trailingNewline) {
         emitIndentation()
-        if (javaDoc) {
+        if (tsDoc) {
           out.append(" * ")
         } else if (comment) {
           out.append("// ")

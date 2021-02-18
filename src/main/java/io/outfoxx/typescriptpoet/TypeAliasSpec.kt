@@ -24,12 +24,12 @@ private constructor(
 
   override val name = builder.name
   val type = builder.type
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
 
   override fun emit(codeWriter: CodeWriter) {
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitTSDoc(tsDoc)
     codeWriter.emitModifiers(modifiers)
     codeWriter.emitCode(CodeBlock.of("type %L", name))
     codeWriter.emitTypeVariables(typeVariables)
@@ -50,7 +50,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
-    builder.javaDoc.add(javaDoc)
+    builder.tsDoc.add(tsDoc)
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     return builder
@@ -61,7 +61,7 @@ private constructor(
     internal val type: TypeName
   ) : TypeSpec.Builder<TypeAliasSpec, Builder>(name) {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val modifiers = mutableSetOf<Modifier>()
     internal val typeVariables = mutableSetOf<TypeName.TypeVariable>()
 
@@ -69,12 +69,12 @@ private constructor(
       require(name.isName) { "not a valid name: $name" }
     }
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addModifiers(vararg modifiers: Modifier) = apply {

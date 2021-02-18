@@ -45,10 +45,10 @@ class InterfaceSpecTests {
   }
 
   @Test
-  @DisplayName("Generates JavaDoc at before interface definition")
-  fun testGenJavaDoc() {
+  @DisplayName("Generates TSDoc at before interface definition")
+  fun testGenTSDoc() {
     val testIface = InterfaceSpec.builder("Test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .build()
 
     val out = StringWriter()
@@ -310,7 +310,7 @@ class InterfaceSpecTests {
   @DisplayName("toBuilder copies all fields")
   fun testToBuilder() {
     val testIfaceBlder = InterfaceSpec.builder("Test")
-      .addJavadoc("this is a comment\n")
+      .addTSDoc("this is a comment\n")
       .addModifiers(Modifier.ABSTRACT, Modifier.EXPORT)
       .addTypeVariable(
         TypeName.typeVariable("X", TypeName.bound(TypeName.implicit("Test2")))
@@ -338,7 +338,7 @@ class InterfaceSpecTests {
       .build()
       .toBuilder()
 
-    assertThat(testIfaceBlder.javaDoc.formatParts, hasItems("this is a comment\n"))
+    assertThat(testIfaceBlder.tsDoc.formatParts, hasItems("this is a comment\n"))
     assertThat(testIfaceBlder.modifiers.toImmutableSet(), equalTo(setOf(Modifier.ABSTRACT, Modifier.EXPORT)))
     assertThat(testIfaceBlder.typeVariables.size, equalTo(1))
     assertThat(

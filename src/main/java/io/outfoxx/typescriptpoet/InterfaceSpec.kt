@@ -25,7 +25,7 @@ private constructor(
 ) : TypeSpec<InterfaceSpec, InterfaceSpec.Builder>(builder) {
 
   override val name = builder.name
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val typeVariables = builder.typeVariables.toImmutableList()
   val superInterfaces = builder.superInterfaces.toImmutableList()
@@ -36,7 +36,7 @@ private constructor(
 
   override fun emit(codeWriter: CodeWriter) {
 
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitTSDoc(tsDoc)
     codeWriter.emitModifiers(modifiers, setOf())
     codeWriter.emit("interface")
     codeWriter.emitCode(CodeBlock.of(" %L", name))
@@ -95,7 +95,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(name)
-    builder.javaDoc.add(javaDoc)
+    builder.tsDoc.add(tsDoc)
     builder.modifiers += modifiers
     builder.typeVariables += typeVariables
     builder.superInterfaces += superInterfaces
@@ -110,7 +110,7 @@ private constructor(
     name: String
   ) : TypeSpec.Builder<InterfaceSpec, Builder>(name) {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
     internal val typeVariables = mutableListOf<TypeName.TypeVariable>()
     internal val superInterfaces = mutableListOf<TypeName>()
@@ -119,12 +119,12 @@ private constructor(
     internal val indexableSpecs = mutableListOf<FunctionSpec>()
     internal var callable: FunctionSpec? = null
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addModifiers(vararg modifiers: Modifier) = apply {

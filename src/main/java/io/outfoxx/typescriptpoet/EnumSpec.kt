@@ -23,13 +23,13 @@ private constructor(
 ) : TypeSpec<EnumSpec, EnumSpec.Builder>(builder) {
 
   override val name = builder.name
-  val javaDoc = builder.javaDoc.build()
+  val tsDoc = builder.tsDoc.build()
   val modifiers = builder.modifiers.toImmutableSet()
   val constants = builder.constants.toImmutableMap()
 
   override fun emit(codeWriter: CodeWriter) {
 
-    codeWriter.emitJavaDoc(javaDoc)
+    codeWriter.emitTSDoc(tsDoc)
     codeWriter.emitModifiers(modifiers, setOf())
     codeWriter.emitCode(CodeBlock.of("enum %L {\n", name))
 
@@ -58,7 +58,7 @@ private constructor(
 
   fun toBuilder(): Builder {
     val builder = Builder(name)
-    builder.javaDoc.add(javaDoc)
+    builder.tsDoc.add(tsDoc)
     builder.modifiers += modifiers
     builder.constants += constants
     return builder
@@ -70,15 +70,15 @@ private constructor(
     val constants: MutableMap<String, CodeBlock?> = mutableMapOf()
   ) : TypeSpec.Builder<EnumSpec, Builder>(name) {
 
-    internal val javaDoc = CodeBlock.builder()
+    internal val tsDoc = CodeBlock.builder()
     internal val modifiers = mutableListOf<Modifier>()
 
-    fun addJavadoc(format: String, vararg args: Any) = apply {
-      javaDoc.add(format, *args)
+    fun addTSDoc(format: String, vararg args: Any) = apply {
+      tsDoc.add(format, *args)
     }
 
-    fun addJavadoc(block: CodeBlock) = apply {
-      javaDoc.add(block)
+    fun addTSDoc(block: CodeBlock) = apply {
+      tsDoc.add(block)
     }
 
     fun addModifiers(vararg modifiers: Modifier) = apply {
