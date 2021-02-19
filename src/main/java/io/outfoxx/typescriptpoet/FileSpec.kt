@@ -47,7 +47,7 @@ private constructor(
   fun writeTo(out: Appendable) {
     // First pass: emit the entire file, just to collect the symbols we'll need to import.
     val importsCollector = CodeWriter(NullAppendable, indent)
-    emit(importsCollector)
+    importsCollector.use { emit(it) }
 
     val importedSymbols =
       importsCollector.referencedSymbols<SymbolSpec.Imported>()
@@ -86,8 +86,9 @@ private constructor(
         .filter { it.key.value != it.value }
 
     // Second pass: write the code, taking advantage of the imports.
-    val codeWriter = CodeWriter(out, indent, renamedSymbols)
-    emit(codeWriter, importedSymbols)
+    CodeWriter(out, indent, renamedSymbols).use {
+      emit(it, importedSymbols)
+    }
   }
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */

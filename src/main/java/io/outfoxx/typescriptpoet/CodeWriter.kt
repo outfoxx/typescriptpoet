@@ -16,6 +16,7 @@
 
 package io.outfoxx.typescriptpoet
 
+import java.io.Closeable
 import java.util.EnumSet
 import java.util.Stack
 
@@ -27,7 +28,7 @@ internal class CodeWriter constructor(
   out: Appendable,
   private val indent: String = "  ",
   val renamedSymbols: Map<SymbolSpec, String> = emptyMap()
-) {
+) : Closeable {
 
   private val out = LineWrapper(out, indent, 100)
   private var indentLevel = 0
@@ -301,10 +302,16 @@ internal class CodeWriter constructor(
       out.append(indent)
     }
   }
+
+  override fun close() {
+    out.close()
+  }
 }
 
 internal inline fun buildCodeString(builderAction: CodeWriter.() -> Unit): String {
   val stringBuilder = StringBuilder()
-  CodeWriter(stringBuilder).builderAction()
+  CodeWriter(stringBuilder).use {
+    it.builderAction()
+  }
   return stringBuilder.toString()
 }

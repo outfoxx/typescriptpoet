@@ -46,7 +46,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { emit(CodeWriter(this)) }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name, type)
