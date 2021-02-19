@@ -28,7 +28,7 @@ internal constructor(
 
   internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
 
-    codeWriter.emitCode(CodeBlock.of("@%N", name))
+    codeWriter.emitCode(CodeBlock.of("@%Q", name))
 
     if (parameters.isNotEmpty()) {
 
