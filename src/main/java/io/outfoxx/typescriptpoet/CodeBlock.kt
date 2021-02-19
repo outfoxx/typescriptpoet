@@ -141,7 +141,7 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildString { CodeWriter(this).emitCode(this@CodeBlock) }
+  override fun toString() = buildCodeString { emitCode(this@CodeBlock) }
 
   fun toBuilder(): Builder {
     val builder = Builder()
