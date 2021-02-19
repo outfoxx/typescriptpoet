@@ -28,8 +28,10 @@ package io.outfoxx.typescriptpoet
  *    primitives, [type declarations][ClassSpec], [decorators][DecoratorSpec] and even other code
  *    blocks.
  *  * `%N` emits a *name*, using name collision avoidance where necessary. Arguments for names may
- *    be strings (actually any [character sequence][CharSequence]), [parameters][ParameterSpec],
- *    [properties][PropertySpec], [functions][FunSpec], and [types][ClassSpec].
+ *    be strings (actually any [character sequence][CharSequence]), [type names][TypeName],
+ *    [classes][ClassSpec], [decorators][DecoratorSpec], [enums][EnumSpec], [functions][FunctionSpec],
+ *    [interfaces][InterfaceSpec], [modules][ModuleSpec], [parameters][ParameterSpec],
+ *    [properties][PropertySpec], [symbols][SymbolSpec], and [type aliases][TypeAliasSpec].
  *  * `%S` escapes the value as a *string*, wraps it with double quotes, and emits that. For
  *    example, `6" sandwich` is emitted `"6\" sandwich"`.
  *  * `%P` escapes the value as a *template*, wraps it with backticks, and emits that. For
@@ -37,6 +39,7 @@ package io.outfoxx.typescriptpoet
  *  * `%T` emits a *type* reference. Types will be imported if possible. Arguments for types may be
  *    [classes][Class], [type mirrors][javax.lang.model.type.TypeMirror], and
  *    [elements][javax.lang.model.element.Element].
+ *  * `%Q` emits a [symbol][SymbolSpec].
  *  * `%%` emits a percent sign.
  *  * `%W` emits a space or a newline, depending on its position on the line. This prefers to wrap
  *    lines before 100 columns.
@@ -311,6 +314,7 @@ private constructor(
         'L' -> this.args += argToLiteral(arg)
         'S', 'P' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
+        'Q' -> this.args += argToSymbol(arg)
         else -> throw IllegalArgumentException(
           String.format("invalid format string: '%s'", format)
         )
@@ -319,12 +323,17 @@ private constructor(
 
     private fun argToName(o: Any?) = when (o) {
       is CharSequence -> o.toString()
-      is SymbolSpec -> o.value
       is TypeName -> o.toString()
+      is ClassSpec -> o.name
+      is DecoratorSpec -> o.name.value
+      is EnumSpec -> o.name
+      is FunctionSpec -> o.name
+      is InterfaceSpec -> o.name
+      is ModuleSpec -> o.name
       is ParameterSpec -> o.name
       is PropertySpec -> o.name
-      is FunctionSpec -> o.name
-      is TypeSpec<*, *> -> o.name
+      is SymbolSpec -> o.value
+      is TypeAliasSpec -> o.name
       else -> throw IllegalArgumentException("expected name but was $o")
     }
 
@@ -338,6 +347,11 @@ private constructor(
     private fun argToType(o: Any?) = when (o) {
       is TypeName -> o
       else -> throw IllegalArgumentException("expected type but was $o")
+    }
+
+    private fun argToSymbol(o: Any?) = when (o) {
+      is SymbolSpec -> o
+      else -> throw IllegalArgumentException("expected symbol but was $o")
     }
 
     /**

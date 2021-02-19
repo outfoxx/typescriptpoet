@@ -177,6 +177,8 @@ internal class CodeWriter constructor(
 
         "%T" -> emitTypeName(codeBlock.args[a++] as TypeName)
 
+        "%Q" -> emitSymbol(codeBlock.args[a++] as SymbolSpec)
+
         "%%" -> emit("%")
 
         "%>" -> indent()
