@@ -315,9 +315,7 @@ private constructor(
         'S', 'P' -> this.args += argToString(arg)
         'T' -> this.args += argToType(arg)
         'Q' -> this.args += argToSymbol(arg)
-        else -> throw IllegalArgumentException(
-          String.format("invalid format string: '%s'", format)
-        )
+        else -> throw IllegalArgumentException("invalid format string: '$format'")
       }
     }
 

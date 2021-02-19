@@ -93,10 +93,7 @@ class ClassSpecTests {
       out.toString(),
       equalTo(
         """
-            @decorate(
-              true,
-              /* targetType */ Test2
-            )
+            @decorate(true, /* targetType */ Test2)
             class Test {
             }
 
@@ -486,9 +483,7 @@ class ClassSpecTests {
               value3: boolean | undefined;
 
               constructor(
-                  @MyDec(
-                    /* value */ 'test-value'
-                  )
+                  @MyDec(/* value */ 'test-value')
                   private value: number,
                   public value2: string,
                   value3: boolean | undefined
@@ -560,10 +555,7 @@ class ClassSpecTests {
 
               value3: boolean = true;
 
-              @limited(
-                /* min */ 5,
-                /* max */ 100
-              )
+              @limited(/* min */ 5, /* max */ 100)
               value4: number;
 
               @dynamic
@@ -613,10 +605,7 @@ class ClassSpecTests {
               test1() {
               }
 
-              @validated(
-                /* strict */ true,
-                /* name */ test2
-              )
+              @validated(/* strict */ true, /* name */ test2)
               test2() {
               }
 
