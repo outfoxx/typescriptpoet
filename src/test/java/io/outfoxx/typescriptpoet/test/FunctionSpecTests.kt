@@ -73,7 +73,7 @@ class FunctionSpecTests {
   }
 
   @Test
-  @DisplayName("Generates decorators formatted")
+  @DisplayName("Generates decorators")
   fun testGenDecorators() {
     val testFunc = FunctionSpec.builder("test")
       .addDecorator(
@@ -91,10 +91,7 @@ class FunctionSpecTests {
       out.toString(),
       equalTo(
         """
-            @decorate(
-              true,
-              /* targetType */ Test2
-            )
+            @decorate(true, /* targetType */ Test2)
             function test() {
             }
 

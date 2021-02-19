@@ -93,8 +93,8 @@ internal class CodeWriter constructor(
 
   fun emitDecorators(decorators: List<DecoratorSpec>, inline: Boolean) {
     for (decoratorSpec in decorators) {
-      decoratorSpec.emit(this, inline)
-      emit(if (inline) " " else "\n")
+      decoratorSpec.emit(this)
+      emitCode(if (inline) "%W" else "\n")
     }
   }
 
@@ -249,7 +249,7 @@ internal class CodeWriter constructor(
       is ClassSpec -> o.emit(this)
       is InterfaceSpec -> o.emit(this)
       is EnumSpec -> o.emit(this)
-      is DecoratorSpec -> o.emit(this, inline = true, asParameter = true)
+      is DecoratorSpec -> o.emit(this)
       is CodeBlock -> emitCode(o)
       else -> emit(o.toString())
     }

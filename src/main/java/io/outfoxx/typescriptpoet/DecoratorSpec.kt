@@ -26,40 +26,31 @@ internal constructor(
   val parameters = builder.parameters
   val factory = builder.factory
 
-  internal fun emit(codeWriter: CodeWriter, inline: Boolean, asParameter: Boolean = false) {
+  internal fun emit(codeWriter: CodeWriter) {
 
     codeWriter.emitCode(CodeBlock.of("@%Q", name))
 
     if (parameters.isNotEmpty()) {
 
-      codeWriter.emit("(")
-      if (!inline) {
-        codeWriter.indent()
-        codeWriter.emit("\n")
-      }
+      codeWriter.emitCode("(")
 
       parameters.forEachIndexed { index, (first, second) ->
         if (index > 0 && index < parameters.size) {
-          codeWriter.emit(",")
-          codeWriter.emit(if (inline) " " else "\n")
+          codeWriter.emitCode(",%W")
         }
-        if (!asParameter && first != null) {
+        if (first != null) {
           codeWriter.emit("/* $first */ ")
         }
         codeWriter.emitCode(second)
       }
 
-      if (!inline) {
-        codeWriter.unindent()
-        codeWriter.emit("\n")
-      }
-      codeWriter.emit(")")
+      codeWriter.emitCode(")")
     } else if (factory ?: parameters.isNotEmpty()) {
       codeWriter.emit("()")
     }
   }
 
-  override fun toString() = buildCodeString { emit(this, false) }
+  override fun toString() = buildCodeString { emit(this) }
 
   fun toBuilder(): Builder {
     val builder = Builder(name)

@@ -43,58 +43,84 @@ class DecoratorSpecTests {
   }
 
   @Test
-  @DisplayName("Generate inline")
-  fun testGenInline() {
+  fun `Generate with multi-line argument`() {
     val testDec = DecoratorSpec.builder("test")
-      .addParameter("value", "100")
-      .addParameter("value2", "20")
+      .addParameter(null, "{%>\nvalue: 5%<\n}")
       .build()
 
-    val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = true)
-
     assertThat(
-      out.toString(),
+      testDec.toString(),
       equalTo(
         """
-            @test(/* value */ 100, /* value2 */ 20)
+          @test({
+            value: 5
+          })
         """.trimIndent()
       )
     )
   }
 
   @Test
-  @DisplayName("Generate expanded")
-  fun testGenExpanded() {
+  fun `Generate with named arguments`() {
     val testDec = DecoratorSpec.builder("test")
       .addParameter("value", "100")
       .addParameter("value2", "20")
       .build()
 
-    val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
-
     assertThat(
-      out.toString(),
+      testDec.toString(),
       equalTo(
         """
-            @test(
-              /* value */ 100,
-              /* value2 */ 20
-            )
+          @test(/* value */ 100, /* value2 */ 20)
         """.trimIndent()
       )
     )
   }
 
   @Test
-  @DisplayName("Generate with no-argument")
+  fun `Generate with unnamed arguments`() {
+    val testDec = DecoratorSpec.builder("test")
+      .addParameter(null, "100")
+      .addParameter(null, "20")
+      .build()
+
+    assertThat(
+      testDec.toString(),
+      equalTo(
+        """
+          @test(100, 20)
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Generate with mixed named arguments`() {
+    val testDec = DecoratorSpec.builder("test")
+      .addParameter(null, "100")
+      .addParameter("value", "20")
+      .addParameter(null, "30")
+      .addParameter("value2", "40")
+      .build()
+
+    assertThat(
+      testDec.toString(),
+      equalTo(
+        """
+          @test(100, /* value */ 20, 30, /* value2 */ 40)
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  @DisplayName("Generate with no-arguments")
   fun testGenNoArg() {
     val testDec = DecoratorSpec.builder("test")
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
+    testDec.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),
@@ -107,14 +133,14 @@ class DecoratorSpecTests {
   }
 
   @Test
-  @DisplayName("Generate factory with no-argument")
+  @DisplayName("Generate factory with no-arguments")
   fun testGenNoArgFactory() {
     val testDec = DecoratorSpec.builder("test")
       .asFactory()
       .build()
 
     val out = StringWriter()
-    testDec.emit(CodeWriter(out), inline = false)
+    testDec.emit(CodeWriter(out))
 
     assertThat(
       out.toString(),

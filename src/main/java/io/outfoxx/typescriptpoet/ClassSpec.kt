@@ -83,7 +83,7 @@ private constructor(
 
       if (it.decorators.isNotEmpty()) {
         codeWriter.emit(" ")
-        codeWriter.emitDecorators(it.decorators, true)
+        codeWriter.emitDecorators(it.decorators, false)
         codeWriter.emit("\n")
       }
 
