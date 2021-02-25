@@ -149,7 +149,7 @@ internal fun List<ParameterSpec>.emit(
   if (size < 5 && all { constructorProperties[it.name]?.decorators?.isEmpty() ?: it.decorators.isEmpty() }) {
     params.forEachIndexed { index, parameter ->
       val optionalAllowed = subList(min(index + 1, size), size).all { it.optional }
-      if (index > 0) emit(", ")
+      if (index > 0) emitCode(",%W")
       emitBlock(parameter, rest === parameter, optionalAllowed)
     }
   } else {
