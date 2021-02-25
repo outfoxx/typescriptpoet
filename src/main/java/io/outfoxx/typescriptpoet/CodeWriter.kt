@@ -148,7 +148,7 @@ internal class CodeWriter constructor(
   }
 
   fun emitSymbol(symbolSpec: SymbolSpec) {
-    if (symbolSpec.isTopLevel) {
+    if (symbolSpec.isTopLevelSymbol) {
       referencedSymbols.add(symbolSpec)
       emit(renamedSymbols[symbolSpec] ?: symbolSpec.value)
     } else {

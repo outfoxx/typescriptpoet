@@ -34,3 +34,6 @@ protected constructor(
     abstract fun build(): T
   }
 }
+
+typealias AnyTypeSpec = TypeSpec<*, *>
+typealias AnyTypeSpecBuilder = TypeSpec.Builder<*, *>

@@ -38,26 +38,32 @@ private constructor(
   builder: Builder
 ) : Taggable(builder.tags.toImmutableMap()) {
 
-  val path = builder.path
+  val modulePath = builder.modulePath
   val comment = builder.comment.build()
   val members = builder.members.toList()
   val indent = builder.indent
 
   @Throws(IOException::class)
-  fun writeTo(out: Appendable) {
+  fun writeTo(out: Appendable, directory: Path = Paths.get("/")) {
     // First pass: emit the entire file, just to collect the symbols we'll need to import.
     val importsCollector = CodeWriter(NullAppendable, indent)
-    importsCollector.use { emit(it) }
+    importsCollector.use { emit(it, directory) }
+
+    val absPath = directory.resolve(modulePath)
 
     val importedSymbols =
       importsCollector.referencedSymbols<SymbolSpec.Imported>()
-        .filterNot {
-          // Filter imports from same file
-          if (it.source.startsWith("./")) {
-            it.source.equals(path.toString(), ignoreCase = true) ||
-              it.source.removePrefix("./").equals(path.toString(), ignoreCase = true)
-          } else {
-            false
+        .filter { // Include only imports from other files
+          when {
+            it.source.startsWith("./") -> {
+              val absImportPath = absPath.resolve(it.source).toAbsolutePath().normalize()
+              absImportPath != absPath
+            }
+            it.source.startsWith("!") -> {
+              val absImportPath = directory.resolve(it.source.removePrefix("!")).toAbsolutePath().normalize()
+              absImportPath != absPath
+            }
+            else -> true
           }
         }
         .toSet()
@@ -67,7 +73,7 @@ private constructor(
 
     // Allocate unique set of top level members
     members
-      .filterIsInstance<TypeSpec<*, *>>()
+      .filterIsInstance<AnyTypeSpec>()
       .map { it.name }
       .toSet()
       .forEach {
@@ -87,7 +93,7 @@ private constructor(
 
     // Second pass: write the code, taking advantage of the imports.
     CodeWriter(out, indent, renamedSymbols).use {
-      emit(it, importedSymbols)
+      emit(it, directory, importedSymbols)
     }
   }
 
@@ -97,22 +103,22 @@ private constructor(
     require(Files.notExists(directory) || Files.isDirectory(directory)) {
       "path $directory exists but is not a directory."
     }
-    val outputPath = directory.resolve("$path.ts")
-    OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writer -> writeTo(writer) }
+    val outputPath = directory.resolve("$modulePath.ts")
+    OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writeTo(it, directory) }
   }
 
   /** Writes this to `directory` as UTF-8 using the standard directory structure.  */
   @Throws(IOException::class)
   fun writeTo(directory: File) = writeTo(directory.toPath())
 
-  private fun emit(codeWriter: CodeWriter, imports: Set<SymbolSpec.Imported> = emptySet()) {
+  private fun emit(codeWriter: CodeWriter, directory: Path = Paths.get("/"), imports: Set<SymbolSpec.Imported> = emptySet()) {
 
     if (comment.isNotEmpty()) {
       codeWriter.emitComment(comment)
     }
 
     if (imports.isNotEmpty()) {
-      emitImports(codeWriter, imports)
+      emitImports(codeWriter, directory, imports)
     }
 
     members.filterNot { it is ModuleSpec || it is CodeBlock }.forEach { member ->
@@ -141,7 +147,7 @@ private constructor(
     }
   }
 
-  private fun emitImports(codeWriter: CodeWriter, imports: Set<SymbolSpec.Imported>) {
+  private fun emitImports(codeWriter: CodeWriter, directory: Path, imports: Set<SymbolSpec.Imported>) {
 
     val augmentImports = imports
       .filterIsInstance<SymbolSpec.Augmented>()
@@ -154,12 +160,9 @@ private constructor(
     if (imports.isNotEmpty()) {
       imports
         .filter { it !is SymbolSpec.Augmented || it !is SymbolSpec.SideEffect }
-        .groupBy { FileModules.importPath(path, it.source) }
+        .groupBy { FileModules.importPath(directory, modulePath, it.source) }
         .toSortedMap()
         .forEach { (sourceImportPath, imports) ->
-          if (path == sourceImportPath || Paths.get(".").resolve(path) == sourceImportPath) {
-            return@forEach
-          }
 
           imports.filterIsInstance<SymbolSpec.ImportsAll>().forEach { import ->
             // Output star imports individually
@@ -219,10 +222,10 @@ private constructor(
 
   override fun hashCode() = toString().hashCode()
 
-  override fun toString() = buildCodeString { emit(this) }
+  override fun toString() = buildCodeString { emit(this, Paths.get("/")) }
 
   fun toBuilder(): Builder {
-    val builder = Builder(path)
+    val builder = Builder(modulePath)
     builder.comment.add(comment)
     builder.members.addAll(this.members)
     builder.indent = indent
@@ -230,8 +233,12 @@ private constructor(
   }
 
   class Builder internal constructor(
-    internal val path: Path
+    internal val modulePath: String
   ) : Taggable.Builder<Builder>() {
+
+    init {
+      require(!modulePath.endsWith(".ts")) { "File's modulePath should not include typescript extension" }
+    }
 
     internal val comment = CodeBlock.builder()
     internal var indent = "  "
@@ -276,8 +283,17 @@ private constructor(
       members += enumSpec
     }
 
+    fun addType(typeSpec: AnyTypeSpec) = apply {
+      when (typeSpec) {
+        is EnumSpec -> addEnum(typeSpec)
+        is InterfaceSpec -> addInterface(typeSpec)
+        is ClassSpec -> addClass(typeSpec)
+        is TypeAliasSpec -> addTypeAlias(typeSpec)
+      }
+    }
+
     fun addFunction(functionSpec: FunctionSpec) = apply {
-      require(!functionSpec.isConstructor) { "cannot add ${functionSpec.name} to file $path" }
+      require(!functionSpec.isConstructor) { "cannot add ${functionSpec.name} to file $modulePath" }
       require(functionSpec.decorators.isEmpty()) { "decorators on module functions are not allowed" }
       checkMemberModifiers(functionSpec.modifiers)
       members += functionSpec
@@ -320,21 +336,18 @@ private constructor(
   companion object {
 
     @JvmStatic
-    fun builder(fileName: String, directory: Path) = Builder(
-      directory.resolve(fileName)
-    )
+    fun builder(modulePath: String) = Builder(modulePath)
 
     @JvmStatic
-    fun builder(filePath: String) = Builder(Paths.get(filePath))
+    fun get(moduleSpec: ModuleSpec, modulePath: String = moduleSpec.name.replace('.', '/').toLowerCase()): FileSpec =
+      builder(modulePath)
+        .apply { members.addAll(moduleSpec.members.toMutableList()) }
+        .build()
 
     @JvmStatic
-    fun builder(filePath: Path) = Builder(filePath)
-
-    @JvmStatic
-    fun builder(module: ModuleSpec, filePath: Path = Paths.get(module.name)): Builder {
-      val file = builder(filePath)
-      file.members.addAll(module.members.toMutableList())
-      return file
-    }
+    fun get(typeSpec: AnyTypeSpec, modulePath: String = typeSpec.name.replace('.', '/').toLowerCase()): FileSpec =
+      builder(modulePath)
+        .addType(typeSpec)
+        .build()
   }
 }

@@ -46,7 +46,7 @@ class FileSpecTests {
   @DisplayName("Generates header file comment")
   fun testComment() {
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addComment(
           """
             A file header comment that
@@ -73,7 +73,7 @@ class FileSpecTests {
     val typeName = TypeName.namedImport("Observable", "rxjs/observable")
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("Test", typeName)
             .build()
@@ -98,14 +98,42 @@ class FileSpecTests {
   }
 
   @Test
-  @DisplayName("Generates star imports")
-  fun testStarImports() {
+  fun `Generates relative named imports for generated modules`() {
+    val typeName = TypeName.namedImport("Observable", "!local/observable")
+
+    val testFile =
+      FileSpec.builder("api/test")
+        .addTypeAlias(
+          TypeAliasSpec.builder("Test", typeName)
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          import {Observable} from '../local/observable';
+          
+          
+          type Test = Observable;
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Generates star imports`() {
     val typeName = TypeName.standard(
       SymbolSpec.importsAll("stuff", "stuff/types")
     )
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("Test", typeName)
             .build()
@@ -130,6 +158,37 @@ class FileSpecTests {
   }
 
   @Test
+  fun `Generates star imports for generated modules`() {
+    val typeName = TypeName.standard(
+      SymbolSpec.importsAll("stuff", "!stuff/types")
+    )
+
+    val testFile =
+      FileSpec.builder("api/test")
+        .addTypeAlias(
+          TypeAliasSpec.builder("Test", typeName)
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          import * as stuff from '../stuff/types';
+          
+          
+          type Test = stuff;
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
   @DisplayName("Generates augment imports")
   fun testAugmentImports() {
     val typeName1 = TypeName.namedImport("Observable", "rxjs/observable")
@@ -138,7 +197,7 @@ class FileSpecTests {
     )
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("Test1", typeName1)
             .build()
@@ -177,7 +236,7 @@ class FileSpecTests {
     )
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("Test", typeName)
             .build()
@@ -202,14 +261,13 @@ class FileSpecTests {
   }
 
   @Test
-  @DisplayName("Generates renamed imports on collision")
-  fun testCollisionRenames() {
+  fun `Generates renamed imports on collision`() {
     val typeName1 = TypeName.namedImport("Test", "test1")
     val typeName2 = TypeName.namedImport("Test", "test2")
     val typeName3 = TypeName.namedImport("Another", "test1")
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("LocalTest1", typeName1)
             .build()
@@ -247,14 +305,57 @@ class FileSpecTests {
   }
 
   @Test
-  @DisplayName("Generates renamed imports on collision for nested types")
-  fun testCollisionRenamesNested() {
+  fun `Generates renamed imports on collision for generated modules`() {
+    val typeName1 = TypeName.namedImport("Test", "!1/test")
+    val typeName2 = TypeName.namedImport("Test", "!2/test")
+    val typeName3 = TypeName.namedImport("Another", "!1/test")
+
+    val testFile =
+      FileSpec.builder("api/client/test")
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest1", typeName1)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest2", typeName2)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("Another", typeName3)
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          import {Another as Another_, Test} from '../../1/test';
+          import {Test as Test_} from '../../2/test';
+          
+          
+          type LocalTest1 = Test;
+
+          type LocalTest2 = Test_;
+          
+          type Another = Another_;
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Generates renamed imports on collision for nested types`() {
     val typeName1 = TypeName.namedImport("Test", "test1")
     val typeName2 = TypeName.namedImport("Test.Kind", "test2")
     val typeName3 = TypeName.namedImport("Another.Kind", "test1")
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
         .addTypeAlias(
           TypeAliasSpec.builder("LocalTest1", typeName1)
             .build()
@@ -292,12 +393,106 @@ class FileSpecTests {
   }
 
   @Test
-  @DisplayName("Generates relative references for nested modules")
-  fun testRelativeModuleReferences() {
+  fun `Generates renamed imports on collision of nested types for generated modules`() {
+    val typeName1 = TypeName.namedImport("Test", "!client/1/test")
+    val typeName2 = TypeName.namedImport("Test.Kind", "!client/2/test")
+    val typeName3 = TypeName.namedImport("Another.Kind", "!client/1/test")
+
+    val testFile =
+      FileSpec.builder("client/api/test")
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest1", typeName1)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("LocalTest2", typeName2)
+            .build()
+        )
+        .addTypeAlias(
+          TypeAliasSpec.builder("Another", typeName3)
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          import {Another as Another_, Test} from '../1/test';
+          import {Test as Test_} from '../2/test';
+          
+          
+          type LocalTest1 = Test;
+
+          type LocalTest2 = Test_.Kind;
+          
+          type Another = Another_.Kind;
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Generates relative references for nested modules`() {
     val nestedTypeName = TypeName.implicit("Test").nested("Nested")
 
     val testFile =
-      FileSpec.builder("test.ts")
+      FileSpec.builder("test")
+        .addClass(
+          ClassSpec.builder("Test")
+            .build()
+        )
+        .addModule(
+          ModuleSpec.builder("Test")
+            .addClass(
+              ClassSpec.builder("Nested")
+                .build()
+            )
+            .addClass(
+              ClassSpec.builder("SubNested")
+                .superClass(nestedTypeName)
+                .build()
+            )
+            .build()
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          
+          class Test {
+          }
+          
+          namespace Test {
+          
+            class Nested {
+            }
+          
+            class SubNested extends Nested {
+            }
+          
+          }
+          
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Generates relative references for generated nested modules`() {
+    val nestedTypeName = TypeName.namedImport("Test", "!client/types/test").nested("Nested")
+
+    val testFile =
+      FileSpec.builder("client/api/test")
         .addClass(
           ClassSpec.builder("Test")
             .build()

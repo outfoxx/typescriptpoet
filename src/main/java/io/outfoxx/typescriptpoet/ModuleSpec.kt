@@ -155,6 +155,15 @@ private constructor(
       members += enumSpec
     }
 
+    fun addType(typeSpec: AnyTypeSpec) = apply {
+      when (typeSpec) {
+        is EnumSpec -> addEnum(typeSpec)
+        is InterfaceSpec -> addInterface(typeSpec)
+        is ClassSpec -> addClass(typeSpec)
+        is TypeAliasSpec -> addTypeAlias(typeSpec)
+      }
+    }
+
     fun addFunction(functionSpec: FunctionSpec) = apply {
       require(!functionSpec.isConstructor) { "cannot add ${functionSpec.name} to module $name" }
       require(functionSpec.decorators.isEmpty()) { "decorators on module functions are not allowed" }

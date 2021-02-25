@@ -30,43 +30,43 @@ class FileModuleTests {
   @DisplayName("Generates correct import path for relative paths")
   fun testRelativeImportPathGeneration() {
 
-    val source = "!generated/src/main/api/Api"
-    val importer = Paths.get("generated/src/main/impl/Impl")
+    val import = "!generated/src/main/api/Api"
+    val importer = "generated/src/main/impl/Impl"
 
-    val path = importPath(importer, source)
-    assertThat(path.toString(), equalTo("../api/Api"))
+    val path = importPath(Paths.get("/"), importer, import)
+    assertThat(path, equalTo("../api/Api"))
   }
 
   @Test
   @DisplayName("Generates correct import path for relative paths referencing the same dir")
   fun testRelativeImportPathGenerationSameDir() {
 
-    val source = "!generated/src/main/api/Api"
-    val importer = Paths.get("generated/src/main/api/Api2")
+    val import = "!generated/src/main/api/Api"
+    val importer = "generated/src/main/api/Api2"
 
-    val path = importPath(importer, source)
-    assertThat(path.toString(), equalTo("./Api"))
+    val path = importPath(Paths.get("/"), importer, import)
+    assertThat(path, equalTo("./Api"))
   }
 
   @Test
   @DisplayName("Generates correct import path for sibling paths with no parent")
   fun testRelativeImportPathGenerationSiblingsNoParent() {
 
-    val source = "!Api"
-    val importer = Paths.get("Api2")
+    val import = "!Api"
+    val importer = "Api2"
 
-    val path = importPath(importer, source)
-    assertThat(path.toString(), equalTo("./Api"))
+    val path = importPath(Paths.get("/"), importer, import)
+    assertThat(path, equalTo("./Api"))
   }
 
   @Test
   @DisplayName("Generates correct import path for implied modules")
   fun testImpliedImportPathGeneration() {
 
-    val source = "rxjs/Observable"
-    val importer = Paths.get("generated/src/main/impl/Impl")
+    val import = "rxjs/Observable"
+    val importer = "generated/src/main/impl/Impl"
 
-    val path = importPath(importer, source)
-    assertThat(path.toString(), equalTo("rxjs/Observable"))
+    val path = importPath(Paths.get("/"), importer, import)
+    assertThat(path, equalTo("rxjs/Observable"))
   }
 }

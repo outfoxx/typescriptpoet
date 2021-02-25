@@ -17,29 +17,22 @@
 package io.outfoxx.typescriptpoet
 
 import java.nio.file.Path
-import java.nio.file.Paths
 
 object FileModules {
 
-  private val CURRENT_DIR = Paths.get(".")
-
-  fun importPath(importer: Path, source: String): Path {
-    return if (source.startsWith("!")) {
+  fun importPath(directory: Path, importer: String, import: String): String {
+    return if (import.startsWith("!")) {
       // Ensure two generated files use proper relative import path
-      val sourceFilePath = Paths.get(source.drop(1))
-      val importDirPath = importer.parentOrCurrent.relativize(sourceFilePath.parentOrCurrent).normalize()
-      val importFilePath = importDirPath.resolve(sourceFilePath.fileName)
-
-      // Ensure TS always imports the file relative to the importing file...
-      if (importFilePath.startsWith("..") || importFilePath.startsWith("."))
-        importFilePath
+      val importerPath = directory.resolve(importer).toAbsolutePath().normalize()
+      val importerDir = importerPath.parent ?: importerPath
+      val importPath = directory.resolve(import.drop(1)).toAbsolutePath().normalize()
+      val importedPath = importerDir.relativize(importPath).normalize().toString()
+      if (importedPath.startsWith("."))
+        importedPath
       else
-        CURRENT_DIR.resolve(importFilePath)
+        "./$importedPath"
     } else {
-      Paths.get(source)
+      import
     }
   }
 }
-
-private val Path.parentOrCurrent: Path
-  get() = if (this.parent != null) this.parent else Paths.get(".")

@@ -29,7 +29,7 @@ sealed class SymbolSpec(
   abstract fun enclosing(): SymbolSpec?
   abstract fun topLevel(): SymbolSpec
 
-  val isTopLevel: Boolean
+  val isTopLevelSymbol: Boolean
     get() = value.count { it == '.' } == 0
 
   companion object {
@@ -37,7 +37,7 @@ sealed class SymbolSpec(
     private val fileNamePattern =
       """(?:[a-zA-Z0-9._\-]+)""".toRegex()
     private val modulePattern =
-      """@?(?:(?:!$fileNamePattern)|(?:$fileNamePattern(?:/$fileNamePattern)*))""".toRegex()
+      """@?(?:(?:!?$fileNamePattern)(?:/$fileNamePattern)*)""".toRegex()
     private val identPattern =
       """(?:(?:[a-zA-Z][_a-zA-Z0-9.]*)|(?:[_a-zA-Z][_a-zA-Z0-9.]+))""".toRegex()
     private val importPattern =
