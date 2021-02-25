@@ -34,22 +34,30 @@ sealed class TypeName {
   ) : TypeName() {
 
     fun nested(name: String) = Standard(base.nested(name))
-    fun enclosing() = base.enclosing()?.let { Standard(it) }
-    fun topLevel() = Standard(base.topLevel())
 
-    val isTopLevel: Boolean
-      get() = base.isTopLevel
+    fun enclosingTypeName() = base.enclosing()?.let { Standard(it) }
+
+    fun topLevelTypeName() = Standard(base.topLevel())
+
+    fun simpleName() = base.value.split(".").last()
+
+    fun simpleNames(): List<String> {
+      val names = base.value.split(".")
+      return names.subList(1, names.size)
+    }
+
+    val isTopLevelTypeName: Boolean get() = base.isTopLevelSymbol
 
     fun parameterized(vararg typeArgs: TypeName) = parameterizedType(this, *typeArgs)
 
     override fun emit(codeWriter: CodeWriter) {
       val fullPath = base.value.split(".")
+      val relativePath = fullPath.dropCommon(codeWriter.currentScope())
       val relativeName =
-        if (fullPath.size != 1) {
-          val relativePath = fullPath.dropCommon(codeWriter.currentScope())
+        if (relativePath.isNotEmpty()) {
           relativePath.joinToString(".")
         } else {
-          fullPath.first()
+          fullPath.last()
         }
 
       if (relativeName == base.value) {
