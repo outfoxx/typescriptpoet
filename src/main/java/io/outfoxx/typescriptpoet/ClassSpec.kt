@@ -66,7 +66,7 @@ private constructor(
 
     // Non-static properties.
     for (propertySpec in propertySpecs) {
-      if (constructorProperties.containsKey(propertySpec.name)) {
+      if (constructorProperties.containsKey(propertySpec.name) && !propertySpec.modifiers.contains(Modifier.STATIC)) {
         continue
       }
       codeWriter.emit("\n")
