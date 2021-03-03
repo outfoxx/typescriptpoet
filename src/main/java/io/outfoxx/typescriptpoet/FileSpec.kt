@@ -104,6 +104,11 @@ private constructor(
       "path $directory exists but is not a directory."
     }
     val outputPath = directory.resolve("$modulePath.ts")
+
+    if (outputPath.parent != null) {
+      Files.createDirectories(outputPath.parent)
+    }
+
     OutputStreamWriter(Files.newOutputStream(outputPath), UTF_8).use { writeTo(it, directory) }
   }
 
