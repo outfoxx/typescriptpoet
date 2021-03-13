@@ -5,12 +5,16 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test-publish:
+  publish:
     runs-on: ubuntu-latest
 
     steps:
 
     - uses: actions/checkout@v2
+
+    - uses: actions/setup-java@v1
+      with:
+        java-version: '11'
 
     - name: Build Docs
       uses: burrunan/gradle-cache-action@v1
