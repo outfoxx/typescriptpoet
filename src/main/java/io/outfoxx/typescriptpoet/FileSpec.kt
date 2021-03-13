@@ -49,7 +49,7 @@ private constructor(
     val importsCollector = CodeWriter(NullAppendable, indent)
     importsCollector.use { emit(it, directory) }
 
-    val absPath = directory.resolve(modulePath)
+    val absPath = directory.resolve(modulePath).toAbsolutePath()
 
     val importedSymbols =
       importsCollector.referencedSymbols<SymbolSpec.Imported>()
