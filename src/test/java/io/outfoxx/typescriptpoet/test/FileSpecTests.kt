@@ -18,6 +18,8 @@ package io.outfoxx.typescriptpoet.test
 
 import io.outfoxx.typescriptpoet.ClassSpec
 import io.outfoxx.typescriptpoet.FileSpec
+import io.outfoxx.typescriptpoet.InterfaceSpec
+import io.outfoxx.typescriptpoet.Modifier
 import io.outfoxx.typescriptpoet.ModuleSpec
 import io.outfoxx.typescriptpoet.SymbolSpec
 import io.outfoxx.typescriptpoet.TypeAliasSpec
@@ -27,9 +29,88 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import java.nio.file.Path
 
 @DisplayName("FileSpec Tests")
 class FileSpecTests {
+
+  @Test
+  @DisplayName("Imports are not generated when type & class are exported together into relative directory")
+  fun testImportDetect() {
+
+    val ifaceBuilder =
+      InterfaceSpec.builder("Test")
+        .addModifiers(Modifier.EXPORT)
+        .build()
+
+    val classBuilder =
+      ClassSpec.builder("Test")
+        .addModifiers(Modifier.EXPORT)
+        .addMixin(TypeName.standard("Test@!test"))
+        .build()
+
+    val testFile =
+      FileSpec.builder("test")
+        .addInterface(ifaceBuilder)
+        .addClass(classBuilder)
+        .build()
+
+    assertThat(
+      buildString {
+        testFile.writeTo(this, Path.of("tester"))
+      },
+      equalTo(
+        """
+          
+          export interface Test {
+          }
+
+          export class Test implements Test {
+          }
+        
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  @DisplayName("Imports are not generated when type & class are exported together into absolute directory")
+  fun testImportDetectAbsolute() {
+
+    val ifaceBuilder =
+      InterfaceSpec.builder("Test")
+        .addModifiers(Modifier.EXPORT)
+        .build()
+
+    val classBuilder =
+      ClassSpec.builder("Test")
+        .addModifiers(Modifier.EXPORT)
+        .addMixin(TypeName.standard("Test@!test"))
+        .build()
+
+    val testFile =
+      FileSpec.builder("test")
+        .addInterface(ifaceBuilder)
+        .addClass(classBuilder)
+        .build()
+
+    assertThat(
+      buildString {
+        testFile.writeTo(this, Path.of("tester").toAbsolutePath())
+      },
+      equalTo(
+        """
+          
+          export interface Test {
+          }
+
+          export class Test implements Test {
+          }
+        
+        """.trimIndent()
+      )
+    )
+  }
 
   @Test
   @DisplayName("Tags on builders can be retrieved on builders and built specs")
