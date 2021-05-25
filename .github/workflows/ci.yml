@@ -1,11 +1,14 @@
-name: Build / Test / Publish
+name: CI
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ main ]
+  pull_request:
+    types: [ opened, synchronize, reopened, closed ]
+    branches: [ main ]
 
 jobs:
-  build-test-publish:
+  build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,11 +31,28 @@ jobs:
         name: reports
         path: build/reports
 
+
+  publish:
+    runs-on: ubuntu-latest
+
+    needs: [build-test]
+
+    if: github.event.pull_request.merged || github.event_name == 'push'
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Build
+      uses: burrunan/gradle-cache-action@v1
+      with:
+        job-id: jdk8-build-test
+        arguments: build -x test
+
     - name: Publish Maven (Snapshot)
       uses: burrunan/gradle-cache-action@v1
       with:
         job-id: jdk8-build-test
-        arguments: build publish -x test
+        arguments: publishMavenRelease
         properties: |
           ossrhUsername=${{ secrets.OSSRH_USER }}
           ossrhPassword=${{ secrets.OSSRH_PASS }}
