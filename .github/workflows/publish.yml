@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    tags: ["[0-9]+.[0-9]+.[0-9]+**"]
+    tags: ["v[0-9]+.[0-9]+.[0-9]+**"]
 
 jobs:
 
@@ -19,6 +19,8 @@ jobs:
 
     - uses: olegtarasov/get-tag@v2.1
       id: tagName
+      with:
+        tagRegex: "v(.*)"
 
     - name: Publish Maven
       uses: burrunan/gradle-cache-action@v1
