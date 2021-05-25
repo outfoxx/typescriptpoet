@@ -77,8 +77,8 @@ inline fun <reified T : Any> Taggable.tag(): T? = tag(T::class)
  * other APIs or callbacks.
  */
 
-inline fun <reified T : Any> ClassSpec.Builder.tag(tag: T?): ClassSpec.Builder =
-  tag(T::class, tag)
+inline fun <reified TAG : Any, T : TypeSpec<T, B>, B : TypeSpec.Builder<T, B>> TypeSpec.Builder<T, B>.tag(tag: TAG?): B =
+  tag(TAG::class, tag)
 
 /**
  * Attaches [tag] to the request using [T] as a key. Tags can be read from a
@@ -90,18 +90,6 @@ inline fun <reified T : Any> ClassSpec.Builder.tag(tag: T?): ClassSpec.Builder =
  */
 
 inline fun <reified T : Any> DecoratorSpec.Builder.tag(tag: T?): DecoratorSpec.Builder =
-  tag(T::class, tag)
-
-/**
- * Attaches [tag] to the request using [T] as a key. Tags can be read from a
- * request using [Taggable.tag]. Use `null` to remove any existing tag assigned for
- * [T].
- *
- * Use this API to attach debugging or other application data to a spec so that you may read it in
- * other APIs or callbacks.
- */
-
-inline fun <reified T : Any> EnumSpec.Builder.tag(tag: T?): EnumSpec.Builder =
   tag(T::class, tag)
 
 /**
@@ -124,18 +112,6 @@ inline fun <reified T : Any> FileSpec.Builder.tag(tag: T?): FileSpec.Builder =
  * other APIs or callbacks.
  */
 inline fun <reified T : Any> FunctionSpec.Builder.tag(tag: T?): FunctionSpec.Builder =
-  tag(T::class, tag)
-
-/**
- * Attaches [tag] to the request using [T] as a key. Tags can be read from a
- * request using [Taggable.tag]. Use `null` to remove any existing tag assigned for
- * [T].
- *
- * Use this API to attach debugging or other application data to a spec so that you may read it in
- * other APIs or callbacks.
- */
-
-inline fun <reified T : Any> InterfaceSpec.Builder.tag(tag: T?): InterfaceSpec.Builder =
   tag(T::class, tag)
 
 /**
@@ -170,15 +146,4 @@ inline fun <reified T : Any> ParameterSpec.Builder.tag(tag: T?): ParameterSpec.B
  * other APIs or callbacks.
  */
 inline fun <reified T : Any> PropertySpec.Builder.tag(tag: T?): PropertySpec.Builder =
-  tag(T::class, tag)
-
-/**
- * Attaches [tag] to the request using [T] as a key. Tags can be read from a
- * request using [Taggable.tag]. Use `null` to remove any existing tag assigned for
- * [T].
- *
- * Use this API to attach debugging or other application data to a spec so that you may read it in
- * other APIs or callbacks.
- */
-inline fun <reified T : Any> TypeAliasSpec.Builder.tag(tag: T?): TypeAliasSpec.Builder =
   tag(T::class, tag)
