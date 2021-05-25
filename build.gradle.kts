@@ -235,9 +235,9 @@ tasks.withType<Sign>().configureEach {
 githubRelease {
   owner("outfoxx")
   repo(name)
-  tagName(releaseVersion)
+  tagName("v$releaseVersion")
   targetCommitish("main")
-  releaseName("v${releaseVersion}")
+  releaseName("🎉 $releaseVersion Release")
   draft(true)
   prerelease(!releaseVersion.matches("""^\d+\.\d+\.\d+$""".toRegex()))
   releaseAssets(
