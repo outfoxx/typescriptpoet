@@ -6,19 +6,22 @@ plugins {
   `maven-publish`
   signing
 
-  kotlin("jvm") version "1.4.30"
-  id("org.jetbrains.dokka") version "1.4.20"
+  kotlin("jvm") version "1.4.32"
+  id("org.jetbrains.dokka") version "1.4.32"
 
   id("net.minecrell.licenser") version "0.4.1"
   id("org.jmailen.kotlinter") version "3.3.0"
+  id("com.github.breadmoirai.github-release") version "2.2.12"
 }
 
 
-group = "io.outfoxx"
-version = "1.2.0-SNAPSHOT"
-description = "A Kotlin/Java API for generating .ts source files."
+val releaseVersion: String by project
+val isSnapshot = releaseVersion.endsWith("SNAPSHOT")
 
-val isSnapshot = "$version".endsWith("SNAPSHOT")
+
+group = "io.outfoxx"
+version = releaseVersion
+description = "A Kotlin/Java API for generating .ts source files."
 
 
 //
@@ -68,9 +71,11 @@ dependencies {
 // COMPILE
 //
 
+val javaVersion = JavaVersion.VERSION_1_8
+
 java {
-  sourceCompatibility = JavaVersion.VERSION_1_8
-  targetCompatibility = JavaVersion.VERSION_1_8
+  sourceCompatibility = javaVersion
+  targetCompatibility = javaVersion
 
   withSourcesJar()
   withJavadocJar()
@@ -79,7 +84,7 @@ java {
 tasks {
   withType<KotlinCompile> {
     kotlinOptions {
-      jvmTarget = "1.8"
+      jvmTarget = "$javaVersion"
     }
   }
 }
@@ -113,7 +118,7 @@ tasks {
 
 tasks {
   dokkaHtml {
-    outputDirectory.set(file("$buildDir/javadoc/${project.version}"))
+    outputDirectory.set(file("$buildDir/javadoc/$releaseVersion"))
   }
 
   javadoc {
@@ -144,7 +149,7 @@ publishing {
 
   publications {
 
-    create<MavenPublication>("mavenJava") {
+    create<MavenPublication>("library") {
       from(components["java"])
 
       pom {
@@ -193,6 +198,7 @@ publishing {
   repositories {
 
     maven {
+      name = "MavenCentral"
       val snapshotUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
       val releaseUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
       url = uri(if (isSnapshot) snapshotUrl else releaseUrl)
@@ -207,10 +213,53 @@ publishing {
 
 }
 
-
 signing {
-  gradle.taskGraph.whenReady {
-    isRequired = hasTask("publishMavenJavaPublicationToMavenRepository")
+  if (!hasProperty("signing.keyId")) {
+    val signingKeyId: String? by project
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
   }
-  sign(publishing.publications["mavenJava"])
+  sign(publishing.publications["library"])
+}
+
+tasks.withType<Sign>().configureEach {
+  onlyIf { !isSnapshot }
+}
+
+
+//
+// RELEASING
+//
+
+githubRelease {
+  owner("outfoxx")
+  repo(name)
+  tagName(releaseVersion)
+  targetCommitish("main")
+  releaseName("v${releaseVersion}")
+  draft(true)
+  prerelease(!releaseVersion.matches("""^\d+\.\d+\.\d+$""".toRegex()))
+  releaseAssets(
+    files("$buildDir/libs/${name}-${releaseVersion}*.jar")
+  )
+  overwrite(true)
+  token(project.findProperty("github.token") as String? ?: System.getenv("GITHUB_TOKEN"))
+}
+
+tasks {
+
+  register("publishMavenRelease") {
+    dependsOn(
+      "publishAllPublicationsToMavenCentralRepository"
+    )
+  }
+
+  register("publishRelease") {
+    dependsOn(
+      "publishMavenRelease",
+      "githubRelease"
+    )
+  }
+
 }
