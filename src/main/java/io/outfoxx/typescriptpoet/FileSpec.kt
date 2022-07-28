@@ -344,13 +344,13 @@ private constructor(
     fun builder(modulePath: String) = Builder(modulePath)
 
     @JvmStatic
-    fun get(moduleSpec: ModuleSpec, modulePath: String = moduleSpec.name.replace('.', '/').toLowerCase()): FileSpec =
+    fun get(moduleSpec: ModuleSpec, modulePath: String = moduleSpec.name.replace('.', '/').lowercase()): FileSpec =
       builder(modulePath)
         .apply { members.addAll(moduleSpec.members.toMutableList()) }
         .build()
 
     @JvmStatic
-    fun get(typeSpec: AnyTypeSpec, modulePath: String = typeSpec.name.replace('.', '/').toLowerCase()): FileSpec =
+    fun get(typeSpec: AnyTypeSpec, modulePath: String = typeSpec.name.replace('.', '/').lowercase()): FileSpec =
       builder(modulePath)
         .addType(typeSpec)
         .build()
