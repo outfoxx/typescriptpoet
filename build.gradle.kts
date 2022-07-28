@@ -30,7 +30,7 @@ description = "A Kotlin/Java API for generating .ts source files."
 
 // Versions
 
-val guavaVersion = "22.0"
+val guavaVersion = "31.1-jre"
 val junitJupiterVersion = "5.6.2"
 val hamcrestVersion = "1.3"
 
