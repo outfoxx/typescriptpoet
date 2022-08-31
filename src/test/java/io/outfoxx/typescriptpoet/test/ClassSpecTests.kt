@@ -572,6 +572,31 @@ class ClassSpecTests {
   }
 
   @Test
+  @DisplayName("Generates property modifiers static precedes readonly")
+  fun testGenPropertiesModifierStaticPrecedesReadonly() {
+    val testClass = ClassSpec.builder("Test")
+      .addProperty("value", TypeName.NUMBER, false, Modifier.PRIVATE, Modifier.STATIC, Modifier.READONLY)
+      .build()
+
+    val out = StringWriter()
+    testClass.emit(CodeWriter(out))
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+            class Test {
+
+              private static readonly value: number;
+
+            }
+
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
   @DisplayName("Generates method definitions")
   fun testGenMethods() {
     val testClass = ClassSpec.builder("Test")
