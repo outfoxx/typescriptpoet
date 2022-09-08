@@ -135,7 +135,7 @@ private fun toTypeScriptIdentifier(suggestion: String) = buildString {
     val validCodePoint: Int = if (Character.isJavaIdentifierPart(codePoint)) {
       codePoint
     } else {
-      '_'.toInt()
+      '_'.code
     }
     appendCodePoint(validCodePoint)
     i += Character.charCount(codePoint)

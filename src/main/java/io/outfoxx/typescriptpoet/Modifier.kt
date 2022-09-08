@@ -34,5 +34,5 @@ enum class Modifier {
   VAR;
 
   val keyword: String
-    get() = name.toLowerCase()
+    get() = name.lowercase()
 }
