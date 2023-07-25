@@ -197,8 +197,8 @@ class FunctionSpecTests {
   }
 
   @Test
-  @DisplayName("Generates no return type when void")
-  fun testGenNoReturnTypeForVoid() {
+  @DisplayName("Generates return type when void")
+  fun testGenReturnTypeForVoid() {
     val testClass = FunctionSpec.builder("test")
       .returns(TypeName.VOID)
       .build()
@@ -210,7 +210,7 @@ class FunctionSpecTests {
       out.toString(),
       equalTo(
         """
-            function test() {
+            function test(): void {
             }
 
         """.trimIndent()
