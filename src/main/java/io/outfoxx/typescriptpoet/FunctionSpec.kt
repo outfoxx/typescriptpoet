@@ -104,7 +104,7 @@ private constructor(
       codeWriter.emitCode("]")
     }
 
-    if (returnType != null && returnType != TypeName.VOID) {
+    if (returnType != null) {
       codeWriter.emitCode(CodeBlock.of(": %T", returnType))
     }
   }
