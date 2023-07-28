@@ -273,9 +273,17 @@ private constructor(
       members += moduleSpec
     }
 
+    fun addModules(moduleSpecs: Iterable<ModuleSpec>) = apply {
+      moduleSpecs.forEach { addModule(it) }
+    }
+
     fun addClass(classSpec: ClassSpec) = apply {
       checkMemberModifiers(classSpec.modifiers)
       members += classSpec
+    }
+
+    fun addClasses(classSpecs: Iterable<ClassSpec>) = apply {
+      classSpecs.forEach { addClass(it) }
     }
 
     fun addInterface(ifaceSpec: InterfaceSpec) = apply {
@@ -283,9 +291,17 @@ private constructor(
       members += ifaceSpec
     }
 
+    fun addInterfaces(ifaceSpecs: Iterable<InterfaceSpec>) = apply {
+      ifaceSpecs.forEach { addInterface(it) }
+    }
+
     fun addEnum(enumSpec: EnumSpec) = apply {
       checkMemberModifiers(enumSpec.modifiers)
       members += enumSpec
+    }
+
+    fun addEnums(enumSpecs: Iterable<EnumSpec>) = apply {
+      enumSpecs.forEach { addEnum(it) }
     }
 
     fun addType(typeSpec: AnyTypeSpec) = apply {
@@ -297,11 +313,19 @@ private constructor(
       }
     }
 
+    fun addTypes(typeSpecs: Iterable<AnyTypeSpec>) = apply {
+      typeSpecs.forEach { addType(it) }
+    }
+
     fun addFunction(functionSpec: FunctionSpec) = apply {
       require(!functionSpec.isConstructor) { "cannot add ${functionSpec.name} to file $modulePath" }
       require(functionSpec.decorators.isEmpty()) { "decorators on module functions are not allowed" }
       checkMemberModifiers(functionSpec.modifiers)
       members += functionSpec
+    }
+
+    fun addFunctions(functionSpecs: Iterable<FunctionSpec>) = apply {
+      functionSpecs.forEach { addFunction(it) }
     }
 
     fun addProperty(propertySpec: PropertySpec) = apply {
@@ -315,8 +339,16 @@ private constructor(
       members += propertySpec
     }
 
+    fun addProperties(propertySpecs: Iterable<PropertySpec>) = apply {
+      propertySpecs.forEach { addProperty(it) }
+    }
+
     fun addTypeAlias(typeAliasSpec: TypeAliasSpec) = apply {
       members += typeAliasSpec
+    }
+
+    fun addTypeAliases(typeAliasSpecs: Iterable<TypeAliasSpec>) = apply {
+      typeAliasSpecs.forEach { addTypeAlias(it) }
     }
 
     fun addCode(codeBlock: CodeBlock) = apply {

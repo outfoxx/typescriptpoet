@@ -18,6 +18,7 @@ package io.outfoxx.typescriptpoet.test
 
 import io.outfoxx.typescriptpoet.ClassSpec
 import io.outfoxx.typescriptpoet.FileSpec
+import io.outfoxx.typescriptpoet.FunctionSpec
 import io.outfoxx.typescriptpoet.InterfaceSpec
 import io.outfoxx.typescriptpoet.Modifier
 import io.outfoxx.typescriptpoet.ModuleSpec
@@ -349,17 +350,15 @@ class FileSpecTests {
 
     val testFile =
       FileSpec.builder("test")
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest1", typeName1)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest2", typeName2)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("Another", typeName3)
-            .build()
+        .addTypeAliases(
+          listOf(
+            TypeAliasSpec.builder("LocalTest1", typeName1)
+              .build(),
+            TypeAliasSpec.builder("LocalTest2", typeName2)
+              .build(),
+            TypeAliasSpec.builder("Another", typeName3)
+              .build()
+          )
         )
         .build()
 
@@ -393,17 +392,15 @@ class FileSpecTests {
 
     val testFile =
       FileSpec.builder("api/client/test")
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest1", typeName1)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest2", typeName2)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("Another", typeName3)
-            .build()
+        .addTypeAliases(
+          listOf(
+            TypeAliasSpec.builder("LocalTest1", typeName1)
+              .build(),
+            TypeAliasSpec.builder("LocalTest2", typeName2)
+              .build(),
+            TypeAliasSpec.builder("Another", typeName3)
+              .build()
+          )
         )
         .build()
 
@@ -437,17 +434,15 @@ class FileSpecTests {
 
     val testFile =
       FileSpec.builder("test")
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest1", typeName1)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest2", typeName2)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("Another", typeName3)
-            .build()
+        .addTypeAliases(
+          listOf(
+            TypeAliasSpec.builder("LocalTest1", typeName1)
+              .build(),
+            TypeAliasSpec.builder("LocalTest2", typeName2)
+              .build(),
+            TypeAliasSpec.builder("Another", typeName3)
+              .build()
+          )
         )
         .build()
 
@@ -481,17 +476,15 @@ class FileSpecTests {
 
     val testFile =
       FileSpec.builder("client/api/test")
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest1", typeName1)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("LocalTest2", typeName2)
-            .build()
-        )
-        .addTypeAlias(
-          TypeAliasSpec.builder("Another", typeName3)
-            .build()
+        .addTypeAliases(
+          listOf(
+            TypeAliasSpec.builder("LocalTest1", typeName1)
+              .build(),
+            TypeAliasSpec.builder("LocalTest2", typeName2)
+              .build(),
+            TypeAliasSpec.builder("Another", typeName3)
+              .build()
+          )
         )
         .build()
 
@@ -614,6 +607,43 @@ class FileSpecTests {
           
           }
           
+        """.trimIndent()
+      )
+    )
+  }
+
+  @Test
+  fun `Simple test for outputting multiple functions`() {
+    val testFile =
+      FileSpec.builder("client/api/test")
+        .addFunctions(
+          listOf(
+            FunctionSpec.builder("logHello")
+              .addStatement("console.log('hello')")
+              .build(),
+            FunctionSpec.builder("logWorld")
+              .addStatement("console.log('world')")
+              .build(),
+          )
+        )
+        .build()
+
+    val out = StringBuilder()
+    testFile.writeTo(out)
+
+    assertThat(
+      out.toString(),
+      equalTo(
+        """
+          
+          function logHello() {
+            console.log('hello');
+          }
+  
+          function logWorld() {
+            console.log('world');
+          }
+        
         """.trimIndent()
       )
     )
