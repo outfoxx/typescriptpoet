@@ -29,7 +29,7 @@ import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import java.nio.file.Path
+import java.nio.file.Paths
 
 @DisplayName("FileSpec Tests")
 class FileSpecTests {
@@ -57,7 +57,7 @@ class FileSpecTests {
 
     assertThat(
       buildString {
-        testFile.writeTo(this, Path.of("tester"))
+        testFile.writeTo(this, Paths.get("tester"))
       },
       equalTo(
         """
@@ -96,7 +96,7 @@ class FileSpecTests {
 
     assertThat(
       buildString {
-        testFile.writeTo(this, Path.of("tester").toAbsolutePath())
+        testFile.writeTo(this, Paths.get("tester").toAbsolutePath())
       },
       equalTo(
         """

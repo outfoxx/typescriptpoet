@@ -26,7 +26,7 @@ object FileModules {
       val importerPath = directory.resolve(importer).toAbsolutePath().normalize()
       val importerDir = importerPath.parent ?: importerPath
       val importPath = directory.resolve(import.drop(1)).toAbsolutePath().normalize()
-      val importedPath = importerDir.relativize(importPath).normalize().toString()
+      val importedPath = importerDir.relativize(importPath).normalize().toString().replace('\\', '/')
       if (importedPath.startsWith("."))
         importedPath
       else
