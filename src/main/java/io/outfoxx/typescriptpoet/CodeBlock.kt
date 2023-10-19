@@ -336,7 +336,7 @@ private constructor(
     }
 
     private fun argToLiteral(o: Any?) = when (o) {
-      is CodeBlock -> o.toString()
+      is CodeBlock -> o
       else -> o.toString()
     }
 

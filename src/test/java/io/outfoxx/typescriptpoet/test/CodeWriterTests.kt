@@ -46,4 +46,26 @@ class CodeWriterTests {
       )
     )
   }
+
+  @Test
+  fun `test CodeBlock with import`() {
+    val testFunc = FunctionSpec.builder("test")
+      .returns(STRING)
+      .addCode(CodeBlock.of("return new %T()", TypeName.namedImport("X", "x")))
+      .build()
+
+    MatcherAssert.assertThat(
+      testFunc.toString(),
+      CoreMatchers.equalTo(
+        """
+            import { X } from 'x';
+
+            function test(): string {
+              return new X();
+            }
+
+        """.trimIndent()
+      )
+    )
+  }
 }
